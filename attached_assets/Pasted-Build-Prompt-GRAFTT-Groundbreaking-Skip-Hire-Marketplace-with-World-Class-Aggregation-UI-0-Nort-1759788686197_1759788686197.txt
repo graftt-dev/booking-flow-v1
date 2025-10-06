@@ -1,0 +1,431 @@
+Build Prompt — GRAFTT (Groundbreaking Skip-Hire Marketplace with World-Class Aggregation UI)
+0) North Star
+
+Create a best-in-class marketplace for skip hire that feels as simple as Skyscanner/Uber and as trustworthy as MoneySuperMarket/Lottie. The journey is frictionless, educational, and fast:
+
+Flow: Home (Location) → Placement → Type of Waste → Extra Items → Size of Skip → Providers (aggregation) → Checkout → Confirmation.
+
+Brand copy (lock):
+
+Hero H1: The easiest way to hire a skip.
+
+Hero sub: Skip hire you can trust – no cowboys, no fly-tipping, no fines.
+
+Benchmark: UK’s No.1 Marketplace for Skip Hire.
+
+1) Tech Stack
+
+React 18 + TypeScript + Vite
+
+Tailwind CSS (tokens below)
+
+Framer Motion (page transitions, ribbons, interstitials)
+
+Zustand (global state)
+
+React Hook Form + Zod (forms & validation)
+
+Leaflet (map with draggable pin)
+
+Stripe (Payment Element + Payment Request for Apple/Google Pay; test mode)
+
+Vitest + React Testing Library + Playwright (unit + E2E)
+
+Lottie (success, subtle interstitials)
+
+2) Project Structure
+/src
+  /app
+    App.tsx
+    router.tsx
+  /theme
+    tokens.ts
+    tailwind.config.ts
+  /components
+    Header.tsx
+    ProgressRibbon.tsx
+    SearchBar.tsx
+    Chip.tsx
+    Tile.tsx
+    Toggle.tsx
+    Range.tsx
+    Overlay.tsx
+    EducationPill.tsx
+    PricePopover.tsx
+    ProviderCard.tsx
+    ProviderRowCompact.tsx
+    ProviderFilters.tsx
+    ProviderCompareDrawer.tsx
+    StickySummary.tsx
+    PaymentPanel.tsx
+    Skeleton.tsx
+  /features
+    home/Home.tsx
+    location/Location.tsx
+    placement/Placement.tsx
+    waste/WasteType.tsx
+    extras/ExtraItems.tsx
+    size/SkipSize.tsx
+    providers/Providers.tsx
+    checkout/Checkout.tsx
+    confirmation/Confirmation.tsx
+  /journey
+    store.ts
+    Interstitial.tsx
+  /lib
+    pricing.ts
+    providers.ts
+    councils.ts
+    w3w.ts
+  /assets
+    lotties/success.json
+    hero/skip-wire.svg
+  /tests
+    unit/*.test.ts
+    e2e/*.spec.ts
+
+3) Design Tokens (Tailwind)
+export const tokens = {
+  color: {
+    teal:  "#05E4C0",
+    navy:  "#06062D",
+    ink:   "#0E102A",
+    paper: "#FFFFFF",
+    paper2:"#F7F8FA",
+    line:  "#E9EDF3",
+    good:  "#16C784",
+    warn:  "#FFB020",
+  },
+  radius: { md: 12, xl: 20, xxl: 28 },
+  shadow: { soft: "0 10px 30px rgba(0,0,0,.08)" },
+  font: { brand: '"Cocogoose Pro", Poppins, system-ui' },
+};
+
+
+UI rules: All-white pages, generous whitespace, teal accents; typography navy/ink; tiles over heavy cards; no scroll on common viewports (scale down if needed).
+
+4) Global Components
+
+Header.tsx — shallow, white, bottom hairline; logo → /; links: How it works, Help, Contact.
+ProgressRibbon.tsx — on-page under H1; labels: Location • Placement • Waste • Items • Size • Providers • Checkout • Done; animated fill + gentle sheen.
+EducationPill.tsx — one per step (bottom, subtle): “Why this matters” + one line.
+Overlay.tsx — shallow popovers (search, date, price breakdown), portal z-50, no layout shift.
+StickySummary.tsx — mobile bottom or desktop right; shows key selections + running total.
+
+5) Pages (exact flow)
+Home (/)
+
+Clean all-white hero.
+
+H1/Sub/Benchmark (above).
+
+Central SearchBar (postcode + address suggestions in portal).
+
+Optional inline toggle: “On the road?” (sets flags.onRoadFromHome).
+
+CTA: Get started → to /location with any filled values.
+
+Location (/location) — 1/8
+
+H1: Confirm the location
+
+Chips: Postcode + Address + Change (overlay search).
+
+Map 16:9; pin drag updates lat/lng + mock W3W input.
+
+EducationPill: “Exact location prevents access issues and permit delays.”
+
+Placement (/placement) — 2/8
+
+H1: Where should we place the skip?
+
+Tiles: On your property / On the road (if road → small permit hint; concierge handled later).
+
+EducationPill: “Driveway avoids permits and often speeds up delivery.”
+
+Type of Waste (/waste) — 3/8
+
+H1: What type of waste is it?
+
+Tiles with consumer labels → operator mapping:
+
+House clearance → Mixed general
+
+Renovation → Builders’ waste
+
+Garden makeover → Green
+
+Soil & Rubble → Soil & stone
+
+DIY Woodwork → Wood
+
+EducationPill: “Right category keeps costs fair and boosts recycling.”
+
+Extra Items (/items) — 4/8
+
+H1: Any of these items?
+
+2-column chip checklist: Mattress, Tyres, Fridge/Freezer, Plasterboard, Gas Bottles, Batteries, Carpet.
+
+Hazardous (Asbestos, Paints/Liquids) → warning overlay.
+
+“None of the above” wide chip.
+
+EducationPill: “Some items need special handling — telling us now avoids surprise charges.”
+
+Size of Skip (/size) — 5/8
+
+H1: How much waste do you have?
+
+2×2 tiles: 4yd ≈40 bags; 6yd ≈60; 8yd ≈80; 12yd ≈120; mini sketches; Recommended badge if logic suggests.
+
+EducationPill: “One correct size is cheaper than two smaller ones.”
+
+Interstitial (micro)
+
+1.6–2.0s: Finding providers near {postcode}… with skeleton tiles; smooth crossfade to Providers.
+
+6) 🚀 Providers (Aggregation) — WORLD-CLASS UI (6/8)
+
+Goals: instant comprehension, trust at a glance, side-by-side clarity, zero noise, no pagination (show 6–12). Everything feels like Skyscanner/MoneySuperMarket with Uber’s speed.
+
+Layout
+
+H1: Choose a provider
+
+Tabs (pills): Recommended | Cheapest | Earliest (just sort modes).
+
+ProviderFilters (compact row):
+
+Distance (≤5km / 10km / 20km / Any)
+
+Ratings (⭐4.0+ / 4.5+)
+
+Recycling rate (50%+ / 70%+)
+
+Delivery window (Today / Tomorrow / This week)
+
+Price range (Range slider)
+
+Toggle: Permit-ready only (if road)
+
+Results body: Grid (desktop 3-up; tablet 2-up; mobile 1-up), no paging. Supports 6–12 providers.
+
+StickySummary: bottom (mobile) / right (desktop) with size, items, placement, provisional total; CTA Continue disabled until selection.
+
+Provider Card (dense & delightful)
+
+ProviderCard.tsx (grid tile):
+
+Top row: Logo + Name (Budget Waste Management must be included), ⭐rating, reviews count.
+
+Price (all-in): large, inclusive (base + items + permit + VAT).
+
+Earliest slot: “Earliest: Tue AM (8–11)” with small clock icon.
+
+Badges:
+
+Licensed Operator
+
+Permit-ready
+
+High Recycling {xx%}
+
+On-time {xx%}
+
+What’s included (bulleted, 3 items)
+
+PricePopover (click “Breakdown”) with table:
+
+Base (size)
+
+Extras (line-items)
+
+Permit (if road)
+
+VAT
+
+Total
+
+Select button → teal ring appears around card; card moves to Selected state.
+
+ProviderRowCompact.tsx (list toggle): condensed, row style with same data; use a view toggle to A/B test Grid vs List density.
+
+Sorting Logic (tabs)
+
+Recommended (weighted score): total price (35%), earliest delivery (25%), rating (20%), recycling% (20%).
+
+Cheapest: ascending total price.
+
+Earliest: soonest window; tie-breakers = rating → price.
+
+Filters (live, no reload)
+
+All filters update the list instantly; count badge (“8 matches”) animates.
+
+“Clear filters” pill visible when any filter active.
+
+Compare (drawer)
+
+User can add up to 3 providers to Compare (checkbox on card).
+
+ProviderCompareDrawer.tsx slides up: columnar comparison of Price, Earliest, Rating, Recycling, On-time, Inclusions.
+
+CTA: Choose {ProviderName} or close.
+
+Map toggle (optional)
+
+Small toggle: Map view shows pins coloured by price gradient; selecting pin highlights card.
+
+Micro-interactions
+
+Cards enter with 40ms stagger; hover lift 2px; select gives teal ring + subtle glow.
+
+PricePopover animates scale+fade (180ms).
+
+When user selects a provider, StickySummary shows “Selected: {ProviderName}”.
+
+Accessibility
+
+Cards are radio buttons in a group (arrow keys to move, space to select).
+
+Filters usable via keyboard and have aria-labels.
+
+PricePopover opens focus-trapped; Esc closes.
+
+Empty/edge states
+
+No results: show guidance — “Try widening the delivery window or removing filters.”
+
+Permit-only constraint (road): show “Permit-ready” filter pre-ticked with info link.
+
+7) Checkout (7/8)
+
+Two columns, white surface, condensed:
+
+Left: PaymentPanel — PaymentRequestButton (Apple/Google Pay) above Payment Element (Card); compact inputs (name/email/phone), driver notes, choose Collection date.
+
+Right: Order summary (location, placement, waste, items, size, chosen provider, delivery window, permit line, subtotal + VAT + total).
+
+Compliance strip above pay button: “Licensed operator • Waste transfer note • GPS drop • Chain of custody”.
+
+CTA: Confirm & Pay → success → /confirmation.
+
+8) Confirmation (8/8)
+
+Success Lottie, clean order card: reference, provider, delivery/collection windows.
+
+Actions: Download transfer note (PDF mock), Add to calendar (iCal), Book another.
+
+9) State & Pricing (mock realistic)
+
+Zustand store
+
+{
+  postcode, address, lat, lng, w3w,
+  placement: "driveway" | "road",
+  wasteType, items: string[],
+  size: "4yd" | "6yd" | "8yd" | "12yd",
+  providerId,
+  deliveryDate, collectionDate,
+  customer: { name, email, phone },
+  totals: { base, extras, permit, vat, total },
+  flags: { onRoadFromHome?: boolean }
+}
+
+
+pricing.ts
+
+basePrice(size, provider)
+
+extrasPrice(items[])
+
+permitFee(placement, postcode) (use councils.ts bands)
+
+totalExVat = base + extras + permit
+
+vat = 0.2
+
+total = totalExVat * (1 + vat)
+
+providers.ts
+
+8–12 providers (must include Budget Waste Management), each with:
+
+priceBySize (4/6/8/12yd)
+
+earliestWindow(postcode) → { dayLabel, range }
+
+rating, reviews, recyclingPct, onTimePct
+
+badges: string[] (e.g., “Licensed Operator”, “Permit-ready”)
+
+distanceKm(postcode) mock
+
+10) EducationPill (copy library)
+
+Location: “Exact location prevents access issues and speeds up delivery.”
+
+Placement: “Driveway avoids permits; roadside may require council approval.”
+
+Waste: “The right category keeps costs fair and increases recycling.”
+
+Items: “Some items need special handling — avoid surprise charges.”
+
+Size: “One correct size is cheaper than two small ones.”
+
+Providers: “We rank real value: total price, timing, reviews, and recycling.”
+
+Checkout: “You’ll receive a digital waste transfer note for full compliance.”
+
+11) Motion & Transitions
+
+Stage transitions: crossfade + 16px slide (220–260ms, ease [0.16,1,0.3,1]).
+
+Interstitial before Providers (1.6–2.0s) with skeleton tiles.
+
+Overlays (search, price, date): scale+fade 180ms; portal; no layout shift.
+
+Respect prefers-reduced-motion.
+
+12) Accessibility
+
+H1 receives focus on each step.
+
+Tiles/cards are proper radios; filters reachable by keyboard; popovers trap focus.
+
+Text contrast AA on white; teal accents pass WCAG.
+
+13) Testing
+
+Unit (Vitest/RTL)
+
+Pricing adds permit only when placement="road".
+
+Provider sorting works for Recommended/Cheapest/Earliest.
+
+Filters reduce result set and update count badge.
+
+Selecting provider updates store.providerId and StickySummary.
+
+E2E (Playwright)
+
+Happy path (driveway): Home → Location → Driveway → Waste → No items → 6yd → Providers (Recommended) → Select → Checkout (4242) → Confirmation.
+
+Road + permit: Placement=Road → “Permit-ready only” filter on → select → total includes permit → pay → confirmation.
+
+Wallet path: Payment Request Button appears → mock Apple/Google Pay → confirmation.
+
+Reduced motion: animations off; flow remains usable.
+
+14) Visual Polish (providers focus)
+
+Grid/list toggle for density A/B.
+
+Heat-map price tint on Map view pins (cheaper = cooler tint).
+
+Reviews microtext (“1,248 reviews”) under rating.
+
+Trust icons small and consistent: shield (Licensed), leaf (Recycling), clock (On-time), badge (Permit-ready).
+
+Zero hidden fees label under price; PricePopover reveals math.
