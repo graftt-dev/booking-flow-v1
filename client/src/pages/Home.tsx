@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import SearchBar from '@/components/SearchBar';
 import { useJourneyStore } from '@/store/journeyStore';
 import Header from '@/components/Header';
-import { motion } from 'framer-motion';
-import { MapPin } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, X } from 'lucide-react';
 
 const mockAddresses = [
   { id: 1, address: '10 Downing Street, London', postcode: 'SW1A 2AA', lat: 51.5034, lng: -0.1276 },
@@ -19,25 +19,35 @@ export default function Home() {
   const [, setLocation] = useLocation();
   const { postcode, setPostcode, setAddress } = useJourneyStore();
   const [showAddresses, setShowAddresses] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState<typeof mockAddresses[0] | null>(null);
+  const [searchValue, setSearchValue] = useState('');
   
   useEffect(() => {
-    if (postcode && postcode.length > 0) {
+    if (searchValue && searchValue.length > 0 && !selectedAddress) {
       setShowAddresses(true);
     } else {
       setShowAddresses(false);
     }
-  }, [postcode]);
+  }, [searchValue, selectedAddress]);
   
   const handleAddressSelect = (addr: typeof mockAddresses[0]) => {
+    setSelectedAddress(addr);
     setPostcode(addr.postcode);
     setAddress(addr.address);
     useJourneyStore.getState().setLocation(addr.lat, addr.lng, '');
     setShowAddresses(false);
-    setLocation('/location');
+    setSearchValue('');
+  };
+  
+  const handleEditAddress = () => {
+    setSelectedAddress(null);
+    setSearchValue('');
   };
   
   const handleGetStarted = () => {
-    setLocation('/location');
+    if (selectedAddress) {
+      setLocation('/delivery-date');
+    }
   };
   
   return (
@@ -61,42 +71,75 @@ export default function Home() {
           </div>
           
           <div className="space-y-6 pt-8">
-            <div className="relative max-w-2xl mx-auto">
-              <SearchBar
-                value={postcode}
-                onChange={setPostcode}
-                placeholder="Enter postcode or address"
-              />
-              
-              {showAddresses && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="absolute z-10 w-full mt-2 bg-background border border-border rounded-md shadow-lg overflow-hidden"
-                  data-testid="dropdown-addresses"
-                >
-                  {mockAddresses.map((addr) => (
+            <div className="max-w-2xl mx-auto space-y-4">
+              <AnimatePresence>
+                {selectedAddress && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex gap-2 justify-center flex-wrap"
+                    data-testid="selected-address-chips"
+                  >
                     <button
-                      key={addr.id}
-                      onClick={() => handleAddressSelect(addr)}
-                      className="w-full px-4 py-3 text-left hover-elevate flex items-start gap-3 border-b border-border last:border-b-0"
-                      data-testid={`address-option-${addr.id}`}
+                      onClick={handleEditAddress}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#05E4C0]/10 text-[#06062D] dark:text-[#05E4C0] border border-[#05E4C0]/30 rounded-full text-sm font-medium hover-elevate active-elevate-2"
+                      data-testid="chip-postcode"
                     >
-                      <MapPin className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-foreground">{addr.address}</div>
-                        <div className="text-sm text-muted-foreground">{addr.postcode}</div>
-                      </div>
+                      <span>{selectedAddress.postcode}</span>
+                      <X className="w-3 h-3" />
                     </button>
-                  ))}
-                </motion.div>
-              )}
+                    <button
+                      onClick={handleEditAddress}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#05E4C0]/10 text-[#06062D] dark:text-[#05E4C0] border border-[#05E4C0]/30 rounded-full text-sm font-medium hover-elevate active-elevate-2"
+                      data-testid="chip-address"
+                    >
+                      <span>{selectedAddress.address.split(',')[0]}</span>
+                      <X className="w-3 h-3" />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              
+              <div className="relative">
+                <SearchBar
+                  value={searchValue}
+                  onChange={setSearchValue}
+                  placeholder="Enter postcode or address"
+                />
+                
+                {showAddresses && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="absolute z-10 w-full mt-2 bg-white dark:bg-card border border-border rounded-md shadow-lg overflow-hidden"
+                    data-testid="dropdown-addresses"
+                  >
+                    {mockAddresses.map((addr) => (
+                      <button
+                        key={addr.id}
+                        onClick={() => handleAddressSelect(addr)}
+                        className="w-full px-4 py-3 text-left hover-elevate active-elevate-2 flex items-start gap-3 border-b border-border last:border-b-0"
+                        data-testid={`address-option-${addr.id}`}
+                      >
+                        <MapPin className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-foreground">{addr.address}</div>
+                          <div className="text-sm text-muted-foreground">{addr.postcode}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </div>
             </div>
             
             <Button 
               size="lg" 
               className="px-12 h-12 text-lg"
               onClick={handleGetStarted}
+              disabled={!selectedAddress}
               data-testid="button-hire-my-skip"
             >
               Hire My Skip
