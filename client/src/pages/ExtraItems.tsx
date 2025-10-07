@@ -35,9 +35,11 @@ export default function ExtraItems() {
   const [, setLocation] = useLocation();
   const { items: selectedItems, itemQuantities, toggleItem, setItems, setItemQuantity } = useJourneyStore();
   const [showHazardWarning, setShowHazardWarning] = useState(false);
+  const [noneExplicitlySelected, setNoneExplicitlySelected] = useState(false);
   
   const handleItemClick = (item: string) => {
     toggleItem(item);
+    setNoneExplicitlySelected(false);
   };
   
   const handleQuantityChange = (item: string, delta: number) => {
@@ -48,6 +50,7 @@ export default function ExtraItems() {
   
   const handleNoneClick = () => {
     setItems([]);
+    setNoneExplicitlySelected(true);
   };
   
   const handleContinue = () => {
@@ -123,12 +126,12 @@ export default function ExtraItems() {
           </div>
           
           <Chip
-            selected={selectedItems.length === 0}
+            selected={noneExplicitlySelected && selectedItems.length === 0}
             onClick={handleNoneClick}
             className={cn(
               "w-full bg-[#05E4C0]/10 border-[#05E4C0]/30 text-[#06062D] dark:text-[#05E4C0]",
-              selectedItems.length > 0 && "hover:bg-[#05E4C0]/20",
-              selectedItems.length === 0 && "!bg-primary !text-primary-foreground !border-primary-border"
+              !noneExplicitlySelected && "hover:bg-[#05E4C0]/20",
+              noneExplicitlySelected && selectedItems.length === 0 && "!bg-primary !text-primary-foreground !border-primary-border"
             )}
           >
             None of the above
