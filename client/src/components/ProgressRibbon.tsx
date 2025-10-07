@@ -5,8 +5,8 @@ interface ProgressRibbonProps {
 }
 
 const steps = [
-  "Location",
   "Placement",
+  "Delivery",
   "Waste",
   "Items",
   "Size",
