@@ -4,17 +4,41 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
 import { Shield, FileText, MapPin, Link as LinkIcon, ArrowLeft } from 'lucide-react';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
+import EducationPill from '@/components/EducationPill';
 import { useJourneyStore } from '@/store/journeyStore';
 import { providers as allProviders } from '@/lib/providers';
 import { formatCurrency } from '@/lib/utils';
 import { motion } from 'framer-motion';
+import { format } from 'date-fns';
+
+const wasteTypeLabels: Record<string, string> = {
+  'house': 'house clearance',
+  'renovation': 'renovation',
+  'garden': 'garden makeover',
+  'soil': 'soil & rubble',
+  'diy': 'DIY woodwork',
+};
 
 export default function Checkout() {
   const [, setLocation] = useLocation();
-  const { size, items, placement, totals, providerId, customer, setCustomer } = useJourneyStore();
+  const { 
+    size, 
+    items, 
+    itemQuantities,
+    placement, 
+    totals, 
+    providerId, 
+    customer, 
+    setCustomer, 
+    address,
+    wasteType,
+    deliveryDate,
+    flags
+  } = useJourneyStore();
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -26,6 +50,36 @@ export default function Checkout() {
     setTimeout(() => {
       setLocation('/confirmation');
     }, 1500);
+  };
+
+  const formatDeliveryDate = () => {
+    if (!deliveryDate) return 'ASAP';
+    try {
+      const date = new Date(deliveryDate);
+      return format(date, 'EEEE d MMMM');
+    } catch {
+      return deliveryDate;
+    }
+  };
+
+  const getWasteTypeLabel = () => {
+    return wasteTypeLabels[wasteType] || wasteType;
+  };
+
+  const getItemsText = () => {
+    if (items.length === 0) return '';
+    
+    const itemsWithQty = items.map(item => {
+      const qty = itemQuantities[item] || 1;
+      return qty > 1 ? `${qty}× ${item}` : item;
+    });
+    
+    if (itemsWithQty.length === 1) return itemsWithQty[0];
+    if (itemsWithQty.length === 2) return `${itemsWithQty[0]} and ${itemsWithQty[1]}`;
+    
+    const lastItem = itemsWithQty[itemsWithQty.length - 1];
+    const otherItems = itemsWithQty.slice(0, -1).join(', ');
+    return `${otherItems}, and ${lastItem}`;
   };
   
   return (
@@ -43,6 +97,112 @@ export default function Checkout() {
         </h1>
         
         <ProgressRibbon currentStep={6} />
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="max-w-4xl mx-auto mt-8"
+        >
+          <div className="bg-white dark:bg-card border border-card-border rounded-lg p-6 shadow-sm" data-testid="section-summary">
+            <h2 className="text-xl font-semibold mb-4">Just to summarise…</h2>
+            
+            <div className="space-y-3 text-base leading-relaxed text-foreground/90">
+              <p>
+                You've asked us to deliver your skip to{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-address"
+                >
+                  {address || 'your location'}
+                </span>
+                {placement && (
+                  <>
+                    , and confirmed that you{' '}
+                    {flags.onRoadFromHome === false ? (
+                      <>
+                        own the land so{' '}
+                        <span className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full">
+                          no permit's needed
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        need a{' '}
+                        <span className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full">
+                          road permit
+                        </span>
+                      </>
+                    )}
+                  </>
+                )}
+                .
+              </p>
+
+              <p>
+                You need it{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-delivery-date"
+                >
+                  {formatDeliveryDate()}
+                </span>
+                {wasteType && (
+                  <>
+                    {' '}for your{' '}
+                    <span 
+                      className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                      data-testid="badge-waste-type"
+                    >
+                      {getWasteTypeLabel()}
+                    </span>
+                    {' '}project
+                  </>
+                )}
+                .
+              </p>
+
+              {items.length > 0 && (
+                <p>
+                  You've mentioned you'll be disposing of{' '}
+                  <span 
+                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                    data-testid="badge-items"
+                  >
+                    {getItemsText()}
+                  </span>
+                  , which we've included in the quote.
+                </p>
+              )}
+
+              <p>
+                You've chosen a{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-size"
+                >
+                  {size}
+                </span>
+                {' '}skip from{' '}
+                {provider && (
+                  <span 
+                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                    data-testid="badge-provider"
+                  >
+                    {provider.name}
+                  </span>
+                )}
+                .
+              </p>
+
+              <p className="pt-2 text-foreground font-medium">
+                Sound good? Then let's get this skip booked in.
+              </p>
+            </div>
+          </div>
+
+          <EducationPill text="Double-checking your answers helps us get everything right first time." />
+        </motion.div>
         
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 mt-8">
           <form onSubmit={handleSubmit} className="space-y-6">
