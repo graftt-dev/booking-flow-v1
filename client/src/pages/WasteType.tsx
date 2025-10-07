@@ -9,11 +9,36 @@ import { useJourneyStore } from '@/store/journeyStore';
 import { motion } from 'framer-motion';
 
 const wasteTypes = [
-  { id: 'house', label: 'House clearance', description: 'Mixed general waste', icon: HomeIcon },
-  { id: 'renovation', label: 'Renovation', description: 'Builders\' waste', icon: Hammer },
-  { id: 'garden', label: 'Garden makeover', description: 'Green waste', icon: Trees },
-  { id: 'soil', label: 'Soil & Rubble', description: 'Soil & stone', icon: Mountain },
-  { id: 'diy', label: 'DIY Woodwork', description: 'Wood waste', icon: Wrench },
+  { 
+    id: 'house', 
+    label: 'House clearance', 
+    description: 'Old furniture, carpets, appliances, general household items and mixed rubbish',
+    icon: HomeIcon 
+  },
+  { 
+    id: 'renovation', 
+    label: 'Renovation', 
+    description: 'Bricks, plasterboard, tiles, concrete, timber and other building materials',
+    icon: Hammer 
+  },
+  { 
+    id: 'garden', 
+    label: 'Garden makeover', 
+    description: 'Grass cuttings, branches, hedge trimmings, leaves and soil',
+    icon: Trees 
+  },
+  { 
+    id: 'soil', 
+    label: 'Soil & Rubble', 
+    description: 'Clean soil, stones, rocks, clay and demolition rubble (no mixed waste)',
+    icon: Mountain 
+  },
+  { 
+    id: 'diy', 
+    label: 'DIY Woodwork', 
+    description: 'Untreated timber, wooden pallets, floorboards and offcuts',
+    icon: Wrench 
+  },
 ];
 
 export default function WasteType() {
@@ -22,7 +47,12 @@ export default function WasteType() {
   
   const handleSelect = (type: string) => {
     setWasteType(type);
-    setTimeout(() => setLocation('/items'), 200);
+  };
+
+  const handleContinue = () => {
+    if (wasteType) {
+      setLocation('/items');
+    }
   };
   
   return (
@@ -64,6 +94,14 @@ export default function WasteType() {
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
+            </Button>
+            <Button
+              size="lg"
+              onClick={handleContinue}
+              disabled={!wasteType}
+              data-testid="button-continue"
+            >
+              Continue
             </Button>
           </div>
           
