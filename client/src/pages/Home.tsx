@@ -61,7 +61,7 @@ export default function Home() {
           </div>
           
           <div className="space-y-6 pt-8">
-            <div className="relative">
+            <div className="relative max-w-2xl mx-auto">
               <SearchBar
                 value={postcode}
                 onChange={setPostcode}
