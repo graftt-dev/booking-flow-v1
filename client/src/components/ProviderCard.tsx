@@ -4,6 +4,7 @@ import { cn, formatCurrency } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import type { Provider } from '@/lib/providers';
 import { motion } from 'framer-motion';
+import { itemPrices } from '@/lib/pricing';
 
 interface ProviderCardProps {
   provider: Provider;
@@ -15,6 +16,9 @@ interface ProviderCardProps {
   extras: number;
   permit: number;
   vat: number;
+  items: string[];
+  itemQuantities: Record<string, number>;
+  placement: string;
 }
 
 export default function ProviderCard({
@@ -26,7 +30,10 @@ export default function ProviderCard({
   basePrice,
   extras,
   permit,
-  vat
+  vat,
+  items,
+  itemQuantities,
+  placement
 }: ProviderCardProps) {
   const iconMap: Record<string, any> = {
     'Licensed Operator': Shield,
@@ -89,15 +96,22 @@ export default function ProviderCard({
                     <span className="text-muted-foreground">Base price</span>
                     <span>{formatCurrency(basePrice)}</span>
                   </div>
-                  {extras > 0 && (
+                  {items.length > 0 && items.map((item) => {
+                    const quantity = itemQuantities[item] || 1;
+                    const itemPrice = itemPrices[item] || 0;
+                    const itemTotal = itemPrice * quantity;
+                    return (
+                      <div key={item} className="flex justify-between text-sm pl-3">
+                        <span className="text-muted-foreground">
+                          {quantity > 1 ? `${quantity}× ` : ''}{item}
+                        </span>
+                        <span>{formatCurrency(itemTotal)}</span>
+                      </div>
+                    );
+                  })}
+                  {placement === 'road' && permit > 0 && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Extra items</span>
-                      <span>{formatCurrency(extras)}</span>
-                    </div>
-                  )}
-                  {permit > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Permit fee</span>
+                      <span className="text-muted-foreground">Road permit</span>
                       <span>{formatCurrency(permit)}</span>
                     </div>
                   )}

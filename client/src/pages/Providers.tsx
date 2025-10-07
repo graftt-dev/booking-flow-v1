@@ -18,7 +18,7 @@ type SortMode = 'recommended' | 'cheapest' | 'earliest';
 
 export default function Providers() {
   const [, setLocation] = useLocation();
-  const { size, items, placement, providerId, setProviderId, setTotals } = useJourneyStore();
+  const { size, items, itemQuantities, placement, providerId, setProviderId, setTotals } = useJourneyStore();
   const [sortMode, setSortMode] = useState<SortMode>('recommended');
   const [providers, setProviders] = useState(allProviders);
   const [filters, setFilters] = useState({
@@ -38,7 +38,7 @@ export default function Providers() {
     setProviderId(id);
     const provider = allProviders.find(p => p.id === id);
     if (provider && size) {
-      const totals = calculateTotals(size, items, placement || 'driveway');
+      const totals = calculateTotals(size, items, placement || 'driveway', itemQuantities);
       setTotals(totals);
     }
   };
@@ -88,7 +88,7 @@ export default function Providers() {
             <AnimatePresence mode="popLayout">
               {filteredProviders.map((provider, index) => {
                 const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
-                const totals = calculateTotals(size || '6yd', items, placement || 'driveway');
+                const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
                 
                 return (
                   <ProviderCard
@@ -102,6 +102,9 @@ export default function Providers() {
                     extras={totals.extras}
                     permit={totals.permit}
                     vat={totals.vat}
+                    items={items}
+                    itemQuantities={itemQuantities}
+                    placement={placement || 'driveway'}
                   />
                 );
               })}

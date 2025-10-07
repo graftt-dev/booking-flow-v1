@@ -108,12 +108,12 @@ const skipSizes = [
 
 export default function SkipSize() {
   const [, setLocation] = useLocation();
-  const { size, setSize, items, placement, setTotals } = useJourneyStore();
+  const { size, setSize, items, itemQuantities, placement, setTotals } = useJourneyStore();
   const [showContactDialog, setShowContactDialog] = useState(false);
   
   const handleSelect = (sizeId: SkipSizeType) => {
     setSize(sizeId);
-    const totals = calculateTotals(sizeId, items, placement || 'driveway');
+    const totals = calculateTotals(sizeId, items, placement || 'driveway', itemQuantities);
     setTotals(totals);
   };
   

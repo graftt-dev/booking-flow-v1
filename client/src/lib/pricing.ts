@@ -12,16 +12,20 @@ export const basePrices: Record<SkipSize, number> = {
 
 export const itemPrices: Record<string, number> = {
   "Mattress": 15,
+  "Sofa": 12,
   "Tyres": 20,
   "Fridge/Freezer": 25,
   "Plasterboard": 10,
   "Gas Bottles": 15,
   "Batteries": 5,
-  "Carpet": 10,
 };
 
-export const calculateExtras = (items: string[]): number => {
-  return items.reduce((total, item) => total + (itemPrices[item] || 0), 0);
+export const calculateExtras = (items: string[], itemQuantities: Record<string, number> = {}): number => {
+  return items.reduce((total, item) => {
+    const price = itemPrices[item] || 0;
+    const quantity = itemQuantities[item] || 1;
+    return total + (price * quantity);
+  }, 0);
 };
 
 export const calculatePermit = (placement: string, postcode: string): number => {
@@ -32,14 +36,15 @@ export const calculatePermit = (placement: string, postcode: string): number => 
 export const calculateTotals = (
   size: SkipSize | null,
   items: string[],
-  placement: string
+  placement: string,
+  itemQuantities: Record<string, number> = {}
 ) => {
   if (!size) {
     return { base: 0, extras: 0, permit: 0, vat: 0, total: 0 };
   }
   
   const base = basePrices[size];
-  const extras = calculateExtras(items);
+  const extras = calculateExtras(items, itemQuantities);
   const permit = calculatePermit(placement, '');
   const totalExVat = base + extras + permit;
   const vat = totalExVat * 0.2;
