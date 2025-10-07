@@ -9,10 +9,54 @@ import { motion } from 'framer-motion';
 import { calculateTotals } from '@/lib/pricing';
 
 const skipSizes = [
-  { id: '4yd', label: '4 yard', bags: '≈40 bags', recommended: false },
-  { id: '6yd', label: '6 yard', bags: '≈60 bags', recommended: true },
-  { id: '8yd', label: '8 yard', bags: '≈80 bags', recommended: false },
-  { id: '12yd', label: '12 yard', bags: '≈120 bags', recommended: false },
+  { 
+    id: '4yd', 
+    label: '4 yard', 
+    bags: '≈ 40 bin bags • 4 cubic yards',
+    recommended: false,
+    whatFits: [
+      'Small bathroom renovation',
+      'Garden shed clear-out',
+      'Kitchen cabinet removal'
+    ],
+    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+  },
+  { 
+    id: '6yd', 
+    label: '6 yard', 
+    bags: '≈ 60 bin bags • 6 cubic yards',
+    recommended: true,
+    whatFits: [
+      'Full bathroom refit',
+      'Kitchen renovation waste',
+      'Garage or loft clearance'
+    ],
+    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+  },
+  { 
+    id: '8yd', 
+    label: '8 yard', 
+    bags: '≈ 80 bin bags • 8 cubic yards',
+    recommended: false,
+    whatFits: [
+      'Large house clearance',
+      'Full garden landscaping',
+      'Major renovation project'
+    ],
+    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+  },
+  { 
+    id: '12yd', 
+    label: '12 yard', 
+    bags: '≈ 120 bin bags • 12 cubic yards',
+    recommended: false,
+    whatFits: [
+      'Complete home refurbishment',
+      'Commercial fit-out waste',
+      'Large construction projects'
+    ],
+    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+  },
 ];
 
 export default function SkipSize() {
@@ -49,15 +93,52 @@ export default function SkipSize() {
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
             {skipSizes.map((skip) => (
-              <Tile
+              <button
                 key={skip.id}
-                title={skip.label}
-                description={skip.bags}
-                selected={size === skip.id}
                 onClick={() => handleSelect(skip.id as SkipSizeType)}
-                badge={skip.recommended ? 'Recommended' : undefined}
-                testId={`tile-${skip.id}`}
-              />
+                className={`
+                  text-left p-6 rounded-md border-2 transition-all relative
+                  ${size === skip.id 
+                    ? 'border-primary bg-primary/5' 
+                    : 'border-border bg-background hover-elevate'
+                  }
+                `}
+                data-testid={`tile-${skip.id}`}
+              >
+                {skip.recommended && (
+                  <div className="absolute top-4 right-4">
+                    <span className="px-3 py-1 text-xs font-medium bg-primary text-primary-foreground rounded-full">
+                      Recommended
+                    </span>
+                  </div>
+                )}
+                
+                <h3 className="text-2xl font-bold text-foreground mb-1">
+                  {skip.label}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {skip.bags}
+                </p>
+                
+                <div className="space-y-3">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground mb-2">What fits:</p>
+                    <ul className="space-y-1">
+                      {skip.whatFits.map((item, idx) => (
+                        <li key={idx} className="text-sm text-muted-foreground flex items-start">
+                          <span className="mr-2">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div className="pt-2 border-t border-border">
+                    <p className="text-xs font-medium text-foreground">Space to leave:</p>
+                    <p className="text-xs text-muted-foreground mt-1">{skip.fillGuidance}</p>
+                  </div>
+                </div>
+              </button>
             ))}
           </div>
           
