@@ -126,8 +126,9 @@ export default function ExtraItems() {
             selected={selectedItems.length === 0}
             onClick={handleNoneClick}
             className={cn(
-              "w-full",
-              selectedItems.length > 0 && "bg-[#05E4C0]/10 border-[#05E4C0]/30 hover:bg-[#05E4C0]/20 text-[#06062D] dark:text-[#05E4C0]"
+              "w-full bg-[#05E4C0]/10 border-[#05E4C0]/30 text-[#06062D] dark:text-[#05E4C0]",
+              selectedItems.length > 0 && "hover:bg-[#05E4C0]/20",
+              selectedItems.length === 0 && "!bg-primary !text-primary-foreground !border-primary-border"
             )}
           >
             None of the above
