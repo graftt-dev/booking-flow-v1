@@ -22,8 +22,9 @@ export default function DeliveryDate() {
   const [confirmedDate, setConfirmedDate] = useState<string>(deliveryDate);
 
   const today = new Date();
+  const tomorrow = addDays(today, 1);
   const weekDays = Array.from({ length: 5 }, (_, i) => {
-    const date = addDays(startOfWeek(today, { weekStartsOn: 1 }), i);
+    const date = addDays(tomorrow, i);
     return {
       date,
       label: format(date, 'EEE'),
@@ -154,7 +155,7 @@ export default function DeliveryDate() {
                     mode="single"
                     selected={selectedDate}
                     onSelect={handleCalendarSelect}
-                    disabled={(date) => date < today}
+                    disabled={(date) => date < tomorrow}
                     className="rounded-md"
                     data-testid="calendar"
                   />
