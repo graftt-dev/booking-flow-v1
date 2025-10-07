@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Shield, FileText, MapPin, Link as LinkIcon } from 'lucide-react';
+import { Shield, FileText, MapPin, Link as LinkIcon, ArrowLeft } from 'lucide-react';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
 import { useJourneyStore } from '@/store/journeyStore';
@@ -38,9 +38,21 @@ export default function Checkout() {
         transition={{ duration: 0.3 }}
         className="container mx-auto px-4 py-8"
       >
-        <h1 className="text-4xl font-bold text-foreground text-center mb-2" data-testid="text-page-title">
-          Complete your booking
-        </h1>
+        <div className="flex items-center justify-center mb-2 relative">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation('/providers')}
+            className="absolute left-0"
+            data-testid="button-back"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <h1 className="text-4xl font-bold text-foreground text-center" data-testid="text-page-title">
+            Complete your booking
+          </h1>
+        </div>
         
         <ProgressRibbon currentStep={6} />
         

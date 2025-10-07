@@ -9,7 +9,7 @@ import Chip from '@/components/Chip';
 import Tile from '@/components/Tile';
 import { useJourneyStore } from '@/store/journeyStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar as CalendarIcon, Clock, Zap } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Zap, ArrowLeft } from 'lucide-react';
 import { format, addDays, startOfWeek } from 'date-fns';
 
 type DeliveryOption = 'asap' | 'this-week' | 'choose-date' | null;
@@ -78,9 +78,21 @@ export default function DeliveryDate() {
         transition={{ duration: 0.3 }}
         className="container mx-auto px-4 py-8"
       >
-        <h1 className="text-4xl font-bold text-foreground text-center mb-2" data-testid="text-page-title">
-          When do you need the skip?
-        </h1>
+        <div className="flex items-center justify-center mb-2 relative">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation('/location')}
+            className="absolute left-0"
+            data-testid="button-back"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <h1 className="text-4xl font-bold text-foreground text-center" data-testid="text-page-title">
+            When do you need the skip?
+          </h1>
+        </div>
         
         <p className="text-center text-muted-foreground mb-4" data-testid="text-subtext">
           We'll do our best to deliver exactly when you need it.

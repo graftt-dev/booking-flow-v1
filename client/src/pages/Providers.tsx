@@ -12,6 +12,7 @@ import { useJourneyStore } from '@/store/journeyStore';
 import { providers as allProviders, sortProviders, getProviderPrice } from '@/lib/providers';
 import { motion, AnimatePresence } from 'framer-motion';
 import { calculateTotals } from '@/lib/pricing';
+import { ArrowLeft } from 'lucide-react';
 
 type SortMode = 'recommended' | 'cheapest' | 'earliest';
 
@@ -60,9 +61,21 @@ export default function Providers() {
         transition={{ duration: 0.3 }}
         className="container mx-auto px-4 py-8"
       >
-        <h1 className="text-4xl font-bold text-foreground text-center mb-2" data-testid="text-page-title">
-          Choose a provider
-        </h1>
+        <div className="flex items-center justify-center mb-2 relative">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation('/size')}
+            className="absolute left-0"
+            data-testid="button-back"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <h1 className="text-4xl font-bold text-foreground text-center" data-testid="text-page-title">
+            Choose a provider
+          </h1>
+        </div>
         
         <ProgressRibbon currentStep={5} />
         

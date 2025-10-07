@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, Minus, Plus } from 'lucide-react';
+import { AlertCircle, Minus, Plus, ArrowLeft } from 'lucide-react';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
 import EducationPill from '@/components/EducationPill';
@@ -63,9 +63,21 @@ export default function ExtraItems() {
         transition={{ duration: 0.3 }}
         className="container mx-auto px-4 py-8"
       >
-        <h1 className="text-4xl font-bold text-foreground text-center mb-2" data-testid="text-page-title">
-          Any of these items?
-        </h1>
+        <div className="flex items-center justify-center mb-2 relative">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation('/waste')}
+            className="absolute left-0"
+            data-testid="button-back"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <h1 className="text-4xl font-bold text-foreground text-center" data-testid="text-page-title">
+            Any of these items?
+          </h1>
+        </div>
         
         <ProgressRibbon currentStep={3} />
         
