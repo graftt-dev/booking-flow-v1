@@ -46,7 +46,7 @@ export default function Home() {
   
   const handleGetStarted = () => {
     if (selectedAddress) {
-      setLocation('/delivery-date');
+      setLocation('/location');
     }
   };
   
