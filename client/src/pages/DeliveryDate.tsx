@@ -19,7 +19,7 @@ export default function DeliveryDate() {
   const { deliveryDate, setDeliveryDate } = useJourneyStore();
   const [selectedOption, setSelectedOption] = useState<DeliveryOption>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(deliveryDate ? new Date(deliveryDate) : undefined);
-  const [confirmedDate, setConfirmedDate] = useState<string>(deliveryDate);
+  const [confirmedDate, setConfirmedDate] = useState<string>('');
 
   const today = new Date();
   const tomorrow = addDays(today, 1);
