@@ -62,21 +62,9 @@ export default function Location() {
         transition={{ duration: 0.3 }}
         className="container mx-auto px-4 py-8"
       >
-        <div className="flex items-center justify-center mb-4 relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLocation('/')}
-            className="absolute left-0"
-            data-testid="button-back"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <h1 className="text-4xl font-bold text-foreground text-center" data-testid="text-page-title">
-            Confirm the location
-          </h1>
-        </div>
+        <h1 className="text-4xl font-bold text-foreground text-center mb-2" data-testid="text-page-title">
+          Confirm the location
+        </h1>
         
         <ProgressRibbon currentStep={0} />
         
@@ -164,6 +152,17 @@ export default function Location() {
               data-testid="button-continue"
             >
               Continue
+            </Button>
+          </div>
+
+          <div className="flex justify-center mt-4">
+            <Button
+              variant="ghost"
+              onClick={() => setLocation('/')}
+              data-testid="button-back"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
             </Button>
           </div>
           

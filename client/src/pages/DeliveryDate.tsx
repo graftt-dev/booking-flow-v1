@@ -78,21 +78,9 @@ export default function DeliveryDate() {
         transition={{ duration: 0.3 }}
         className="container mx-auto px-4 py-8"
       >
-        <div className="flex items-center justify-center mb-2 relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLocation('/location')}
-            className="absolute left-0"
-            data-testid="button-back"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <h1 className="text-4xl font-bold text-foreground text-center" data-testid="text-page-title">
-            When do you need the skip?
-          </h1>
-        </div>
+        <h1 className="text-4xl font-bold text-foreground text-center mb-2" data-testid="text-page-title">
+          When do you need the skip?
+        </h1>
         
         <p className="text-center text-muted-foreground mb-4" data-testid="text-subtext">
           We'll do our best to deliver exactly when you need it.
@@ -200,6 +188,17 @@ export default function DeliveryDate() {
               data-testid="button-continue"
             >
               Continue
+            </Button>
+          </div>
+
+          <div className="flex justify-center mt-4">
+            <Button
+              variant="ghost"
+              onClick={() => setLocation('/location')}
+              data-testid="button-back"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
             </Button>
           </div>
           

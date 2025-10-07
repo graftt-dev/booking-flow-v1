@@ -63,21 +63,9 @@ export default function ExtraItems() {
         transition={{ duration: 0.3 }}
         className="container mx-auto px-4 py-8"
       >
-        <div className="flex items-center justify-center mb-2 relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setLocation('/waste')}
-            className="absolute left-0"
-            data-testid="button-back"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <h1 className="text-4xl font-bold text-foreground text-center" data-testid="text-page-title">
-            Any of these items?
-          </h1>
-        </div>
+        <h1 className="text-4xl font-bold text-foreground text-center mb-2" data-testid="text-page-title">
+          Any of these items?
+        </h1>
         
         <ProgressRibbon currentStep={3} />
         
@@ -156,6 +144,17 @@ export default function ExtraItems() {
           <div className="flex justify-center pt-4">
             <Button size="lg" onClick={handleContinue} data-testid="button-continue">
               Continue
+            </Button>
+          </div>
+
+          <div className="flex justify-center mt-4">
+            <Button
+              variant="ghost"
+              onClick={() => setLocation('/waste')}
+              data-testid="button-back"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
             </Button>
           </div>
           
