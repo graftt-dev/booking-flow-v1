@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Minus, Plus } from 'lucide-react';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
 import EducationPill from '@/components/EducationPill';
 import Chip from '@/components/Chip';
 import { useJourneyStore } from '@/store/journeyStore';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,11 +32,17 @@ const hazardousItems = ['Asbestos', 'Paints/Liquids'];
 
 export default function ExtraItems() {
   const [, setLocation] = useLocation();
-  const { items: selectedItems, toggleItem, setItems } = useJourneyStore();
+  const { items: selectedItems, itemQuantities, toggleItem, setItems, setItemQuantity } = useJourneyStore();
   const [showHazardWarning, setShowHazardWarning] = useState(false);
   
   const handleItemClick = (item: string) => {
     toggleItem(item);
+  };
+  
+  const handleQuantityChange = (item: string, delta: number) => {
+    const currentQty = itemQuantities[item] || 1;
+    const newQty = Math.max(1, currentQty + delta);
+    setItemQuantity(item, newQty);
   };
   
   const handleNoneClick = () => {
@@ -65,15 +71,51 @@ export default function ExtraItems() {
         
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="grid grid-cols-2 gap-3 mt-8">
-            {items.map((item) => (
-              <Chip
-                key={item}
-                selected={selectedItems.includes(item)}
-                onClick={() => handleItemClick(item)}
-              >
-                {item}
-              </Chip>
-            ))}
+            {items.map((item) => {
+              const isSelected = selectedItems.includes(item);
+              const quantity = itemQuantities[item] || 1;
+              
+              return (
+                <div key={item} className="space-y-2">
+                  <Chip
+                    selected={isSelected}
+                    onClick={() => handleItemClick(item)}
+                  >
+                    {item}
+                  </Chip>
+                  
+                  <AnimatePresence>
+                    {isSelected && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="flex items-center justify-center gap-3"
+                      >
+                        <button
+                          onClick={() => handleQuantityChange(item, -1)}
+                          className="w-8 h-8 rounded-md border border-border bg-background flex items-center justify-center hover-elevate active-elevate-2"
+                          disabled={quantity <= 1}
+                          data-testid={`button-decrease-${item}`}
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <span className="text-sm font-medium text-foreground min-w-8 text-center" data-testid={`text-quantity-${item}`}>
+                          {quantity}
+                        </span>
+                        <button
+                          onClick={() => handleQuantityChange(item, 1)}
+                          className="w-8 h-8 rounded-md border border-border bg-background flex items-center justify-center hover-elevate active-elevate-2"
+                          data-testid={`button-increase-${item}`}
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
           </div>
           
           <Chip

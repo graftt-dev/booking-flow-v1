@@ -12,6 +12,7 @@ interface JourneyState {
   placement: Placement | null;
   wasteType: string;
   items: string[];
+  itemQuantities: Record<string, number>;
   size: SkipSize | null;
   providerId: string | null;
   deliveryDate: string;
@@ -40,6 +41,7 @@ interface JourneyState {
   setWasteType: (wasteType: string) => void;
   toggleItem: (item: string) => void;
   setItems: (items: string[]) => void;
+  setItemQuantity: (item: string, quantity: number) => void;
   setSize: (size: SkipSize) => void;
   setProviderId: (id: string) => void;
   setDeliveryDate: (date: string) => void;
@@ -61,6 +63,7 @@ const initialState = {
   placement: null,
   wasteType: '',
   items: [],
+  itemQuantities: {},
   size: null,
   providerId: null,
   deliveryDate: '',
@@ -89,12 +92,28 @@ export const useJourneyStore = create<JourneyState>((set) => ({
   setLocation: (lat, lng, w3w) => set({ lat, lng, w3w }),
   setPlacement: (placement) => set({ placement }),
   setWasteType: (wasteType) => set({ wasteType }),
-  toggleItem: (item) => set((state) => ({
-    items: state.items.includes(item)
-      ? state.items.filter(i => i !== item)
-      : [...state.items, item]
+  toggleItem: (item) => set((state) => {
+    const isRemoving = state.items.includes(item);
+    const newQuantities = { ...state.itemQuantities };
+    
+    if (isRemoving) {
+      delete newQuantities[item];
+      return {
+        items: state.items.filter(i => i !== item),
+        itemQuantities: newQuantities
+      };
+    } else {
+      newQuantities[item] = 1;
+      return {
+        items: [...state.items, item],
+        itemQuantities: newQuantities
+      };
+    }
+  }),
+  setItems: (items) => set({ items, itemQuantities: {} }),
+  setItemQuantity: (item, quantity) => set((state) => ({
+    itemQuantities: { ...state.itemQuantities, [item]: quantity }
   })),
-  setItems: (items) => set({ items }),
   setSize: (size) => set({ size }),
   setProviderId: (providerId) => set({ providerId }),
   setDeliveryDate: (deliveryDate) => set({ deliveryDate }),
