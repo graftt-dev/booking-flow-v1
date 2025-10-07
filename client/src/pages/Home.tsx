@@ -29,13 +29,10 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="space-y-4">
             <h1 className="text-5xl md:text-6xl font-bold text-foreground tracking-tight" data-testid="text-hero-title">
-              The easiest way to hire a skip.
+              UK's No.1 Marketplace for Skip Hire
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto" data-testid="text-hero-subtitle">
               Skip hire you can trust – no cowboys, no fly-tipping, no fines.
-            </p>
-            <p className="text-sm font-medium text-primary" data-testid="text-benchmark">
-              UK's No.1 Marketplace for Skip Hire
             </p>
           </div>
           
