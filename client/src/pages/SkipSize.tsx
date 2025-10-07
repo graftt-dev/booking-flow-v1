@@ -123,7 +123,7 @@ export default function SkipSize() {
   
   const handleContinue = () => {
     if (!size) return;
-    setTimeout(() => setLocation('/providers'), 1600);
+    setLocation('/finding-providers');
   };
   
   return (

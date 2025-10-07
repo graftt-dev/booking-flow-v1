@@ -10,6 +10,7 @@ import DeliveryDate from "@/pages/DeliveryDate";
 import WasteType from "@/pages/WasteType";
 import ExtraItems from "@/pages/ExtraItems";
 import SkipSize from "@/pages/SkipSize";
+import FindingProviders from "@/pages/FindingProviders";
 import Providers from "@/pages/Providers";
 import Checkout from "@/pages/Checkout";
 import Confirmation from "@/pages/Confirmation";
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/waste" component={WasteType} />
       <Route path="/items" component={ExtraItems} />
       <Route path="/size" component={SkipSize} />
+      <Route path="/finding-providers" component={FindingProviders} />
       <Route path="/providers" component={Providers} />
       <Route path="/checkout" component={Checkout} />
       <Route path="/confirmation" component={Confirmation} />
