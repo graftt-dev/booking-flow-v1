@@ -7,11 +7,11 @@ import EducationPill from '@/components/EducationPill';
 import Chip from '@/components/Chip';
 import { useJourneyStore } from '@/store/journeyStore';
 import { motion } from 'framer-motion';
-import { MapPin } from 'lucide-react';
+import { MapPin, Home, Truck } from 'lucide-react';
 
 export default function Location() {
   const [, setLocation] = useLocation();
-  const { postcode, address, lat, lng, setLocation: setJourneyLocation } = useJourneyStore();
+  const { postcode, address, lat, lng, placement, setLocation: setJourneyLocation, setPlacement } = useJourneyStore();
   const [position, setPosition] = useState<[number, number]>([lat, lng]);
   
   useEffect(() => {
@@ -19,8 +19,9 @@ export default function Location() {
   }, [lat, lng]);
   
   const handleContinue = () => {
+    if (!placement) return;
     setJourneyLocation(position[0], position[1], 'mock.what3.words');
-    setLocation('/placement');
+    setLocation('/waste');
   };
   
   return (
@@ -39,7 +40,7 @@ export default function Location() {
         
         <ProgressRibbon currentStep={0} />
         
-        <div className="max-w-4xl mx-auto space-y-6">
+        <div className="max-w-4xl mx-auto space-y-8">
           <div className="flex gap-3 flex-wrap justify-center">
             <Chip selected>
               {postcode || 'SW1A 1AA'}
@@ -66,8 +67,62 @@ export default function Location() {
             </div>
           </div>
           
+          <div className="space-y-4 pt-4">
+            <div className="text-center space-y-2">
+              <p className="text-lg text-foreground" data-testid="text-placement-question">
+                Just to check — do you own or have permission for the land where the skip will go?
+              </p>
+              <p className="text-sm text-muted-foreground" data-testid="text-placement-helper">
+                (It helps us know if we need to arrange a permit.)
+              </p>
+            </div>
+            
+            <div className="flex gap-4 justify-center flex-wrap">
+              <button
+                onClick={() => setPlacement('driveway')}
+                className={`
+                  flex items-center gap-3 px-6 py-4 rounded-md border-2 transition-all
+                  ${placement === 'driveway' 
+                    ? 'border-primary bg-primary/5 text-foreground' 
+                    : 'border-border bg-background text-foreground hover-elevate'
+                  }
+                `}
+                data-testid="button-driveway"
+              >
+                <Home className="w-5 h-5" />
+                <div className="text-left">
+                  <div className="font-medium">Yes, on my property</div>
+                  <div className="text-sm text-muted-foreground">Driveway, garden, or private land</div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => setPlacement('road')}
+                className={`
+                  flex items-center gap-3 px-6 py-4 rounded-md border-2 transition-all
+                  ${placement === 'road' 
+                    ? 'border-primary bg-primary/5 text-foreground' 
+                    : 'border-border bg-background text-foreground hover-elevate'
+                  }
+                `}
+                data-testid="button-road"
+              >
+                <Truck className="w-5 h-5" />
+                <div className="text-left">
+                  <div className="font-medium">No, on the road</div>
+                  <div className="text-sm text-muted-foreground">We'll arrange the permit for you</div>
+                </div>
+              </button>
+            </div>
+          </div>
+          
           <div className="flex justify-center">
-            <Button size="lg" onClick={handleContinue} data-testid="button-continue">
+            <Button 
+              size="lg" 
+              onClick={handleContinue} 
+              disabled={!placement}
+              data-testid="button-continue"
+            >
               Continue
             </Button>
           </div>
