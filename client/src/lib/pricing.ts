@@ -1,10 +1,13 @@
 import type { SkipSize } from '../store/journeyStore';
 
 export const basePrices: Record<SkipSize, number> = {
+  "2yd": 140,
   "4yd": 180,
   "6yd": 220,
   "8yd": 260,
   "12yd": 340,
+  "14yd": 380,
+  "16yd": 420,
 };
 
 export const itemPrices: Record<string, number> = {

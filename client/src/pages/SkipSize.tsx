@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
@@ -7,9 +8,30 @@ import Tile from '@/components/Tile';
 import { useJourneyStore, type SkipSize as SkipSizeType } from '@/store/journeyStore';
 import { motion } from 'framer-motion';
 import { calculateTotals } from '@/lib/pricing';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Phone, Mail } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const skipSizes = [
+  { 
+    id: '2yd', 
+    label: '2 yard', 
+    bags: '≈ 20 bin bags • 2 cubic yards',
+    recommended: false,
+    whatFits: [
+      'Small garden tidy-up',
+      'Wardrobe clear-out',
+      'Light DIY waste'
+    ],
+    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+  },
   { 
     id: '4yd', 
     label: '4 yard', 
@@ -58,16 +80,45 @@ const skipSizes = [
     ],
     fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
   },
+  { 
+    id: '14yd', 
+    label: '14 yard', 
+    bags: '≈ 140 bin bags • 14 cubic yards',
+    recommended: false,
+    whatFits: [
+      'Major commercial projects',
+      'Full house demolition waste',
+      'Large-scale renovations'
+    ],
+    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+  },
+  { 
+    id: '16yd', 
+    label: '16 yard', 
+    bags: '≈ 160 bin bags • 16 cubic yards',
+    recommended: false,
+    whatFits: [
+      'Heavy construction waste',
+      'Complete building refits',
+      'Industrial-scale projects'
+    ],
+    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+  },
 ];
 
 export default function SkipSize() {
   const [, setLocation] = useLocation();
   const { size, setSize, items, placement, setTotals } = useJourneyStore();
+  const [showContactDialog, setShowContactDialog] = useState(false);
   
   const handleSelect = (sizeId: SkipSizeType) => {
     setSize(sizeId);
     const totals = calculateTotals(sizeId, items, placement || 'driveway');
     setTotals(totals);
+  };
+  
+  const handleOtherClick = () => {
+    setShowContactDialog(true);
   };
   
   const handleContinue = () => {
@@ -141,7 +192,64 @@ export default function SkipSize() {
                 </div>
               </button>
             ))}
+            
+            <button
+              onClick={handleOtherClick}
+              className="text-left p-6 rounded-md border-2 border-border bg-background hover-elevate transition-all"
+              data-testid="tile-other"
+            >
+              <h3 className="text-2xl font-bold text-foreground mb-1">
+                Other
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Need a different size or custom solution?
+              </p>
+              
+              <div className="space-y-3">
+                <p className="text-sm text-foreground">
+                  Get in touch with our team for bespoke skip hire options and expert advice.
+                </p>
+              </div>
+            </button>
           </div>
+
+          <AlertDialog open={showContactDialog} onOpenChange={setShowContactDialog}>
+            <AlertDialogContent data-testid="dialog-contact">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Get in touch with GRAFTT</AlertDialogTitle>
+                <AlertDialogDescription className="space-y-4">
+                  <p>
+                    Need a custom skip size or have specific requirements? Our team is here to help you find the perfect solution.
+                  </p>
+                  
+                  <div className="space-y-3 pt-2">
+                    <div className="flex items-center gap-3 text-foreground">
+                      <Phone className="w-5 h-5 text-primary" />
+                      <div>
+                        <p className="font-semibold">Call us</p>
+                        <a href="tel:0800123456" className="text-primary hover:underline">
+                          0800 123 456
+                        </a>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-foreground">
+                      <Mail className="w-5 h-5 text-primary" />
+                      <div>
+                        <p className="font-semibold">Email us</p>
+                        <a href="mailto:hello@graftt.co.uk" className="text-primary hover:underline">
+                          hello@graftt.co.uk
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction data-testid="button-close-dialog">Got it</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           
           <div className="flex justify-center items-center gap-4 mt-8">
             <Button

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type SkipSize = "4yd" | "6yd" | "8yd" | "12yd";
+export type SkipSize = "2yd" | "4yd" | "6yd" | "8yd" | "12yd" | "14yd" | "16yd";
 export type Placement = "driveway" | "road";
 
 interface JourneyState {

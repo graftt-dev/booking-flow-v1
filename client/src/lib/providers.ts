@@ -3,10 +3,13 @@ export interface Provider {
   name: string;
   logo: string;
   priceBySize: {
+    "2yd": number;
     "4yd": number;
     "6yd": number;
     "8yd": number;
     "12yd": number;
+    "14yd": number;
+    "16yd": number;
   };
   rating: number;
   reviews: number;
@@ -24,7 +27,7 @@ export const providers: Provider[] = [
     id: "budget-waste",
     name: "Budget Waste Management",
     logo: "BWM",
-    priceBySize: { "4yd": 180, "6yd": 220, "8yd": 260, "12yd": 340 },
+    priceBySize: { "2yd": 140, "4yd": 180, "6yd": 220, "8yd": 260, "12yd": 340, "14yd": 380, "16yd": 420 },
     rating: 4.7,
     reviews: 1248,
     recyclingPct: 78,
@@ -39,7 +42,7 @@ export const providers: Provider[] = [
     id: "eco-skip",
     name: "EcoSkip Solutions",
     logo: "ES",
-    priceBySize: { "4yd": 195, "6yd": 235, "8yd": 275, "12yd": 360 },
+    priceBySize: { "2yd": 155, "4yd": 195, "6yd": 235, "8yd": 275, "12yd": 360, "14yd": 400, "16yd": 440 },
     rating: 4.9,
     reviews: 892,
     recyclingPct: 85,
@@ -54,7 +57,7 @@ export const providers: Provider[] = [
     id: "rapid-waste",
     name: "Rapid Waste Services",
     logo: "RW",
-    priceBySize: { "4yd": 175, "6yd": 215, "8yd": 255, "12yd": 330 },
+    priceBySize: { "2yd": 135, "4yd": 175, "6yd": 215, "8yd": 255, "12yd": 330, "14yd": 370, "16yd": 410 },
     rating: 4.5,
     reviews: 2103,
     recyclingPct: 72,
@@ -69,7 +72,7 @@ export const providers: Provider[] = [
     id: "green-bins",
     name: "Green Bins Ltd",
     logo: "GB",
-    priceBySize: { "4yd": 188, "6yd": 228, "8yd": 268, "12yd": 348 },
+    priceBySize: { "2yd": 148, "4yd": 188, "6yd": 228, "8yd": 268, "12yd": 348, "14yd": 388, "16yd": 428 },
     rating: 4.8,
     reviews: 1567,
     recyclingPct: 81,
@@ -84,7 +87,7 @@ export const providers: Provider[] = [
     id: "clearway",
     name: "Clearway Skip Hire",
     logo: "CW",
-    priceBySize: { "4yd": 192, "6yd": 232, "8yd": 272, "12yd": 352 },
+    priceBySize: { "2yd": 152, "4yd": 192, "6yd": 232, "8yd": 272, "12yd": 352, "14yd": 392, "16yd": 432 },
     rating: 4.6,
     reviews: 743,
     recyclingPct: 76,
@@ -99,7 +102,7 @@ export const providers: Provider[] = [
     id: "premier-skip",
     name: "Premier Skip Co",
     logo: "PS",
-    priceBySize: { "4yd": 198, "6yd": 238, "8yd": 278, "12yd": 358 },
+    priceBySize: { "2yd": 158, "4yd": 198, "6yd": 238, "8yd": 278, "12yd": 358, "14yd": 398, "16yd": 438 },
     rating: 4.7,
     reviews: 1891,
     recyclingPct: 79,
@@ -114,7 +117,7 @@ export const providers: Provider[] = [
     id: "urban-waste",
     name: "Urban Waste Group",
     logo: "UW",
-    priceBySize: { "4yd": 185, "6yd": 225, "8yd": 265, "12yd": 345 },
+    priceBySize: { "2yd": 145, "4yd": 185, "6yd": 225, "8yd": 265, "12yd": 345, "14yd": 385, "16yd": 425 },
     rating: 4.4,
     reviews: 1124,
     recyclingPct: 74,
@@ -129,7 +132,7 @@ export const providers: Provider[] = [
     id: "fast-skip",
     name: "Fast Skip Removals",
     logo: "FS",
-    priceBySize: { "4yd": 178, "6yd": 218, "8yd": 258, "12yd": 335 },
+    priceBySize: { "2yd": 138, "4yd": 178, "6yd": 218, "8yd": 258, "12yd": 335, "14yd": 375, "16yd": 415 },
     rating: 4.6,
     reviews: 956,
     recyclingPct: 77,
