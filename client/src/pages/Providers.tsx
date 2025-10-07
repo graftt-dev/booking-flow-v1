@@ -83,7 +83,7 @@ export default function Providers() {
             </Badge>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="max-w-4xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {filteredProviders.map((provider, index) => {
                 const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
