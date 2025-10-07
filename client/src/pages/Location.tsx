@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
 import EducationPill from '@/components/EducationPill';
@@ -13,10 +21,28 @@ export default function Location() {
   const [, setLocation] = useLocation();
   const { postcode, address, lat, lng, placement, setLocation: setJourneyLocation, setPlacement } = useJourneyStore();
   const [position, setPosition] = useState<[number, number]>([lat, lng]);
+  const [showPermitDialog, setShowPermitDialog] = useState(false);
   
   useEffect(() => {
     setPosition([lat, lng]);
   }, [lat, lng]);
+  
+  const handlePlacementSelect = (type: 'driveway' | 'road') => {
+    if (type === 'road') {
+      setShowPermitDialog(true);
+    } else {
+      setPlacement(type);
+    }
+  };
+  
+  const handlePermitGoBack = () => {
+    setShowPermitDialog(false);
+  };
+  
+  const handlePermitAgree = () => {
+    setPlacement('road');
+    setShowPermitDialog(false);
+  };
   
   const handleContinue = () => {
     if (!placement) return;
@@ -79,7 +105,7 @@ export default function Location() {
             
             <div className="flex gap-4 justify-center flex-wrap">
               <button
-                onClick={() => setPlacement('driveway')}
+                onClick={() => handlePlacementSelect('driveway')}
                 className={`
                   flex items-center gap-3 px-6 py-4 rounded-md border-2 transition-all
                   ${placement === 'driveway' 
@@ -97,7 +123,7 @@ export default function Location() {
               </button>
               
               <button
-                onClick={() => setPlacement('road')}
+                onClick={() => handlePlacementSelect('road')}
                 className={`
                   flex items-center gap-3 px-6 py-4 rounded-md border-2 transition-all
                   ${placement === 'road' 
@@ -130,6 +156,39 @@ export default function Location() {
           <EducationPill text="Exact location prevents access issues and speeds up delivery." />
         </div>
       </motion.main>
+      
+      <AlertDialog open={showPermitDialog} onOpenChange={setShowPermitDialog}>
+        <AlertDialogContent data-testid="dialog-permit">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-2xl font-bold text-foreground">
+              Council Permit Required
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-base text-foreground space-y-3 pt-2">
+              <p>
+                On-road skips typically require a council permit. This can take up to 2 weeks and may have a local fee (usually £100-£200).
+              </p>
+              <p className="text-muted-foreground">
+                No stress though, we'll handle the permit application. Do you want to proceed?
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-3 sm:gap-3">
+            <Button
+              variant="outline"
+              onClick={handlePermitGoBack}
+              data-testid="button-go-back"
+            >
+              Go back
+            </Button>
+            <Button
+              onClick={handlePermitAgree}
+              data-testid="button-agree-continue"
+            >
+              Agree and continue
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
