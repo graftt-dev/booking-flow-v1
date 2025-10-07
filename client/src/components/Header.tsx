@@ -1,4 +1,5 @@
 import { Link } from 'wouter';
+import logoPath from '@assets/GRAFFT Primary Logo (3)_1759848271762.png';
 
 export default function Header() {
   return (
@@ -6,7 +7,7 @@ export default function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" data-testid="link-home">
-            <span className="text-2xl font-bold text-foreground tracking-tight">GRAFTT</span>
+            <img src={logoPath} alt="GRAFTT" className="h-6" />
           </Link>
           
           <nav className="hidden md:flex items-center gap-8">
