@@ -124,7 +124,7 @@ export default function ExtraItems() {
           <Chip
             selected={selectedItems.length === 0}
             onClick={handleNoneClick}
-            className="w-full"
+            className="w-full bg-[#05E4C0]/10 border-[#05E4C0]/30 hover:bg-[#05E4C0]/20"
           >
             None of the above
           </Chip>
