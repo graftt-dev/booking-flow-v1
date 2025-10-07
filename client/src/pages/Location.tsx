@@ -144,18 +144,7 @@ export default function Location() {
             </div>
           </div>
           
-          <div className="flex justify-center">
-            <Button 
-              size="lg" 
-              onClick={handleContinue} 
-              disabled={!placement}
-              data-testid="button-continue"
-            >
-              Continue
-            </Button>
-          </div>
-
-          <div className="flex justify-center mt-4">
+          <div className="flex justify-center items-center gap-4">
             <Button
               variant="ghost"
               onClick={() => setLocation('/')}
@@ -163,6 +152,14 @@ export default function Location() {
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
+            </Button>
+            <Button 
+              size="lg" 
+              onClick={handleContinue} 
+              disabled={!placement}
+              data-testid="button-continue"
+            >
+              Continue
             </Button>
           </div>
           

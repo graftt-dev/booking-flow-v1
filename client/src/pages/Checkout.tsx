@@ -117,17 +117,7 @@ export default function Checkout() {
               </div>
             </div>
             
-            <Button
-              type="submit"
-              size="lg"
-              className="w-full"
-              disabled={loading}
-              data-testid="button-pay"
-            >
-              {loading ? 'Processing...' : `Pay ${formatCurrency(totals.total)}`}
-            </Button>
-
-            <div className="flex justify-center">
+            <div className="flex items-center gap-4">
               <Button
                 type="button"
                 variant="ghost"
@@ -136,6 +126,15 @@ export default function Checkout() {
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back
+              </Button>
+              <Button
+                type="submit"
+                size="lg"
+                className="flex-1"
+                disabled={loading}
+                data-testid="button-pay"
+              >
+                {loading ? 'Processing...' : `Pay ${formatCurrency(totals.total)}`}
               </Button>
             </div>
           </form>

@@ -141,13 +141,7 @@ export default function ExtraItems() {
             </div>
           </div>
           
-          <div className="flex justify-center pt-4">
-            <Button size="lg" onClick={handleContinue} data-testid="button-continue">
-              Continue
-            </Button>
-          </div>
-
-          <div className="flex justify-center mt-4">
+          <div className="flex justify-center items-center gap-4 pt-4">
             <Button
               variant="ghost"
               onClick={() => setLocation('/waste')}
@@ -155,6 +149,9 @@ export default function ExtraItems() {
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
+            </Button>
+            <Button size="lg" onClick={handleContinue} data-testid="button-continue">
+              Continue
             </Button>
           </div>
           

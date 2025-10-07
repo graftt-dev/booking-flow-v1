@@ -56,7 +56,7 @@ export default function WasteType() {
             ))}
           </div>
 
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center items-center gap-4 mt-6">
             <Button
               variant="ghost"
               onClick={() => setLocation('/delivery-date')}

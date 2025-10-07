@@ -180,18 +180,7 @@ export default function DeliveryDate() {
             )}
           </AnimatePresence>
 
-          <div className="flex justify-center pt-4">
-            <Button 
-              size="lg" 
-              onClick={handleContinue}
-              disabled={!confirmedDate}
-              data-testid="button-continue"
-            >
-              Continue
-            </Button>
-          </div>
-
-          <div className="flex justify-center mt-4">
+          <div className="flex justify-center items-center gap-4 pt-4">
             <Button
               variant="ghost"
               onClick={() => setLocation('/location')}
@@ -199,6 +188,14 @@ export default function DeliveryDate() {
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
+            </Button>
+            <Button 
+              size="lg" 
+              onClick={handleContinue}
+              disabled={!confirmedDate}
+              data-testid="button-continue"
+            >
+              Continue
             </Button>
           </div>
           
