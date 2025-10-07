@@ -41,7 +41,9 @@ export default function Location() {
   
   const handlePermitAgree = () => {
     setPlacement('road');
+    setJourneyLocation(position[0], position[1], 'mock.what3.words');
     setShowPermitDialog(false);
+    setLocation('/waste');
   };
   
   const handleContinue = () => {
