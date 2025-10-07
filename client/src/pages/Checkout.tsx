@@ -162,18 +162,31 @@ export default function Checkout() {
                 .
               </p>
 
-              {items.length > 0 && (
-                <p>
-                  You've mentioned you'll be disposing of{' '}
-                  <span 
-                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
-                    data-testid="badge-items"
-                  >
-                    {getItemsText()}
-                  </span>
-                  , which we've included in the quote.
-                </p>
-              )}
+              <p>
+                {items.length > 0 ? (
+                  <>
+                    You've mentioned you'll be disposing of{' '}
+                    <span 
+                      className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                      data-testid="badge-items"
+                    >
+                      {getItemsText()}
+                    </span>
+                    , which we've included in the quote.
+                  </>
+                ) : (
+                  <>
+                    You've confirmed{' '}
+                    <span 
+                      className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                      data-testid="badge-no-items"
+                    >
+                      no additional items
+                    </span>
+                    {' '}will be included.
+                  </>
+                )}
+              </p>
 
               <p>
                 You've chosen a{' '}
