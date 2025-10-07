@@ -8,6 +8,7 @@ import EducationPill from '@/components/EducationPill';
 import Chip from '@/components/Chip';
 import { useJourneyStore } from '@/store/journeyStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -124,7 +125,10 @@ export default function ExtraItems() {
           <Chip
             selected={selectedItems.length === 0}
             onClick={handleNoneClick}
-            className="w-full bg-[#05E4C0]/10 border-[#05E4C0]/30 hover:bg-[#05E4C0]/20 text-[#06062D] dark:text-[#05E4C0]"
+            className={cn(
+              "w-full",
+              selectedItems.length > 0 && "bg-[#05E4C0]/10 border-[#05E4C0]/30 hover:bg-[#05E4C0]/20 text-[#06062D] dark:text-[#05E4C0]"
+            )}
           >
             None of the above
           </Chip>
