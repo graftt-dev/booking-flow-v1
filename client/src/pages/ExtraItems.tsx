@@ -70,27 +70,30 @@ export default function ExtraItems() {
         <ProgressRibbon currentStep={3} />
         
         <div className="max-w-3xl mx-auto space-y-6">
-          <div className="grid grid-cols-2 gap-3 mt-8">
+          <div className="grid grid-cols-1 gap-3 mt-8">
             {items.map((item) => {
               const isSelected = selectedItems.includes(item);
               const quantity = itemQuantities[item] || 1;
               
               return (
-                <div key={item} className="space-y-2">
-                  <Chip
-                    selected={isSelected}
-                    onClick={() => handleItemClick(item)}
-                  >
-                    {item}
-                  </Chip>
+                <div key={item} className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <Chip
+                      selected={isSelected}
+                      onClick={() => handleItemClick(item)}
+                      className="w-full"
+                    >
+                      {item}
+                    </Chip>
+                  </div>
                   
                   <AnimatePresence>
                     {isSelected && (
                       <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="flex items-center justify-center gap-3"
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        exit={{ opacity: 0, width: 0 }}
+                        className="flex items-center gap-2"
                       >
                         <button
                           onClick={() => handleQuantityChange(item, -1)}
