@@ -21,12 +21,12 @@ import {
 
 const items = [
   'Mattress',
+  'Sofa',
   'Tyres',
   'Fridge/Freezer',
   'Plasterboard',
   'Gas Bottles',
   'Batteries',
-  'Carpet',
 ];
 
 const hazardousItems = ['Asbestos', 'Paints/Liquids'];
