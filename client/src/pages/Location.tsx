@@ -43,13 +43,13 @@ export default function Location() {
     setPlacement('road');
     setJourneyLocation(position[0], position[1], 'mock.what3.words');
     setShowPermitDialog(false);
-    setLocation('/waste');
+    setLocation('/delivery-date');
   };
   
   const handleContinue = () => {
     if (!placement) return;
     setJourneyLocation(position[0], position[1], 'mock.what3.words');
-    setLocation('/waste');
+    setLocation('/delivery-date');
   };
   
   return (

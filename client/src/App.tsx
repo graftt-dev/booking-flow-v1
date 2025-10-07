@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
 import Location from "@/pages/Location";
 import Placement from "@/pages/Placement";
+import DeliveryDate from "@/pages/DeliveryDate";
 import WasteType from "@/pages/WasteType";
 import ExtraItems from "@/pages/ExtraItems";
 import SkipSize from "@/pages/SkipSize";
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/location" component={Location} />
       <Route path="/placement" component={Placement} />
+      <Route path="/delivery-date" component={DeliveryDate} />
       <Route path="/waste" component={WasteType} />
       <Route path="/items" component={ExtraItems} />
       <Route path="/size" component={SkipSize} />
