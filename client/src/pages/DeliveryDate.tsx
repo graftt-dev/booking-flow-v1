@@ -370,19 +370,19 @@ export default function DeliveryDate() {
                 data-testid="confirmation-message"
               >
                 <div className="relative flex items-stretch justify-center">
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[2px] bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[2px] bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
                   
-                  <div className="relative z-10 flex items-center justify-between w-full max-w-2xl">
-                    <div className="flex flex-col items-center text-center bg-background px-3">
-                      <div className="w-14 h-14 rounded-full bg-primary/10 border-2 border-primary flex items-center justify-center mb-2">
+                  <div className="relative z-10 grid grid-cols-3 w-full max-w-2xl">
+                    <div className="flex flex-col items-center text-center bg-background px-2">
+                      <div className="w-14 h-14 rounded-lg bg-primary/10 border-2 border-primary flex items-center justify-center mb-2">
                         <Truck className="w-6 h-6 text-primary" />
                       </div>
                       <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Delivery</p>
-                      <p className="text-sm font-bold text-foreground mt-1">{formatDateDisplay(deliveryStart, deliveryEnd)}</p>
+                      <p className="text-xs font-bold text-foreground mt-1 leading-tight">{formatDateDisplay(deliveryStart, deliveryEnd)}</p>
                     </div>
                     
-                    <div className="flex flex-col items-center text-center bg-background px-4 -mt-2">
-                      <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center mb-2 shadow-lg">
+                    <div className="flex flex-col items-center text-center bg-background px-2 -mt-2">
+                      <div className="w-20 h-20 rounded-lg bg-primary flex items-center justify-center mb-2 shadow-lg">
                         <div className="text-center">
                           <p className="text-2xl font-bold text-primary-foreground">{getHireDays()}</p>
                           <p className="text-[10px] uppercase text-primary-foreground/80 -mt-1">days</p>
@@ -391,12 +391,12 @@ export default function DeliveryDate() {
                       <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Hire Period</p>
                     </div>
                     
-                    <div className="flex flex-col items-center text-center bg-background px-3">
-                      <div className="w-14 h-14 rounded-full bg-primary/10 border-2 border-primary flex items-center justify-center mb-2">
+                    <div className="flex flex-col items-center text-center bg-background px-2">
+                      <div className="w-14 h-14 rounded-lg bg-primary/10 border-2 border-primary flex items-center justify-center mb-2">
                         <Package className="w-6 h-6 text-primary" />
                       </div>
                       <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Collection</p>
-                      <p className="text-sm font-bold text-foreground mt-1">{formatDateDisplay(collectionStart, collectionEnd)}</p>
+                      <p className="text-xs font-bold text-foreground mt-1 leading-tight">{formatDateDisplay(collectionStart, collectionEnd)}</p>
                     </div>
                   </div>
                 </div>
