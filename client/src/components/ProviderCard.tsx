@@ -105,7 +105,7 @@ export default function ProviderCard({
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">
-                      Extra days {extraDays > 0 ? `(${extraDays} × ${formatCurrency(provider.extraDayRate)})` : `@ ${formatCurrency(provider.extraDayRate)}/day`}
+                      Extra hire {extraDays > 0 ? `(${extraDays} × ${formatCurrency(provider.extraDayRate)})` : `@ ${formatCurrency(provider.extraDayRate)}/day`}
                     </span>
                     <span>{formatCurrency(extraDaysCost)}</span>
                   </div>
