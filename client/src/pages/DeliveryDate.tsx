@@ -190,12 +190,16 @@ export default function DeliveryDate() {
     );
   };
 
-  const formatDateDisplay = (start?: Date, end?: Date) => {
+  const formatDateDisplay = (start?: Date, end?: Date, includeYear = true) => {
     if (!start) return null;
+    const yearFormat = includeYear ? ' yyyy' : '';
     if (end && !isSameDay(start, end)) {
-      return `${format(start, 'EEE d')} - ${format(end, 'EEE d MMM')}`;
+      if (isSameMonth(start, end)) {
+        return `${format(start, 'EEE d')} - ${format(end, 'EEE d MMM' + yearFormat)}`;
+      }
+      return `${format(start, 'EEE d MMM')} - ${format(end, 'EEE d MMM' + yearFormat)}`;
     }
-    return format(start, 'EEE d MMM');
+    return format(start, 'EEE d MMM' + yearFormat);
   };
 
   return (
@@ -365,23 +369,35 @@ export default function DeliveryDate() {
                 className="mt-4 space-y-3"
               >
                 <div 
-                  className="p-4 bg-primary/5 rounded-lg border border-primary/20"
+                  className="p-5 bg-primary/5 rounded-lg border border-primary/20"
                   data-testid="confirmation-message"
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <Truck className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-medium">{formatDateDisplay(deliveryStart, deliveryEnd)}</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Truck className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide">Delivery</p>
+                        <p className="text-sm font-semibold text-foreground">{formatDateDisplay(deliveryStart, deliveryEnd)}</p>
+                      </div>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                    <div className="flex items-center gap-2">
-                      <Package className="w-4 h-4 text-primary" />
-                      <span className="text-sm font-medium">{formatDateDisplay(collectionStart, collectionEnd)}</span>
+                    
+                    <div className="flex flex-col items-center px-4">
+                      <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                      <span className="text-primary font-bold text-sm mt-1">{getHireDays()} day hire</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide">Collection</p>
+                        <p className="text-sm font-semibold text-foreground">{formatDateDisplay(collectionStart, collectionEnd)}</p>
+                      </div>
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Package className="w-5 h-5 text-primary" />
+                      </div>
                     </div>
                   </div>
-                  <p className="text-center text-primary font-semibold mt-2">
-                    {getHireDays()} day hire
-                  </p>
                 </div>
 
                 <div className="flex items-start gap-2 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground">
