@@ -35,11 +35,6 @@ export default function ProviderCard({
   itemQuantities,
   placement
 }: ProviderCardProps) {
-  const hasLicense = provider.badges.some(b => b.includes('Licensed'));
-  const hasPermit = provider.badges.some(b => b.includes('Permit'));
-  const recyclingBadge = provider.badges.find(b => b.includes('Recycling'));
-  const recyclingRate = recyclingBadge ? recyclingBadge.match(/\d+/)?.[0] : null;
-  
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -132,23 +127,21 @@ export default function ProviderCard({
             <div className="flex items-center gap-1.5">
               <Shield className="w-3 h-3 text-primary" />
               <span className="text-muted-foreground">
-                Waste Carriers: <span className={hasLicense ? "text-primary font-medium" : "text-muted-foreground"}>{hasLicense ? 'Yes' : 'No'}</span>
+                Waste Carriers: <span className="text-primary font-medium">{provider.wasteCarrierLicense}</span>
               </span>
             </div>
             <div className="flex items-center gap-1.5">
               <FileCheck className="w-3 h-3 text-primary" />
               <span className="text-muted-foreground">
-                Site Permit: <span className={hasPermit ? "text-primary font-medium" : "text-muted-foreground"}>{hasPermit ? 'Yes' : 'No'}</span>
+                Site Permit: <span className="text-primary font-medium">{provider.sitePermit}</span>
               </span>
             </div>
-            {recyclingRate && (
-              <div className="flex items-center gap-1.5">
-                <Leaf className="w-3 h-3 text-primary" />
-                <span className="text-muted-foreground">
-                  Recycling Rate: <span className="text-primary font-medium">{recyclingRate}%</span>
-                </span>
-              </div>
-            )}
+            <div className="flex items-center gap-1.5">
+              <Leaf className="w-3 h-3 text-primary" />
+              <span className="text-muted-foreground">
+                Recycling Rate: <span className="text-primary font-medium">{provider.recyclingPct}%</span>
+              </span>
+            </div>
           </div>
           
           <Button
