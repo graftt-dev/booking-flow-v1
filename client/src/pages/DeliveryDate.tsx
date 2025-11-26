@@ -403,7 +403,7 @@ export default function DeliveryDate() {
                   </div>
                 </div>
 
-                <div className="flex items-start justify-center gap-2 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground max-w-lg mx-auto">
+                <div className="flex items-start justify-center gap-2 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground">
                   <Info className="w-4 h-4 mt-0.5 shrink-0" />
                   <p>
                     Most providers include <span className="font-semibold text-foreground">7 days</span> hire for a {size || '6yd'} skip as standard. 
