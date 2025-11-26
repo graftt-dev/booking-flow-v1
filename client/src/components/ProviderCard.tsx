@@ -91,12 +91,12 @@ export default function ProviderCard({
 
         <div className="flex items-center gap-4 mb-4">
           <div className="flex items-center gap-1.5">
-            <BadgeCheck className="w-4 h-4 text-muted-foreground" />
+            <BadgeCheck className="w-4 h-4 text-primary" />
             <span className="text-sm text-muted-foreground">Licensed Operator</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Leaf className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">{provider.recyclingPct}% Recycled</span>
+            <Leaf className="w-4 h-4 text-primary" />
+            <span className="text-sm text-muted-foreground"><span className="font-semibold">{provider.recyclingPct}%</span> Recycled</span>
           </div>
         </div>
         
