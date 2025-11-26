@@ -32,31 +32,6 @@ function calculateExtraDays(deliveryDate: string, collectionDate: string, standa
   return Math.max(0, diffDays - standardHireDays);
 }
 
-function StarRating({ rating }: { rating: number }) {
-  const fullStars = Math.floor(rating);
-  const hasHalfStar = rating % 1 >= 0.5;
-  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-  
-  return (
-    <div className="flex items-center gap-0.5">
-      {[...Array(fullStars)].map((_, i) => (
-        <Star key={`full-${i}`} className="w-3 h-3 fill-primary text-primary" />
-      ))}
-      {hasHalfStar && (
-        <div className="relative w-3 h-3">
-          <Star className="absolute w-3 h-3 text-muted-foreground/30" />
-          <div className="absolute overflow-hidden w-[50%]">
-            <Star className="w-3 h-3 fill-primary text-primary" />
-          </div>
-        </div>
-      )}
-      {[...Array(emptyStars)].map((_, i) => (
-        <Star key={`empty-${i}`} className="w-3 h-3 text-muted-foreground/30" />
-      ))}
-    </div>
-  );
-}
-
 export default function ProviderCard({
   provider,
   price,
@@ -101,8 +76,9 @@ export default function ProviderCard({
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-foreground text-lg">{provider.name}</h3>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <StarRating rating={provider.rating} />
-                <span className="text-xs text-muted-foreground">{provider.rating} ({provider.reviews.toLocaleString()})</span>
+                <Star className="w-3.5 h-3.5 fill-primary text-primary" />
+                <span className="text-sm font-semibold text-foreground">{provider.rating}</span>
+                <span className="text-sm text-muted-foreground">({provider.reviews.toLocaleString()} reviews)</span>
               </div>
             </div>
           </div>
@@ -113,14 +89,14 @@ export default function ProviderCard({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 mb-4">
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/10 rounded-md">
-            <BadgeCheck className="w-4 h-4 text-primary" />
-            <span className="text-xs font-semibold text-primary">Licensed Operator</span>
+        <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-1.5">
+            <BadgeCheck className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Licensed Operator</span>
           </div>
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/10 rounded-md">
-            <Leaf className="w-4 h-4 text-primary" />
-            <span className="text-xs font-semibold text-primary">{provider.recyclingPct}% Recycled</span>
+          <div className="flex items-center gap-1.5">
+            <Leaf className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">{provider.recyclingPct}% Recycled</span>
           </div>
         </div>
         
