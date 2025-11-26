@@ -123,7 +123,7 @@ export default function SkipSize() {
   
   const handleContinue = () => {
     if (!size) return;
-    setLocation('/finding-providers');
+    setLocation('/waste');
   };
   
   return (
@@ -140,7 +140,7 @@ export default function SkipSize() {
           How much waste do you have?
         </h1>
         
-        <ProgressRibbon currentStep={4} />
+        <ProgressRibbon currentStep={1} />
         
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
@@ -254,7 +254,7 @@ export default function SkipSize() {
           <div className="flex justify-center items-center gap-4 mt-8">
             <Button
               variant="ghost"
-              onClick={() => setLocation('/items')}
+              onClick={() => setLocation('/placement')}
               data-testid="button-back"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />

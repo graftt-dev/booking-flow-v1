@@ -45,7 +45,7 @@ export default function Providers() {
   
   const handleContinue = () => {
     if (providerId) {
-      setLocation('/checkout');
+      setLocation('/items');
     }
   };
   
@@ -65,7 +65,7 @@ export default function Providers() {
           Choose a provider
         </h1>
         
-        <ProgressRibbon currentStep={5} />
+        <ProgressRibbon currentStep={4} />
         
         <div className="max-w-7xl mx-auto">
           <Tabs value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)} className="w-full">
@@ -116,7 +116,7 @@ export default function Providers() {
           <div className="flex justify-center items-center gap-4 mt-12">
             <Button
               variant="ghost"
-              onClick={() => setLocation('/size')}
+              onClick={() => setLocation('/delivery-date')}
               data-testid="button-back"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -128,7 +128,7 @@ export default function Providers() {
               disabled={!providerId}
               data-testid="button-continue"
             >
-              Continue to Checkout
+              Continue
             </Button>
           </div>
           

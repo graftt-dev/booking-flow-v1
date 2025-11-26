@@ -305,7 +305,7 @@ export default function Checkout() {
               <Button
                 type="button"
                 variant="ghost"
-                onClick={() => setLocation('/providers')}
+                onClick={() => setLocation('/items')}
                 data-testid="button-back"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />

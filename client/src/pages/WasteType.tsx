@@ -51,7 +51,7 @@ export default function WasteType() {
 
   const handleContinue = () => {
     if (wasteType) {
-      setLocation('/items');
+      setLocation('/delivery-date');
     }
   };
   
@@ -89,7 +89,7 @@ export default function WasteType() {
           <div className="flex justify-center items-center gap-4 mt-6">
             <Button
               variant="ghost"
-              onClick={() => setLocation('/delivery-date')}
+              onClick={() => setLocation('/size')}
               data-testid="button-back"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />

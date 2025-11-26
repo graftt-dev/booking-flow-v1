@@ -54,7 +54,7 @@ export default function ExtraItems() {
   };
   
   const handleContinue = () => {
-    setLocation('/size');
+    setLocation('/checkout');
   };
   
   return (
@@ -71,7 +71,7 @@ export default function ExtraItems() {
           Any of these items?
         </h1>
         
-        <ProgressRibbon currentStep={3} />
+        <ProgressRibbon currentStep={5} />
         
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="grid grid-cols-1 gap-3 mt-8">
@@ -152,7 +152,7 @@ export default function ExtraItems() {
           <div className="flex justify-center items-center gap-4 pt-4">
             <Button
               variant="ghost"
-              onClick={() => setLocation('/waste')}
+              onClick={() => setLocation('/providers')}
               data-testid="button-back"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />

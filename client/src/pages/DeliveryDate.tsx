@@ -9,22 +9,27 @@ import Chip from '@/components/Chip';
 import Tile from '@/components/Tile';
 import { useJourneyStore } from '@/store/journeyStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar as CalendarIcon, Clock, Zap, ArrowLeft } from 'lucide-react';
-import { format, addDays, startOfWeek } from 'date-fns';
+import { Calendar as CalendarIcon, Clock, Zap, ArrowLeft, Truck, Package } from 'lucide-react';
+import { format, addDays, differenceInDays } from 'date-fns';
 
-type DeliveryOption = 'asap' | 'this-week' | 'choose-date' | null;
+type DateOption = 'asap' | 'this-week' | 'choose-date' | null;
 
 export default function DeliveryDate() {
   const [, setLocation] = useLocation();
-  const { deliveryDate, setDeliveryDate } = useJourneyStore();
-  const [selectedOption, setSelectedOption] = useState<DeliveryOption>(null);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(deliveryDate ? new Date(deliveryDate) : undefined);
-  const [confirmedDate, setConfirmedDate] = useState<string>('');
+  const { deliveryDate, setDeliveryDate, collectionDate, setCollectionDate } = useJourneyStore();
+  const [showCollection, setShowCollection] = useState(false);
+  const [deliveryOption, setDeliveryOption] = useState<DateOption>(null);
+  const [collectionOption, setCollectionOption] = useState<DateOption>(null);
+  const [selectedDeliveryDate, setSelectedDeliveryDate] = useState<Date | undefined>(deliveryDate ? new Date(deliveryDate) : undefined);
+  const [selectedCollectionDate, setSelectedCollectionDate] = useState<Date | undefined>(collectionDate ? new Date(collectionDate) : undefined);
+  const [confirmedDeliveryDate, setConfirmedDeliveryDate] = useState<string>(deliveryDate || '');
+  const [confirmedCollectionDate, setConfirmedCollectionDate] = useState<string>(collectionDate || '');
 
   const today = new Date();
   const tomorrow = addDays(today, 1);
-  const weekDays = Array.from({ length: 5 }, (_, i) => {
-    const date = addDays(tomorrow, i);
+  
+  const getWeekDays = (startDate: Date) => Array.from({ length: 5 }, (_, i) => {
+    const date = addDays(startDate, i);
     return {
       date,
       label: format(date, 'EEE'),
@@ -33,40 +38,79 @@ export default function DeliveryDate() {
     };
   });
 
-  const handleOptionSelect = (option: DeliveryOption) => {
-    setSelectedOption(option);
-    setConfirmedDate('');
+  const deliveryWeekDays = getWeekDays(tomorrow);
+  const collectionMinDate = confirmedDeliveryDate ? addDays(new Date(confirmedDeliveryDate), 1) : addDays(tomorrow, 1);
+  const collectionWeekDays = getWeekDays(collectionMinDate);
+
+  const handleDeliveryOptionSelect = (option: DateOption) => {
+    setDeliveryOption(option);
     
     if (option === 'asap') {
-      const asapDate = format(addDays(today, 1), 'yyyy-MM-dd');
-      setConfirmedDate(asapDate);
+      const asapDate = format(tomorrow, 'yyyy-MM-dd');
+      setConfirmedDeliveryDate(asapDate);
       setDeliveryDate(asapDate);
+      setShowCollection(true);
     }
   };
 
-  const handleWeekDaySelect = (dateStr: string) => {
-    setConfirmedDate(dateStr);
+  const handleDeliveryWeekDaySelect = (dateStr: string) => {
+    setConfirmedDeliveryDate(dateStr);
     setDeliveryDate(dateStr);
+    setShowCollection(true);
   };
 
-  const handleCalendarSelect = (date: Date | undefined) => {
+  const handleDeliveryCalendarSelect = (date: Date | undefined) => {
     if (date) {
       const dateStr = format(date, 'yyyy-MM-dd');
-      setSelectedDate(date);
-      setConfirmedDate(dateStr);
+      setSelectedDeliveryDate(date);
+      setConfirmedDeliveryDate(dateStr);
       setDeliveryDate(dateStr);
+      setShowCollection(true);
+    }
+  };
+
+  const handleCollectionOptionSelect = (option: DateOption) => {
+    setCollectionOption(option);
+    
+    if (option === 'asap') {
+      const asapDate = format(collectionMinDate, 'yyyy-MM-dd');
+      setConfirmedCollectionDate(asapDate);
+      setCollectionDate(asapDate);
+    }
+  };
+
+  const handleCollectionWeekDaySelect = (dateStr: string) => {
+    setConfirmedCollectionDate(dateStr);
+    setCollectionDate(dateStr);
+  };
+
+  const handleCollectionCalendarSelect = (date: Date | undefined) => {
+    if (date) {
+      const dateStr = format(date, 'yyyy-MM-dd');
+      setSelectedCollectionDate(date);
+      setConfirmedCollectionDate(dateStr);
+      setCollectionDate(dateStr);
     }
   };
 
   const handleContinue = () => {
-    if (confirmedDate) {
-      setLocation('/waste');
+    if (confirmedDeliveryDate && confirmedCollectionDate) {
+      setLocation('/finding-providers');
     }
   };
 
   const formatConfirmationDate = (dateStr: string) => {
-    return format(new Date(dateStr), 'EEEE, MMMM d, yyyy');
+    return format(new Date(dateStr), 'EEEE, MMMM d');
   };
+
+  const getHireDays = () => {
+    if (confirmedDeliveryDate && confirmedCollectionDate) {
+      return differenceInDays(new Date(confirmedCollectionDate), new Date(confirmedDeliveryDate));
+    }
+    return 0;
+  };
+
+  const canContinue = confirmedDeliveryDate && confirmedCollectionDate;
 
   return (
     <div className="min-h-screen bg-background">
@@ -83,89 +127,196 @@ export default function DeliveryDate() {
         </h1>
         
         <p className="text-center text-muted-foreground mb-4" data-testid="text-subtext">
-          We'll do our best to deliver exactly when you need it.
+          Choose your delivery and collection dates.
         </p>
         
-        <ProgressRibbon currentStep={1} />
+        <ProgressRibbon currentStep={3} />
         
-        <div className="max-w-3xl mx-auto space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-            <Tile
-              icon={Zap}
-              title="ASAP"
-              description="As soon as possible"
-              selected={selectedOption === 'asap'}
-              onClick={() => handleOptionSelect('asap')}
-              testId="tile-asap"
-            />
-            <Tile
-              icon={Clock}
-              title="Sometime this week"
-              description="Pick a day this week"
-              selected={selectedOption === 'this-week'}
-              onClick={() => handleOptionSelect('this-week')}
-              testId="tile-this-week"
-            />
-            <Tile
-              icon={CalendarIcon}
-              title="Choose a date"
-              description="Pick any date"
-              selected={selectedOption === 'choose-date'}
-              onClick={() => handleOptionSelect('choose-date')}
-              testId="tile-choose-date"
-            />
+        <div className="max-w-4xl mx-auto space-y-8">
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <Truck className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-foreground">Delivery Date</h2>
+                <p className="text-sm text-muted-foreground">When should we drop off the skip?</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Tile
+                icon={Zap}
+                title="ASAP"
+                description="As soon as possible"
+                selected={deliveryOption === 'asap'}
+                onClick={() => handleDeliveryOptionSelect('asap')}
+                testId="tile-delivery-asap"
+              />
+              <Tile
+                icon={Clock}
+                title="This week"
+                description="Pick a day this week"
+                selected={deliveryOption === 'this-week'}
+                onClick={() => handleDeliveryOptionSelect('this-week')}
+                testId="tile-delivery-this-week"
+              />
+              <Tile
+                icon={CalendarIcon}
+                title="Choose date"
+                description="Pick any date"
+                selected={deliveryOption === 'choose-date'}
+                onClick={() => handleDeliveryOptionSelect('choose-date')}
+                testId="tile-delivery-choose-date"
+              />
+            </div>
+
+            <AnimatePresence mode="wait">
+              {deliveryOption === 'this-week' && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex gap-3 justify-center flex-wrap"
+                  data-testid="delivery-week-days"
+                >
+                  {deliveryWeekDays.map((day) => (
+                    <Chip
+                      key={day.full}
+                      selected={confirmedDeliveryDate === day.full}
+                      onClick={() => handleDeliveryWeekDaySelect(day.full)}
+                    >
+                      <div className="text-center">
+                        <div className="text-xs">{day.label}</div>
+                        <div className="font-semibold">{day.day}</div>
+                      </div>
+                    </Chip>
+                  ))}
+                </motion.div>
+              )}
+
+              {deliveryOption === 'choose-date' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="flex justify-center"
+                  data-testid="delivery-calendar"
+                >
+                  <div className="rounded-md border border-border p-4 bg-background">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDeliveryDate}
+                      onSelect={handleDeliveryCalendarSelect}
+                      disabled={(date) => date < tomorrow}
+                      className="rounded-md"
+                    />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          <AnimatePresence mode="wait">
-            {selectedOption === 'this-week' && (
+          <AnimatePresence>
+            {showCollection && (
               <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3 }}
-                className="flex gap-3 justify-center flex-wrap"
-                data-testid="week-days-container"
-              >
-                {weekDays.map((day) => (
-                  <Chip
-                    key={day.full}
-                    selected={confirmedDate === day.full}
-                    onClick={() => handleWeekDaySelect(day.full)}
-                  >
-                    <div className="text-center">
-                      <div className="text-xs">{day.label}</div>
-                      <div className="font-semibold">{day.day}</div>
-                    </div>
-                  </Chip>
-                ))}
-              </motion.div>
-            )}
-
-            {selectedOption === 'choose-date' && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="flex justify-center"
-                data-testid="calendar-container"
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.4 }}
+                className="space-y-6 pt-6 border-t border-border"
               >
-                <div className="rounded-md border border-border p-4 bg-background">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={handleCalendarSelect}
-                    disabled={(date) => date < tomorrow}
-                    className="rounded-md"
-                    data-testid="calendar"
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Package className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-semibold text-foreground">Collection Date</h2>
+                    <p className="text-sm text-muted-foreground">When should we pick it up?</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Tile
+                    icon={Zap}
+                    title="ASAP"
+                    description="Next available day"
+                    selected={collectionOption === 'asap'}
+                    onClick={() => handleCollectionOptionSelect('asap')}
+                    testId="tile-collection-asap"
+                  />
+                  <Tile
+                    icon={Clock}
+                    title="This week"
+                    description="Pick a day"
+                    selected={collectionOption === 'this-week'}
+                    onClick={() => handleCollectionOptionSelect('this-week')}
+                    testId="tile-collection-this-week"
+                  />
+                  <Tile
+                    icon={CalendarIcon}
+                    title="Choose date"
+                    description="Pick any date"
+                    selected={collectionOption === 'choose-date'}
+                    onClick={() => handleCollectionOptionSelect('choose-date')}
+                    testId="tile-collection-choose-date"
                   />
                 </div>
+
+                <AnimatePresence mode="wait">
+                  {collectionOption === 'this-week' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="flex gap-3 justify-center flex-wrap"
+                      data-testid="collection-week-days"
+                    >
+                      {collectionWeekDays.map((day) => (
+                        <Chip
+                          key={day.full}
+                          selected={confirmedCollectionDate === day.full}
+                          onClick={() => handleCollectionWeekDaySelect(day.full)}
+                        >
+                          <div className="text-center">
+                            <div className="text-xs">{day.label}</div>
+                            <div className="font-semibold">{day.day}</div>
+                          </div>
+                        </Chip>
+                      ))}
+                    </motion.div>
+                  )}
+
+                  {collectionOption === 'choose-date' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="flex justify-center"
+                      data-testid="collection-calendar"
+                    >
+                      <div className="rounded-md border border-border p-4 bg-background">
+                        <Calendar
+                          mode="single"
+                          selected={selectedCollectionDate}
+                          onSelect={handleCollectionCalendarSelect}
+                          disabled={(date) => date < collectionMinDate}
+                          className="rounded-md"
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             )}
           </AnimatePresence>
 
           <AnimatePresence>
-            {confirmedDate && (
+            {confirmedDeliveryDate && confirmedCollectionDate && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -174,7 +325,10 @@ export default function DeliveryDate() {
                 data-testid="confirmation-message"
               >
                 <p className="text-foreground font-medium">
-                  Got it — we'll plan delivery for {formatConfirmationDate(confirmedDate)}.
+                  Delivery: {formatConfirmationDate(confirmedDeliveryDate)} — Collection: {formatConfirmationDate(confirmedCollectionDate)}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {getHireDays()} day hire period
                 </p>
               </motion.div>
             )}
@@ -183,7 +337,7 @@ export default function DeliveryDate() {
           <div className="flex justify-center items-center gap-4 pt-4">
             <Button
               variant="ghost"
-              onClick={() => setLocation('/location')}
+              onClick={() => setLocation('/waste')}
               data-testid="button-back"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -192,14 +346,14 @@ export default function DeliveryDate() {
             <Button 
               size="lg" 
               onClick={handleContinue}
-              disabled={!confirmedDate}
+              disabled={!canContinue}
               data-testid="button-continue"
             >
               Continue
             </Button>
           </div>
           
-          <EducationPill text="Choosing your delivery date helps us schedule the right lorry and permit if needed." />
+          <EducationPill text="Most providers include 7-14 days hire. Longer periods may incur extra charges." />
         </div>
       </motion.main>
     </div>
