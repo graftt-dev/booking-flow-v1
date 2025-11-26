@@ -190,27 +190,22 @@ export const getProviderPrice = (provider: Provider, size: string, items: string
   return subtotal + vat;
 };
 
-export const sortProviders = (providers: Provider[], mode: 'recommended' | 'cheapest' | 'earliest', size: string, items: string[], placement: string) => {
+export const sortProviders = (providers: Provider[], mode: 'best' | 'cheapest' | 'greenest', size: string, items: string[], placement: string) => {
   const sorted = [...providers];
   
   if (mode === 'cheapest') {
     sorted.sort((a, b) => getProviderPrice(a, size, items, placement) - getProviderPrice(b, size, items, placement));
-  } else if (mode === 'earliest') {
-    const dayOrder = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  } else if (mode === 'greenest') {
     sorted.sort((a, b) => {
-      const aDay = dayOrder.indexOf(a.earliestDay.split(' ')[0]);
-      const bDay = dayOrder.indexOf(b.earliestDay.split(' ')[0]);
-      if (aDay !== bDay) return aDay - bDay;
+      if (b.recyclingPct !== a.recyclingPct) return b.recyclingPct - a.recyclingPct;
       return b.rating - a.rating;
     });
   } else {
     sorted.sort((a, b) => {
       const aPrice = getProviderPrice(a, size, items, placement);
       const bPrice = getProviderPrice(b, size, items, placement);
-      const aDay = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(a.earliestDay.split(' ')[0]);
-      const bDay = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].indexOf(b.earliestDay.split(' ')[0]);
-      const aScore = (aPrice * 0.35) + (aDay * 50 * 0.25) + ((5 - a.rating) * 100 * 0.2) + ((100 - a.recyclingPct) * 2 * 0.2);
-      const bScore = (bPrice * 0.35) + (bDay * 50 * 0.25) + ((5 - b.rating) * 100 * 0.2) + ((100 - b.recyclingPct) * 2 * 0.2);
+      const aScore = (aPrice * 0.35) + ((5 - a.rating) * 100 * 0.3) + ((100 - a.recyclingPct) * 2 * 0.35);
+      const bScore = (bPrice * 0.35) + ((5 - b.rating) * 100 * 0.3) + ((100 - b.recyclingPct) * 2 * 0.35);
       return aScore - bScore;
     });
   }

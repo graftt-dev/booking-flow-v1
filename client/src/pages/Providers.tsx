@@ -14,12 +14,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { calculateTotals } from '@/lib/pricing';
 import { ArrowLeft } from 'lucide-react';
 
-type SortMode = 'recommended' | 'cheapest' | 'earliest';
+type SortMode = 'best' | 'cheapest' | 'greenest';
 
 export default function Providers() {
   const [, setLocation] = useLocation();
   const { size, items, itemQuantities, placement, providerId, setProviderId, setTotals, deliveryDate, collectionDate } = useJourneyStore();
-  const [sortMode, setSortMode] = useState<SortMode>('recommended');
+  const [sortMode, setSortMode] = useState<SortMode>('best');
   const [providers, setProviders] = useState(allProviders);
   const [filters, setFilters] = useState({
     distance: 'any',
@@ -71,9 +71,9 @@ export default function Providers() {
           <Tabs value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)} className="w-full">
             <div className="flex justify-center mb-8">
               <TabsList data-testid="tabs-sort">
-                <TabsTrigger value="recommended" data-testid="tab-recommended">Recommended</TabsTrigger>
+                <TabsTrigger value="best" data-testid="tab-best">Best</TabsTrigger>
                 <TabsTrigger value="cheapest" data-testid="tab-cheapest">Cheapest</TabsTrigger>
-                <TabsTrigger value="earliest" data-testid="tab-earliest">Earliest</TabsTrigger>
+                <TabsTrigger value="greenest" data-testid="tab-greenest">Greenest</TabsTrigger>
               </TabsList>
             </div>
           </Tabs>
