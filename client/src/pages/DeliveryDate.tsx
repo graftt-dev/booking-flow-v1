@@ -9,10 +9,10 @@ import Chip from '@/components/Chip';
 import Tile from '@/components/Tile';
 import { useJourneyStore } from '@/store/journeyStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar as CalendarIcon, Clock, Zap, ArrowLeft, Truck, Package } from 'lucide-react';
+import { Calendar as CalendarIcon, Zap, ArrowLeft, Truck, Package } from 'lucide-react';
 import { format, addDays, differenceInDays } from 'date-fns';
 
-type DateOption = 'asap' | 'this-week' | 'choose-date' | null;
+type DateOption = 'asap' | 'choose-date' | null;
 
 export default function DeliveryDate() {
   const [, setLocation] = useLocation();
@@ -44,13 +44,6 @@ export default function DeliveryDate() {
 
   const handleDeliveryOptionSelect = (option: DateOption) => {
     setDeliveryOption(option);
-    
-    if (option === 'asap') {
-      const asapDate = format(tomorrow, 'yyyy-MM-dd');
-      setConfirmedDeliveryDate(asapDate);
-      setDeliveryDate(asapDate);
-      setShowCollection(true);
-    }
   };
 
   const handleDeliveryWeekDaySelect = (dateStr: string) => {
@@ -71,12 +64,6 @@ export default function DeliveryDate() {
 
   const handleCollectionOptionSelect = (option: DateOption) => {
     setCollectionOption(option);
-    
-    if (option === 'asap') {
-      const asapDate = format(collectionMinDate, 'yyyy-MM-dd');
-      setConfirmedCollectionDate(asapDate);
-      setCollectionDate(asapDate);
-    }
   };
 
   const handleCollectionWeekDaySelect = (dateStr: string) => {
@@ -144,7 +131,7 @@ export default function DeliveryDate() {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Tile
                 icon={Zap}
                 title="ASAP"
@@ -152,14 +139,6 @@ export default function DeliveryDate() {
                 selected={deliveryOption === 'asap'}
                 onClick={() => handleDeliveryOptionSelect('asap')}
                 testId="tile-delivery-asap"
-              />
-              <Tile
-                icon={Clock}
-                title="This week"
-                description="Pick a day this week"
-                selected={deliveryOption === 'this-week'}
-                onClick={() => handleDeliveryOptionSelect('this-week')}
-                testId="tile-delivery-this-week"
               />
               <Tile
                 icon={CalendarIcon}
@@ -172,7 +151,7 @@ export default function DeliveryDate() {
             </div>
 
             <AnimatePresence mode="wait">
-              {deliveryOption === 'this-week' && (
+              {deliveryOption === 'asap' && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
@@ -238,22 +217,14 @@ export default function DeliveryDate() {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Tile
                     icon={Zap}
                     title="ASAP"
-                    description="Next available day"
+                    description="As soon as possible"
                     selected={collectionOption === 'asap'}
                     onClick={() => handleCollectionOptionSelect('asap')}
                     testId="tile-collection-asap"
-                  />
-                  <Tile
-                    icon={Clock}
-                    title="This week"
-                    description="Pick a day"
-                    selected={collectionOption === 'this-week'}
-                    onClick={() => handleCollectionOptionSelect('this-week')}
-                    testId="tile-collection-this-week"
                   />
                   <Tile
                     icon={CalendarIcon}
@@ -266,7 +237,7 @@ export default function DeliveryDate() {
                 </div>
 
                 <AnimatePresence mode="wait">
-                  {collectionOption === 'this-week' && (
+                  {collectionOption === 'asap' && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
