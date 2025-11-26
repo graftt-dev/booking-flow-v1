@@ -83,7 +83,7 @@ export default function Providers() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="px-4 py-8 relative"
       >
-        <div className="hidden lg:block fixed left-4 top-24 w-72 z-10">
+        <div className="hidden lg:block fixed left-4 top-72 w-72 z-10">
           <Card className="p-5">
             <h2 className="text-lg font-semibold text-foreground mb-1">Your Selection</h2>
             <p className="text-sm text-muted-foreground mb-5">Edit any detail to update providers</p>
