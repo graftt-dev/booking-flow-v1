@@ -1,4 +1,4 @@
-import { Star, Clock, Shield, Leaf, FileCheck, CheckCircle2 } from 'lucide-react';
+import { Star, Shield, Leaf, FileCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn, formatCurrency } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -62,11 +62,6 @@ export default function ProviderCard({
                   <Star className="w-3 h-3 fill-primary text-primary" />
                   <span className="font-medium">{provider.rating}</span>
                   <span>({provider.reviews.toLocaleString()})</span>
-                </div>
-                <span>•</span>
-                <div className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  <span>{provider.earliestDay}</span>
                 </div>
               </div>
             </div>
