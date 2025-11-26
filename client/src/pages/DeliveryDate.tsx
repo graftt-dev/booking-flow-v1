@@ -407,7 +407,7 @@ export default function DeliveryDate() {
                   <Info className="w-4 h-4 mt-0.5 shrink-0" />
                   <p>
                     Most providers include <span className="font-semibold text-foreground">7 days</span> hire for a {size || '6yd'} skip as standard. 
-                    Extra days may have additional charges.
+                    Extra days may have additional charges. <span className="font-medium">Hire terms are provider dependent.</span>
                   </p>
                 </div>
               </motion.div>
