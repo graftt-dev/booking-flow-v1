@@ -9,10 +9,11 @@ import Chip from '@/components/Chip';
 import Tile from '@/components/Tile';
 import { useJourneyStore } from '@/store/journeyStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar as CalendarIcon, Zap, ArrowLeft, Truck, Package } from 'lucide-react';
+import { Calendar as CalendarIcon, Zap, ArrowLeft, Truck, Package, CalendarRange } from 'lucide-react';
 import { format, addDays, differenceInDays } from 'date-fns';
+import type { DateRange } from 'react-day-picker';
 
-type DateOption = 'asap' | 'choose-date' | null;
+type DateOption = 'asap' | 'choose-date' | 'flexible' | null;
 
 export default function DeliveryDate() {
   const [, setLocation] = useLocation();
@@ -24,6 +25,10 @@ export default function DeliveryDate() {
   const [selectedCollectionDate, setSelectedCollectionDate] = useState<Date | undefined>(collectionDate ? new Date(collectionDate) : undefined);
   const [confirmedDeliveryDate, setConfirmedDeliveryDate] = useState<string>(deliveryDate || '');
   const [confirmedCollectionDate, setConfirmedCollectionDate] = useState<string>(collectionDate || '');
+  const [deliveryDateRange, setDeliveryDateRange] = useState<DateRange | undefined>();
+  const [collectionDateRange, setCollectionDateRange] = useState<DateRange | undefined>();
+  const [isDeliveryFlexible, setIsDeliveryFlexible] = useState(false);
+  const [isCollectionFlexible, setIsCollectionFlexible] = useState(false);
 
   const today = new Date();
   const tomorrow = addDays(today, 1);
@@ -39,11 +44,24 @@ export default function DeliveryDate() {
   });
 
   const deliveryWeekDays = getWeekDays(tomorrow);
-  const collectionMinDate = confirmedDeliveryDate ? addDays(new Date(confirmedDeliveryDate), 1) : addDays(tomorrow, 1);
+  const getCollectionMinDate = () => {
+    if (isDeliveryFlexible && deliveryDateRange?.to) {
+      return addDays(deliveryDateRange.to, 1);
+    }
+    if (confirmedDeliveryDate) {
+      return addDays(new Date(confirmedDeliveryDate), 1);
+    }
+    return addDays(tomorrow, 1);
+  };
+  const collectionMinDate = getCollectionMinDate();
   const collectionWeekDays = getWeekDays(collectionMinDate);
 
   const handleDeliveryOptionSelect = (option: DateOption) => {
     setDeliveryOption(option);
+    setIsDeliveryFlexible(option === 'flexible');
+    if (option !== 'flexible') {
+      setDeliveryDateRange(undefined);
+    }
   };
 
   const handleDeliveryWeekDaySelect = (dateStr: string) => {
@@ -62,8 +80,23 @@ export default function DeliveryDate() {
     }
   };
 
+  const handleDeliveryRangeSelect = (range: DateRange | undefined) => {
+    setDeliveryDateRange(range);
+    if (range?.from && range?.to) {
+      const fromStr = format(range.from, 'yyyy-MM-dd');
+      const toStr = format(range.to, 'yyyy-MM-dd');
+      setConfirmedDeliveryDate(`${fromStr}|${toStr}`);
+      setDeliveryDate(`${fromStr}|${toStr}`);
+      setShowCollection(true);
+    }
+  };
+
   const handleCollectionOptionSelect = (option: DateOption) => {
     setCollectionOption(option);
+    setIsCollectionFlexible(option === 'flexible');
+    if (option !== 'flexible') {
+      setCollectionDateRange(undefined);
+    }
   };
 
   const handleCollectionWeekDaySelect = (dateStr: string) => {
@@ -80,6 +113,16 @@ export default function DeliveryDate() {
     }
   };
 
+  const handleCollectionRangeSelect = (range: DateRange | undefined) => {
+    setCollectionDateRange(range);
+    if (range?.from && range?.to) {
+      const fromStr = format(range.from, 'yyyy-MM-dd');
+      const toStr = format(range.to, 'yyyy-MM-dd');
+      setConfirmedCollectionDate(`${fromStr}|${toStr}`);
+      setCollectionDate(`${fromStr}|${toStr}`);
+    }
+  };
+
   const handleContinue = () => {
     if (confirmedDeliveryDate && confirmedCollectionDate) {
       setLocation('/finding-providers');
@@ -87,12 +130,22 @@ export default function DeliveryDate() {
   };
 
   const formatConfirmationDate = (dateStr: string) => {
+    if (dateStr.includes('|')) {
+      const [from, to] = dateStr.split('|');
+      return `${format(new Date(from), 'EEE d')} - ${format(new Date(to), 'EEE d MMM')}`;
+    }
     return format(new Date(dateStr), 'EEEE, MMMM d');
   };
 
   const getHireDays = () => {
     if (confirmedDeliveryDate && confirmedCollectionDate) {
-      return differenceInDays(new Date(confirmedCollectionDate), new Date(confirmedDeliveryDate));
+      const deliveryEnd = confirmedDeliveryDate.includes('|') 
+        ? new Date(confirmedDeliveryDate.split('|')[1]) 
+        : new Date(confirmedDeliveryDate);
+      const collectionStart = confirmedCollectionDate.includes('|')
+        ? new Date(confirmedCollectionDate.split('|')[0])
+        : new Date(confirmedCollectionDate);
+      return differenceInDays(collectionStart, deliveryEnd);
     }
     return 0;
   };
@@ -131,7 +184,7 @@ export default function DeliveryDate() {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Tile
                 icon={Zap}
                 title="ASAP"
@@ -143,10 +196,18 @@ export default function DeliveryDate() {
               <Tile
                 icon={CalendarIcon}
                 title="Choose date"
-                description="Pick any date"
+                description="Pick a specific date"
                 selected={deliveryOption === 'choose-date'}
                 onClick={() => handleDeliveryOptionSelect('choose-date')}
                 testId="tile-delivery-choose-date"
+              />
+              <Tile
+                icon={CalendarRange}
+                title="I'm flexible"
+                description="Pick a date range"
+                selected={deliveryOption === 'flexible'}
+                onClick={() => handleDeliveryOptionSelect('flexible')}
+                testId="tile-delivery-flexible"
               />
             </div>
 
@@ -195,6 +256,38 @@ export default function DeliveryDate() {
                   </div>
                 </motion.div>
               )}
+
+              {deliveryOption === 'flexible' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                  className="space-y-3"
+                  data-testid="delivery-range-calendar"
+                >
+                  <p className="text-center text-sm text-muted-foreground">
+                    Select a start and end date for your delivery window
+                  </p>
+                  <div className="flex justify-center">
+                    <div className="rounded-md border border-border p-4 bg-background">
+                      <Calendar
+                        mode="range"
+                        selected={deliveryDateRange}
+                        onSelect={handleDeliveryRangeSelect}
+                        disabled={(date) => date < tomorrow}
+                        numberOfMonths={1}
+                        className="rounded-md"
+                      />
+                    </div>
+                  </div>
+                  {deliveryDateRange?.from && deliveryDateRange?.to && (
+                    <p className="text-center text-sm font-medium text-primary">
+                      Deliver between {format(deliveryDateRange.from, 'EEE d MMM')} and {format(deliveryDateRange.to, 'EEE d MMM')}
+                    </p>
+                  )}
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
 
@@ -217,7 +310,7 @@ export default function DeliveryDate() {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Tile
                     icon={Zap}
                     title="ASAP"
@@ -229,10 +322,18 @@ export default function DeliveryDate() {
                   <Tile
                     icon={CalendarIcon}
                     title="Choose date"
-                    description="Pick any date"
+                    description="Pick a specific date"
                     selected={collectionOption === 'choose-date'}
                     onClick={() => handleCollectionOptionSelect('choose-date')}
                     testId="tile-collection-choose-date"
+                  />
+                  <Tile
+                    icon={CalendarRange}
+                    title="I'm flexible"
+                    description="Pick a date range"
+                    selected={collectionOption === 'flexible'}
+                    onClick={() => handleCollectionOptionSelect('flexible')}
+                    testId="tile-collection-flexible"
                   />
                 </div>
 
@@ -281,6 +382,38 @@ export default function DeliveryDate() {
                       </div>
                     </motion.div>
                   )}
+
+                  {collectionOption === 'flexible' && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      transition={{ duration: 0.3 }}
+                      className="space-y-3"
+                      data-testid="collection-range-calendar"
+                    >
+                      <p className="text-center text-sm text-muted-foreground">
+                        Select a start and end date for your collection window
+                      </p>
+                      <div className="flex justify-center">
+                        <div className="rounded-md border border-border p-4 bg-background">
+                          <Calendar
+                            mode="range"
+                            selected={collectionDateRange}
+                            onSelect={handleCollectionRangeSelect}
+                            disabled={(date) => date < collectionMinDate}
+                            numberOfMonths={1}
+                            className="rounded-md"
+                          />
+                        </div>
+                      </div>
+                      {collectionDateRange?.from && collectionDateRange?.to && (
+                        <p className="text-center text-sm font-medium text-primary">
+                          Collect between {format(collectionDateRange.from, 'EEE d MMM')} and {format(collectionDateRange.to, 'EEE d MMM')}
+                        </p>
+                      )}
+                    </motion.div>
+                  )}
                 </AnimatePresence>
               </motion.div>
             )}
@@ -299,7 +432,7 @@ export default function DeliveryDate() {
                   Delivery: {formatConfirmationDate(confirmedDeliveryDate)} — Collection: {formatConfirmationDate(confirmedCollectionDate)}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {getHireDays()} day hire period
+                  {getHireDays() > 0 ? `Approximately ${getHireDays()} day hire period` : 'Hire period will be confirmed'}
                 </p>
               </motion.div>
             )}
@@ -324,7 +457,7 @@ export default function DeliveryDate() {
             </Button>
           </div>
           
-          <EducationPill text="Most providers include 7-14 days hire. Longer periods may incur extra charges." />
+          <EducationPill text="Being flexible with dates can help providers offer better availability and pricing." />
         </div>
       </motion.main>
     </div>
