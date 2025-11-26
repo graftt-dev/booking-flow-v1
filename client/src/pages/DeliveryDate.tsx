@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
 import EducationPill from '@/components/EducationPill';
@@ -8,9 +9,20 @@ import { useJourneyStore } from '@/store/journeyStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Truck, Package, ArrowRight, Info, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format, addDays, addMonths, subMonths, differenceInDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, isSameMonth, isAfter, isBefore } from 'date-fns';
+import type { SkipSize } from '@/store/journeyStore';
 
 type SelectionPhase = 'delivery' | 'collection';
 type DateMode = 'specific' | 'flexible';
+
+const standardHireDays: Record<SkipSize, number> = {
+  "2yd": 7,
+  "4yd": 7,
+  "6yd": 7,
+  "8yd": 7,
+  "12yd": 14,
+  "14yd": 14,
+  "16yd": 14,
+};
 
 export default function DeliveryDate() {
   const [, setLocation] = useLocation();
@@ -31,6 +43,18 @@ export default function DeliveryDate() {
 
   const currentMode = phase === 'delivery' ? deliveryMode : collectionMode;
   const setCurrentMode = phase === 'delivery' ? setDeliveryMode : setCollectionMode;
+
+  const getStandardHireDays = () => {
+    return size ? standardHireDays[size] : 7;
+  };
+
+  const getRecommendedCollectionDate = (): Date | undefined => {
+    const effectiveDelivery = deliveryEnd || deliveryStart;
+    if (!effectiveDelivery) return undefined;
+    return addDays(effectiveDelivery, getStandardHireDays());
+  };
+
+  const recommendedDate = getRecommendedCollectionDate();
 
   const handleDateClick = (date: Date) => {
     if (phase === 'delivery') {
@@ -110,6 +134,10 @@ export default function DeliveryDate() {
     return isBefore(date, collectionMinDate);
   };
 
+  const isRecommendedDate = (date: Date) => {
+    return recommendedDate && isSameDay(date, recommendedDate) && phase === 'collection' && !collectionStart;
+  };
+
   const getDayClasses = (date: Date) => {
     const disabled = isDateDisabled(date);
     if (disabled) return 'text-muted-foreground/40 cursor-not-allowed';
@@ -144,6 +172,47 @@ export default function DeliveryDate() {
     return 'hover-elevate text-foreground';
   };
 
+  const renderDayButton = (day: Date, isCurrentMonth: boolean) => {
+    const disabled = isDateDisabled(day);
+    const dayClasses = getDayClasses(day);
+    const isRecommended = isRecommendedDate(day);
+    
+    const button = (
+      <button
+        onClick={() => !disabled && isCurrentMonth && handleDateClick(day)}
+        disabled={disabled || !isCurrentMonth}
+        className={`
+          aspect-square flex items-center justify-center text-sm rounded-full transition-all relative
+          ${!isCurrentMonth ? 'invisible' : dayClasses}
+          ${isRecommended ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' : ''}
+        `}
+        data-testid={`day-${format(day, 'yyyy-MM-dd')}`}
+      >
+        {format(day, 'd')}
+      </button>
+    );
+
+    if (isRecommended && isCurrentMonth) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {button}
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-[200px] text-center">
+            <p className="text-xs">
+              <span className="font-semibold">Recommended collection</span>
+              <br />
+              Based on standard {getStandardHireDays()}-day hire for {size || '6yd'} skips. 
+              Actual terms vary by provider.
+            </p>
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return button;
+  };
+
   const renderMonth = (monthDate: Date, isSecondMonth = false) => {
     const monthStart = startOfMonth(monthDate);
     const monthEnd = endOfMonth(monthDate);
@@ -167,22 +236,10 @@ export default function DeliveryDate() {
         <div className="grid grid-cols-7 gap-1">
           {days.map((day, i) => {
             const isCurrentMonth = isSameMonth(day, monthDate);
-            const disabled = isDateDisabled(day);
-            const dayClasses = getDayClasses(day);
-            
             return (
-              <button
-                key={i}
-                onClick={() => !disabled && isCurrentMonth && handleDateClick(day)}
-                disabled={disabled || !isCurrentMonth}
-                className={`
-                  aspect-square flex items-center justify-center text-sm rounded-full transition-all
-                  ${!isCurrentMonth ? 'invisible' : dayClasses}
-                `}
-                data-testid={`day-${format(day, 'yyyy-MM-dd')}`}
-              >
-                {format(day, 'd')}
-              </button>
+              <div key={i}>
+                {renderDayButton(day, isCurrentMonth)}
+              </div>
             );
           })}
         </div>
@@ -339,7 +396,7 @@ export default function DeliveryDate() {
                 {renderMonth(addMonths(currentMonth, 1), true)}
               </div>
 
-              <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-border text-xs text-muted-foreground">
+              <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-border text-xs text-muted-foreground flex-wrap">
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 rounded-full bg-primary" />
                   <span>Selected</span>
@@ -352,6 +409,12 @@ export default function DeliveryDate() {
                   <div className="w-4 h-4 rounded-full bg-primary/20" />
                   <span>Hire period</span>
                 </div>
+                {phase === 'collection' && !collectionStart && recommendedDate && (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full ring-2 ring-primary ring-offset-1 ring-offset-background" />
+                    <span>Recommended ({getStandardHireDays()} days)</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -387,7 +450,7 @@ export default function DeliveryDate() {
                 <div className="flex items-start gap-2 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground">
                   <Info className="w-4 h-4 mt-0.5 shrink-0" />
                   <p>
-                    Most providers include <span className="font-semibold text-foreground">7 days</span> hire for a {size || '6yd'} skip as standard. 
+                    Most providers include <span className="font-semibold text-foreground">{getStandardHireDays()} days</span> hire for a {size || '6yd'} skip as standard. 
                     Extra days may have additional charges.
                   </p>
                 </div>
