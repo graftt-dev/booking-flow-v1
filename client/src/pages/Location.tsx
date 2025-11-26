@@ -137,7 +137,7 @@ export default function Location() {
               >
                 <Truck className="w-5 h-5" />
                 <div className="text-left">
-                  <div className="font-medium">No, on the road</div>
+                  <div className="font-medium">No, on public property</div>
                   <div className="text-sm text-muted-foreground">We'll arrange the permit for you</div>
                 </div>
               </button>
