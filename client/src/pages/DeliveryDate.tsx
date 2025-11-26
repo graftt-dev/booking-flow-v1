@@ -144,7 +144,7 @@ export default function DeliveryDate() {
     return 'hover-elevate text-foreground';
   };
 
-  const renderMonth = (monthDate: Date) => {
+  const renderMonth = (monthDate: Date, isSecondMonth = false) => {
     const monthStart = startOfMonth(monthDate);
     const monthEnd = endOfMonth(monthDate);
     const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
@@ -153,7 +153,7 @@ export default function DeliveryDate() {
     const weekDays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
     return (
-      <div className="flex-1">
+      <div className="flex-1" data-testid={`calendar-month-${isSecondMonth ? 'next' : 'current'}`}>
         <h3 className="text-center font-semibold text-foreground mb-4">
           {format(monthDate, 'MMMM yyyy')}
         </h3>
@@ -168,6 +168,7 @@ export default function DeliveryDate() {
           {days.map((day, i) => {
             const isCurrentMonth = isSameMonth(day, monthDate);
             const disabled = isDateDisabled(day);
+            const dayClasses = getDayClasses(day);
             
             return (
               <button
@@ -176,7 +177,7 @@ export default function DeliveryDate() {
                 disabled={disabled || !isCurrentMonth}
                 className={`
                   aspect-square flex items-center justify-center text-sm rounded-full transition-all
-                  ${!isCurrentMonth ? 'invisible' : getDayClasses(day)}
+                  ${!isCurrentMonth ? 'invisible' : dayClasses}
                 `}
                 data-testid={`day-${format(day, 'yyyy-MM-dd')}`}
               >
@@ -334,8 +335,8 @@ export default function DeliveryDate() {
               </div>
               
               <div className="flex gap-8">
-                {renderMonth(currentMonth)}
-                {renderMonth(addMonths(currentMonth, 1))}
+                {renderMonth(currentMonth, false)}
+                {renderMonth(addMonths(currentMonth, 1), true)}
               </div>
 
               <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-border text-xs text-muted-foreground">
