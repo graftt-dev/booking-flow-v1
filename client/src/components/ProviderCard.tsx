@@ -1,9 +1,9 @@
-import { Star, Shield, Leaf, FileCheck } from 'lucide-react';
+import { useState } from 'react';
+import { Star, Shield, Leaf, FileCheck, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn, formatCurrency } from '@/lib/utils';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import type { Provider } from '@/lib/providers';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { itemPrices } from '@/lib/pricing';
 
 interface ProviderCardProps {
@@ -48,8 +48,11 @@ export default function ProviderCard({
   deliveryDate = '',
   collectionDate = ''
 }: ProviderCardProps) {
+  const [expanded, setExpanded] = useState(false);
   const extraDays = calculateExtraDays(deliveryDate, collectionDate, provider.standardHireDays);
   const extraDaysCost = extraDays * provider.extraDayRate;
+  const totalPrice = (basePrice + extraDaysCost + extras + permit) * 1.2;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -59,110 +62,50 @@ export default function ProviderCard({
     >
       <div
         className={cn(
-          "relative p-4 rounded-md border-2 transition-all bg-card hover-elevate",
+          "relative p-4 rounded-md border-2 transition-all bg-card",
           selected
             ? "border-primary shadow-soft"
-            : "border-card-border"
+            : "border-card-border hover-elevate"
         )}
       >
-        <div className="flex items-center justify-between gap-4 mb-3">
+        <div className="flex items-start justify-between gap-4 mb-4">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <span className="text-sm font-bold text-primary">{provider.logo}</span>
+            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <span className="text-lg font-bold text-primary">{provider.logo}</span>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground truncate">{provider.name}</h3>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <Star className="w-3 h-3 fill-primary text-primary" />
-                  <span className="font-medium">{provider.rating}</span>
-                  <span>({provider.reviews.toLocaleString()})</span>
-                </div>
-              </div>
+              <h3 className="font-semibold text-foreground text-lg">{provider.name}</h3>
             </div>
           </div>
           
           <div className="text-right flex-shrink-0">
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-foreground">{formatCurrency((basePrice + extraDaysCost + extras + permit) * 1.2)}</span>
-            </div>
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="text-xs text-primary hover:underline" data-testid="button-breakdown">
-                  Breakdown
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80" data-testid="price-breakdown">
-                <div className="space-y-2">
-                  <h4 className="font-semibold mb-3">Price Breakdown</h4>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Base price</span>
-                    <span>{formatCurrency(basePrice)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Hire terms</span>
-                    <span>{provider.standardHireDays} days included</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      Extra hire {extraDays > 0 ? `(${extraDays} × ${formatCurrency(provider.extraDayRate)})` : `@ ${formatCurrency(provider.extraDayRate)}/day`}
-                    </span>
-                    <span>{formatCurrency(extraDaysCost)}</span>
-                  </div>
-                  {items.length > 0 && items.map((item) => {
-                    const quantity = itemQuantities[item] || 1;
-                    const itemPrice = itemPrices[item] || 0;
-                    const itemTotal = itemPrice * quantity;
-                    return (
-                      <div key={item} className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          {quantity > 1 ? `${quantity}× ` : ''}{item}
-                        </span>
-                        <span>{formatCurrency(itemTotal)}</span>
-                      </div>
-                    );
-                  })}
-                  {placement === 'road' && permit > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Road permit</span>
-                      <span>{formatCurrency(permit)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">VAT (20%)</span>
-                    <span>{formatCurrency((basePrice + extraDaysCost + extras + permit) * 0.2)}</span>
-                  </div>
-                  <div className="border-t pt-2 mt-2 flex justify-between font-semibold">
-                    <span>Total</span>
-                    <span>{formatCurrency((basePrice + extraDaysCost + extras + permit) * 1.2)}</span>
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+            <span className="text-2xl font-bold text-foreground">{formatCurrency(totalPrice)}</span>
+            <p className="text-xs text-muted-foreground">inc. VAT</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex items-center gap-2 px-3 py-2 bg-primary/5 rounded-lg border border-primary/20">
+            <Star className="w-4 h-4 fill-primary text-primary" />
+            <span className="font-bold text-foreground">{provider.rating}</span>
+            <span className="text-xs text-muted-foreground">({provider.reviews.toLocaleString()} reviews)</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-2 bg-primary/5 rounded-lg border border-primary/20">
+            <Leaf className="w-4 h-4 text-primary" />
+            <span className="font-bold text-foreground">{provider.recyclingPct}%</span>
+            <span className="text-xs text-muted-foreground">recycled</span>
           </div>
         </div>
         
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 text-xs flex-1 flex-wrap">
-            <div className="flex items-center gap-1.5">
-              <Shield className="w-3 h-3 text-primary" />
-              <span className="text-muted-foreground">
-                Waste Carriers: <span className="text-primary font-medium">{provider.wasteCarrierLicense}</span>
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <FileCheck className="w-3 h-3 text-primary" />
-              <span className="text-muted-foreground">
-                Site Permit: <span className="text-primary font-medium">{provider.sitePermit}</span>
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Leaf className="w-3 h-3 text-primary" />
-              <span className="text-muted-foreground">
-                Recycling Rate: <span className="text-primary font-medium">{provider.recyclingPct}%</span>
-              </span>
-            </div>
-          </div>
+          <button 
+            onClick={() => setExpanded(!expanded)}
+            className="flex items-center gap-1 text-xs text-primary hover:underline"
+            data-testid="button-breakdown"
+          >
+            <span>{expanded ? 'Hide' : 'View'} breakdown</span>
+            <ChevronDown className={cn("w-3 h-3 transition-transform", expanded && "rotate-180")} />
+          </button>
           
           <Button
             onClick={onSelect}
@@ -171,9 +114,87 @@ export default function ProviderCard({
             className="min-w-28"
             data-testid={`button-select-${provider.id}`}
           >
-            {selected ? 'Selected ✓' : 'Select'}
+            {selected ? 'Selected' : 'Select'}
           </Button>
         </div>
+
+        <AnimatePresence>
+          {expanded && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="pt-4 mt-4 border-t border-border space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md">
+                    <Shield className="w-4 h-4 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Waste Carriers License</p>
+                      <p className="text-sm font-semibold text-foreground">{provider.wasteCarrierLicense}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md">
+                    <FileCheck className="w-4 h-4 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Site Permit</p>
+                      <p className="text-sm font-semibold text-foreground">{provider.sitePermit}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-sm">Price Breakdown</h4>
+                  <div className="space-y-1.5 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Base price</span>
+                      <span>{formatCurrency(basePrice)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Hire terms</span>
+                      <span className="text-primary font-medium">{provider.standardHireDays} days included</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">
+                        Extra days {extraDays > 0 ? `(${extraDays} × ${formatCurrency(provider.extraDayRate)})` : `@ ${formatCurrency(provider.extraDayRate)}/day`}
+                      </span>
+                      <span>{formatCurrency(extraDaysCost)}</span>
+                    </div>
+                    {items.length > 0 && items.map((item) => {
+                      const quantity = itemQuantities[item] || 1;
+                      const itemPrice = itemPrices[item] || 0;
+                      const itemTotal = itemPrice * quantity;
+                      return (
+                        <div key={item} className="flex justify-between">
+                          <span className="text-muted-foreground">
+                            {quantity > 1 ? `${quantity}× ` : ''}{item}
+                          </span>
+                          <span>{formatCurrency(itemTotal)}</span>
+                        </div>
+                      );
+                    })}
+                    {placement === 'road' && permit > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Road permit</span>
+                        <span>{formatCurrency(permit)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">VAT (20%)</span>
+                      <span>{formatCurrency((basePrice + extraDaysCost + extras + permit) * 0.2)}</span>
+                    </div>
+                    <div className="border-t pt-2 mt-2 flex justify-between font-semibold">
+                      <span>Total</span>
+                      <span className="text-primary">{formatCurrency(totalPrice)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );
