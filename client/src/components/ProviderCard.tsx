@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Star, Shield, Leaf, FileCheck, ChevronDown } from 'lucide-react';
+import { Star, Shield, Leaf, ChevronDown, BadgeCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn, formatCurrency } from '@/lib/utils';
 import type { Provider } from '@/lib/providers';
@@ -30,6 +30,31 @@ function calculateExtraDays(deliveryDate: string, collectionDate: string, standa
   const diffTime = Math.abs(collection.getTime() - delivery.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   return Math.max(0, diffDays - standardHireDays);
+}
+
+function StarRating({ rating }: { rating: number }) {
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  
+  return (
+    <div className="flex items-center gap-0.5">
+      {[...Array(fullStars)].map((_, i) => (
+        <Star key={`full-${i}`} className="w-3 h-3 fill-primary text-primary" />
+      ))}
+      {hasHalfStar && (
+        <div className="relative w-3 h-3">
+          <Star className="absolute w-3 h-3 text-muted-foreground/30" />
+          <div className="absolute overflow-hidden w-[50%]">
+            <Star className="w-3 h-3 fill-primary text-primary" />
+          </div>
+        </div>
+      )}
+      {[...Array(emptyStars)].map((_, i) => (
+        <Star key={`empty-${i}`} className="w-3 h-3 text-muted-foreground/30" />
+      ))}
+    </div>
+  );
 }
 
 export default function ProviderCard({
@@ -68,13 +93,17 @@ export default function ProviderCard({
             : "border-card-border hover-elevate"
         )}
       >
-        <div className="flex items-start justify-between gap-4 mb-4">
+        <div className="flex items-start justify-between gap-4 mb-3">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
               <span className="text-lg font-bold text-primary">{provider.logo}</span>
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-foreground text-lg">{provider.name}</h3>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <StarRating rating={provider.rating} />
+                <span className="text-xs text-muted-foreground">{provider.rating} ({provider.reviews.toLocaleString()})</span>
+              </div>
             </div>
           </div>
           
@@ -84,16 +113,14 @@ export default function ProviderCard({
           </div>
         </div>
 
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex items-center gap-2 px-3 py-2 bg-primary/5 rounded-lg border border-primary/20">
-            <Star className="w-4 h-4 fill-primary text-primary" />
-            <span className="font-bold text-foreground">{provider.rating}</span>
-            <span className="text-xs text-muted-foreground">({provider.reviews.toLocaleString()} reviews)</span>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/10 rounded-md">
+            <BadgeCheck className="w-4 h-4 text-primary" />
+            <span className="text-xs font-semibold text-primary">Licensed Operator</span>
           </div>
-          <div className="flex items-center gap-2 px-3 py-2 bg-primary/5 rounded-lg border border-primary/20">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-primary/10 rounded-md">
             <Leaf className="w-4 h-4 text-primary" />
-            <span className="font-bold text-foreground">{provider.recyclingPct}%</span>
-            <span className="text-xs text-muted-foreground">recycled</span>
+            <span className="text-xs font-semibold text-primary">{provider.recyclingPct}% Recycled</span>
           </div>
         </div>
         
@@ -137,7 +164,7 @@ export default function ProviderCard({
                     </div>
                   </div>
                   <div className="flex items-center gap-2 p-2 bg-muted/50 rounded-md">
-                    <FileCheck className="w-4 h-4 text-primary" />
+                    <BadgeCheck className="w-4 h-4 text-primary" />
                     <div>
                       <p className="text-xs text-muted-foreground">Site Permit</p>
                       <p className="text-sm font-semibold text-foreground">{provider.sitePermit}</p>
