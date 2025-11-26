@@ -22,6 +22,8 @@ export interface Provider {
   inclusions: string[];
   wasteCarrierLicense: string;
   sitePermit: string;
+  standardHireDays: number;
+  extraDayRate: number;
 }
 
 export const providers: Provider[] = [
@@ -40,7 +42,9 @@ export const providers: Provider[] = [
     earliestRange: "8-11",
     inclusions: ["2-week hire", "Same-day delivery", "Free permit handling"],
     wasteCarrierLicense: "CBDL847291",
-    sitePermit: "EPR/LP3847CF"
+    sitePermit: "EPR/LP3847CF",
+    standardHireDays: 14,
+    extraDayRate: 5
   },
   {
     id: "eco-skip",
@@ -57,7 +61,9 @@ export const providers: Provider[] = [
     earliestRange: "9-12",
     inclusions: ["3-week hire", "Eco-friendly", "Free waste sorting"],
     wasteCarrierLicense: "CBDL592184",
-    sitePermit: "EPR/LP7621CF"
+    sitePermit: "EPR/LP7621CF",
+    standardHireDays: 21,
+    extraDayRate: 4
   },
   {
     id: "rapid-waste",
@@ -74,7 +80,9 @@ export const providers: Provider[] = [
     earliestRange: "13-16",
     inclusions: ["10-day hire", "Next-day collection", "Extended hours"],
     wasteCarrierLicense: "CBDL316758",
-    sitePermit: "EPR/LP1294CF"
+    sitePermit: "EPR/LP1294CF",
+    standardHireDays: 10,
+    extraDayRate: 6
   },
   {
     id: "green-bins",
@@ -91,7 +99,9 @@ export const providers: Provider[] = [
     earliestRange: "14-17",
     inclusions: ["2-week hire", "Free permits", "Recycling report"],
     wasteCarrierLicense: "CBDL729463",
-    sitePermit: "EPR/LP5038CF"
+    sitePermit: "EPR/LP5038CF",
+    standardHireDays: 14,
+    extraDayRate: 5
   },
   {
     id: "clearway",
@@ -108,7 +118,9 @@ export const providers: Provider[] = [
     earliestRange: "8-11",
     inclusions: ["2-week hire", "24/7 support", "Flexible collection"],
     wasteCarrierLicense: "CBDL483926",
-    sitePermit: "EPR/LP8467CF"
+    sitePermit: "EPR/LP8467CF",
+    standardHireDays: 14,
+    extraDayRate: 4
   },
   {
     id: "premier-skip",
@@ -125,7 +137,9 @@ export const providers: Provider[] = [
     earliestRange: "13-16",
     inclusions: ["3-week hire", "Premium service", "Priority delivery"],
     wasteCarrierLicense: "CBDL651842",
-    sitePermit: "EPR/LP2915CF"
+    sitePermit: "EPR/LP2915CF",
+    standardHireDays: 21,
+    extraDayRate: 6
   },
   {
     id: "urban-waste",
@@ -142,7 +156,9 @@ export const providers: Provider[] = [
     earliestRange: "9-12",
     inclusions: ["2-week hire", "City specialist", "Same-week service"],
     wasteCarrierLicense: "CBDL274815",
-    sitePermit: "EPR/LP6183CF"
+    sitePermit: "EPR/LP6183CF",
+    standardHireDays: 14,
+    extraDayRate: 5
   },
   {
     id: "fast-skip",
@@ -159,7 +175,9 @@ export const providers: Provider[] = [
     earliestRange: "8-11",
     inclusions: ["10-day hire", "Express delivery", "Weekend service"],
     wasteCarrierLicense: "CBDL938671",
-    sitePermit: "EPR/LP4572CF"
+    sitePermit: "EPR/LP4572CF",
+    standardHireDays: 10,
+    extraDayRate: 7
   },
 ];
 

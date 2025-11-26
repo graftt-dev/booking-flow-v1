@@ -19,6 +19,17 @@ interface ProviderCardProps {
   items: string[];
   itemQuantities: Record<string, number>;
   placement: string;
+  deliveryDate?: string;
+  collectionDate?: string;
+}
+
+function calculateExtraDays(deliveryDate: string, collectionDate: string, standardHireDays: number): number {
+  if (!deliveryDate || !collectionDate) return 0;
+  const delivery = new Date(deliveryDate);
+  const collection = new Date(collectionDate);
+  const diffTime = Math.abs(collection.getTime() - delivery.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return Math.max(0, diffDays - standardHireDays);
 }
 
 export default function ProviderCard({
@@ -33,8 +44,12 @@ export default function ProviderCard({
   vat,
   items,
   itemQuantities,
-  placement
+  placement,
+  deliveryDate = '',
+  collectionDate = ''
 }: ProviderCardProps) {
+  const extraDays = calculateExtraDays(deliveryDate, collectionDate, provider.standardHireDays);
+  const extraDaysCost = extraDays * provider.extraDayRate;
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -69,7 +84,7 @@ export default function ProviderCard({
           
           <div className="text-right flex-shrink-0">
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-foreground">{formatCurrency(price)}</span>
+              <span className="text-2xl font-bold text-foreground">{formatCurrency(price + extraDaysCost + (extraDaysCost * 0.2))}</span>
             </div>
             <Popover>
               <PopoverTrigger asChild>
@@ -84,6 +99,16 @@ export default function ProviderCard({
                     <span className="text-muted-foreground">Base price</span>
                     <span>{formatCurrency(basePrice)}</span>
                   </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Days hire</span>
+                    <span className="text-muted-foreground">{provider.standardHireDays} days included</span>
+                  </div>
+                  {extraDays > 0 && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Extra days ({extraDays} × {formatCurrency(provider.extraDayRate)})</span>
+                      <span>{formatCurrency(extraDaysCost)}</span>
+                    </div>
+                  )}
                   {items.length > 0 && items.map((item) => {
                     const quantity = itemQuantities[item] || 1;
                     const itemPrice = itemPrices[item] || 0;
@@ -105,11 +130,11 @@ export default function ProviderCard({
                   )}
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">VAT (20%)</span>
-                    <span>{formatCurrency(vat)}</span>
+                    <span>{formatCurrency(vat + (extraDaysCost * 0.2))}</span>
                   </div>
                   <div className="border-t pt-2 mt-2 flex justify-between font-semibold">
                     <span>Total</span>
-                    <span>{formatCurrency(price)}</span>
+                    <span>{formatCurrency(price + extraDaysCost + (extraDaysCost * 0.2))}</span>
                   </div>
                 </div>
               </PopoverContent>

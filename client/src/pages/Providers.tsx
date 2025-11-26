@@ -18,7 +18,7 @@ type SortMode = 'recommended' | 'cheapest' | 'earliest';
 
 export default function Providers() {
   const [, setLocation] = useLocation();
-  const { size, items, itemQuantities, placement, providerId, setProviderId, setTotals } = useJourneyStore();
+  const { size, items, itemQuantities, placement, providerId, setProviderId, setTotals, deliveryDate, collectionDate } = useJourneyStore();
   const [sortMode, setSortMode] = useState<SortMode>('recommended');
   const [providers, setProviders] = useState(allProviders);
   const [filters, setFilters] = useState({
@@ -105,6 +105,8 @@ export default function Providers() {
                     items={items}
                     itemQuantities={itemQuantities}
                     placement={placement || 'driveway'}
+                    deliveryDate={deliveryDate}
+                    collectionDate={collectionDate}
                   />
                 );
               })}
