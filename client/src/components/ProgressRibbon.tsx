@@ -6,11 +6,11 @@ interface ProgressRibbonProps {
 
 const steps = [
   "Placement",
-  "Delivery",
-  "Waste",
-  "Items",
   "Size",
+  "Waste",
+  "Delivery",
   "Providers",
+  "Items",
   "Checkout",
   "Done"
 ];

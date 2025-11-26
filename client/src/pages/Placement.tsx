@@ -13,7 +13,7 @@ export default function Placement() {
   
   const handleSelect = (value: 'driveway' | 'road') => {
     setPlacement(value);
-    setTimeout(() => setLocation('/waste'), 200);
+    setTimeout(() => setLocation('/size'), 200);
   };
   
   return (
@@ -30,7 +30,7 @@ export default function Placement() {
           Where should we place the skip?
         </h1>
         
-        <ProgressRibbon currentStep={1} />
+        <ProgressRibbon currentStep={0} />
         
         <div className="max-w-3xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
