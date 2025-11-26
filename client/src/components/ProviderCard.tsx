@@ -84,7 +84,7 @@ export default function ProviderCard({
           
           <div className="text-right flex-shrink-0">
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-bold text-foreground">{formatCurrency(price + extraDaysCost + (extraDaysCost * 0.2))}</span>
+              <span className="text-2xl font-bold text-foreground">{formatCurrency((basePrice + extraDaysCost + extras + permit) * 1.2)}</span>
             </div>
             <Popover>
               <PopoverTrigger asChild>
@@ -100,21 +100,21 @@ export default function ProviderCard({
                     <span>{formatCurrency(basePrice)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Days hire</span>
+                    <span className="text-muted-foreground">Hire terms</span>
                     <span>{provider.standardHireDays} days included</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">
-                      Extra days {extraDays > 0 ? `(${extraDays} days × ${formatCurrency(provider.extraDayRate)}/day)` : ''}
+                      Extra days {extraDays > 0 ? `(${extraDays} × ${formatCurrency(provider.extraDayRate)})` : `@ ${formatCurrency(provider.extraDayRate)}/day`}
                     </span>
-                    <span>{extraDays > 0 ? formatCurrency(extraDaysCost) : formatCurrency(0)}</span>
+                    <span>{formatCurrency(extraDaysCost)}</span>
                   </div>
                   {items.length > 0 && items.map((item) => {
                     const quantity = itemQuantities[item] || 1;
                     const itemPrice = itemPrices[item] || 0;
                     const itemTotal = itemPrice * quantity;
                     return (
-                      <div key={item} className="flex justify-between text-sm pl-3">
+                      <div key={item} className="flex justify-between text-sm">
                         <span className="text-muted-foreground">
                           {quantity > 1 ? `${quantity}× ` : ''}{item}
                         </span>
@@ -130,11 +130,11 @@ export default function ProviderCard({
                   )}
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">VAT (20%)</span>
-                    <span>{formatCurrency(vat + (extraDaysCost * 0.2))}</span>
+                    <span>{formatCurrency((basePrice + extraDaysCost + extras + permit) * 0.2)}</span>
                   </div>
                   <div className="border-t pt-2 mt-2 flex justify-between font-semibold">
                     <span>Total</span>
-                    <span>{formatCurrency(price + extraDaysCost + (extraDaysCost * 0.2))}</span>
+                    <span>{formatCurrency((basePrice + extraDaysCost + extras + permit) * 1.2)}</span>
                   </div>
                 </div>
               </PopoverContent>
