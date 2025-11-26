@@ -1,4 +1,4 @@
-import { Star, Clock, Shield, Leaf, Award, CheckCircle2 } from 'lucide-react';
+import { Star, Clock, Shield, Leaf, FileCheck, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn, formatCurrency } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -35,12 +35,10 @@ export default function ProviderCard({
   itemQuantities,
   placement
 }: ProviderCardProps) {
-  const iconMap: Record<string, any> = {
-    'Licensed Operator': Shield,
-    'Permit-ready': Award,
-    'High Recycling': Leaf,
-    'On-time': Clock,
-  };
+  const hasLicense = provider.badges.some(b => b.includes('Licensed'));
+  const hasPermit = provider.badges.some(b => b.includes('Permit'));
+  const recyclingBadge = provider.badges.find(b => b.includes('Recycling'));
+  const recyclingRate = recyclingBadge ? recyclingBadge.match(/\d+/)?.[0] : null;
   
   return (
     <motion.div
@@ -130,16 +128,27 @@ export default function ProviderCard({
         </div>
         
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 text-xs flex-1">
-            {provider.badges.slice(0, 3).map((badge) => {
-              const BadgeIcon = iconMap[badge.split(' ')[0] + (badge.includes('Recycling') ? ' Recycling' : badge.includes('On-time') ? ' On-time' : ' ' + badge.split(' ')[1])] || Shield;
-              return (
-                <div key={badge} className="flex items-center gap-1.5">
-                  <BadgeIcon className="w-3 h-3 text-primary" />
-                  <span className="text-muted-foreground">{badge}</span>
-                </div>
-              );
-            })}
+          <div className="flex items-center gap-4 text-xs flex-1 flex-wrap">
+            <div className="flex items-center gap-1.5">
+              <Shield className="w-3 h-3 text-primary" />
+              <span className="text-muted-foreground">
+                Waste Carriers: <span className={hasLicense ? "text-primary font-medium" : "text-muted-foreground"}>{hasLicense ? 'Yes' : 'No'}</span>
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <FileCheck className="w-3 h-3 text-primary" />
+              <span className="text-muted-foreground">
+                Site Permit: <span className={hasPermit ? "text-primary font-medium" : "text-muted-foreground"}>{hasPermit ? 'Yes' : 'No'}</span>
+              </span>
+            </div>
+            {recyclingRate && (
+              <div className="flex items-center gap-1.5">
+                <Leaf className="w-3 h-3 text-primary" />
+                <span className="text-muted-foreground">
+                  Recycling Rate: <span className="text-primary font-medium">{recyclingRate}%</span>
+                </span>
+              </div>
+            )}
           </div>
           
           <Button
