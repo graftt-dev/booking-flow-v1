@@ -107,6 +107,7 @@ export default function Providers() {
                     placement={placement || 'driveway'}
                     deliveryDate={deliveryDate}
                     collectionDate={collectionDate}
+                    size={size || '6yd'}
                   />
                 );
               })}
