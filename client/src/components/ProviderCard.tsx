@@ -101,14 +101,14 @@ export default function ProviderCard({
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Days hire</span>
-                    <span className="text-muted-foreground">{provider.standardHireDays} days included</span>
+                    <span>{provider.standardHireDays} days included</span>
                   </div>
-                  {extraDays > 0 && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Extra days ({extraDays} × {formatCurrency(provider.extraDayRate)})</span>
-                      <span>{formatCurrency(extraDaysCost)}</span>
-                    </div>
-                  )}
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">
+                      Extra days {extraDays > 0 ? `(${extraDays} days × ${formatCurrency(provider.extraDayRate)}/day)` : ''}
+                    </span>
+                    <span>{extraDays > 0 ? formatCurrency(extraDaysCost) : formatCurrency(0)}</span>
+                  </div>
                   {items.length > 0 && items.map((item) => {
                     const quantity = itemQuantities[item] || 1;
                     const itemPrice = itemPrices[item] || 0;
