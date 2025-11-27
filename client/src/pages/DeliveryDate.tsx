@@ -287,30 +287,6 @@ export default function DeliveryDate() {
               </button>
             </div>
 
-            {phase === 'collection' && deliveryStart && (
-              <div className="p-3 border-b border-border bg-primary/5" data-testid="delivery-summary">
-                <div className="flex items-center justify-center gap-3">
-                  <Truck className="w-4 h-4 text-primary" />
-                  <div className="text-sm">
-                    <span className="text-muted-foreground">Delivery: </span>
-                    <span className="font-semibold text-foreground">
-                      {formatDateDisplay(deliveryStart, deliveryEnd)}
-                    </span>
-                    {deliveryMode === 'flexible' && deliveryEnd && (
-                      <span className="ml-2 text-xs text-primary">(flexible)</span>
-                    )}
-                  </div>
-                  <button 
-                    onClick={handleChangeDelivery}
-                    className="text-xs text-primary hover:underline ml-2"
-                    data-testid="btn-change-delivery"
-                  >
-                    Change
-                  </button>
-                </div>
-              </div>
-            )}
-
             <div className="p-4 border-b border-border bg-muted/30">
               <div className="flex items-center justify-center gap-2">
                 <button
