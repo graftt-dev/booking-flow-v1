@@ -1,26 +1,15 @@
 import { Link } from 'wouter';
-import logoPath from '@assets/GRAFFT Primary Logo (3)_1759848271762.png';
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-border">
+    <header className="sticky top-0 z-50 w-full bg-[#0a1628]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-center h-14">
           <Link href="/" data-testid="link-home">
-            <img src={logoPath} alt="GRAFTT" className="h-6" />
+            <div className="w-10 h-10 rounded-full bg-[#05E4C0] flex items-center justify-center">
+              <span className="text-[#0a1628] font-bold text-xl">G</span>
+            </div>
           </Link>
-          
-          <nav className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-sm text-foreground hover-elevate active-elevate-2 px-3 py-2 rounded-md" data-testid="link-how-it-works">
-              How it works
-            </a>
-            <a href="#" className="text-sm text-foreground hover-elevate active-elevate-2 px-3 py-2 rounded-md" data-testid="link-help">
-              Help
-            </a>
-            <a href="#" className="text-sm text-foreground hover-elevate active-elevate-2 px-3 py-2 rounded-md" data-testid="link-contact">
-              Contact
-            </a>
-          </nav>
         </div>
       </div>
     </header>
