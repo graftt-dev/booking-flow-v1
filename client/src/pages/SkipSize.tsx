@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import skip2ydImage from '@assets/ChatGPT Image Nov 27, 2025, 03_35_55 PM_1764257857350.png';
+import skip2ydImage from '@assets/02 Yard_1764258203014.png';
 
 const skipSizes = [
   { 
@@ -173,14 +173,6 @@ export default function SkipSize() {
                 )}
                 
                 <div className="flex">
-                  <div className="w-32 h-32 flex-shrink-0 bg-gradient-to-br from-[#06062D] to-[#0a0a3d] flex items-center justify-center">
-                    <img 
-                      src={skip2ydImage} 
-                      alt={`${skip.label} yard skip`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  
                   <div className="flex-1 p-4">
                     <div className="flex items-baseline gap-1 mb-1">
                       <span className="text-4xl font-bold text-foreground">{skip.label}</span>
@@ -189,22 +181,28 @@ export default function SkipSize() {
                     <p className="text-sm text-muted-foreground">
                       Holds approx. <span className="font-semibold text-foreground">{skip.binBags} bin bags</span>
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground mb-3">
                       {skip.cubicYards} cubic yards
                     </p>
+                    
+                    <p className="text-sm font-semibold text-foreground mb-2">Perfect for:</p>
+                    <ul className="space-y-1">
+                      {skip.perfectFor.map((item, idx) => (
+                        <li key={idx} className="text-sm text-muted-foreground flex items-start">
+                          <span className="mr-2 text-primary">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-                
-                <div className="px-4 pb-3">
-                  <p className="text-sm font-semibold text-foreground mb-2">Perfect for:</p>
-                  <ul className="space-y-1">
-                    {skip.perfectFor.map((item, idx) => (
-                      <li key={idx} className="text-sm text-muted-foreground flex items-start">
-                        <span className="mr-2 text-primary">•</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  
+                  <div className="w-36 flex-shrink-0 flex items-center justify-center p-2">
+                    <img 
+                      src={skip2ydImage} 
+                      alt={`${skip.label} yard skip`}
+                      className="w-full h-auto object-contain"
+                    />
+                  </div>
                 </div>
                 
                 <div className="border-t border-border bg-secondary/30 px-4 py-3 space-y-2">
