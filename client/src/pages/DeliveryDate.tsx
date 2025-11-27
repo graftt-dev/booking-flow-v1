@@ -366,32 +366,38 @@ export default function DeliveryDate() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="mt-8 p-6 bg-card border border-border rounded-lg"
+                className="mt-6 p-4 bg-card border border-border rounded-lg"
                 data-testid="confirmation-message"
               >
-                <h3 className="text-center font-semibold text-foreground mb-6">Your Booking Summary</h3>
-                
-                <div className="grid grid-cols-3 gap-6 text-center">
-                  <div>
-                    <Truck className="w-5 h-5 text-primary mx-auto mb-2" />
-                    <p className="text-xs text-muted-foreground uppercase mb-1">Delivery</p>
-                    <p className="font-semibold text-foreground">{format(deliveryStart, 'EEE d MMM')}</p>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 flex-1">
+                    <Truck className="w-5 h-5 text-primary flex-shrink-0" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Delivery</p>
+                      <p className="font-semibold text-foreground text-sm">
+                        {deliveryEnd ? `${format(deliveryStart, 'd MMM')} - ${format(deliveryEnd, 'd MMM')}` : format(deliveryStart, 'EEE d MMM')}
+                      </p>
+                    </div>
                   </div>
                   
-                  <div className="border-x border-border px-4">
-                    <div className="text-3xl font-bold text-primary">{getHireDays()}</div>
-                    <p className="text-xs text-muted-foreground uppercase">days hire</p>
+                  <div className="text-center px-4 border-x border-border">
+                    <span className="text-2xl font-bold text-primary">{getHireDays()}</span>
+                    <span className="text-xs text-muted-foreground ml-1">days</span>
                   </div>
                   
-                  <div>
-                    <Package className="w-5 h-5 text-primary mx-auto mb-2" />
-                    <p className="text-xs text-muted-foreground uppercase mb-1">Collection</p>
-                    <p className="font-semibold text-foreground">{format(collectionStart, 'EEE d MMM')}</p>
+                  <div className="flex items-center gap-3 flex-1 justify-end text-right">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Collection</p>
+                      <p className="font-semibold text-foreground text-sm">
+                        {collectionEnd ? `${format(collectionStart, 'd MMM')} - ${format(collectionEnd, 'd MMM')}` : format(collectionStart, 'EEE d MMM')}
+                      </p>
+                    </div>
+                    <Package className="w-5 h-5 text-primary flex-shrink-0" />
                   </div>
                 </div>
                 
-                <p className="text-center text-xs text-muted-foreground mt-5 pt-4 border-t border-border">
-                  Most providers include <span className="font-semibold text-foreground">7-14 days</span> for a {size || '6yd'} skip. Extra days may incur charges.
+                <p className="text-center text-xs text-muted-foreground mt-3 pt-3 border-t border-border">
+                  Standard hire: <span className="font-semibold text-foreground">7-14 days</span> for {size || '6yd'} skips
                 </p>
               </motion.div>
             )}
