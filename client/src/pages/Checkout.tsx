@@ -4,15 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Shield, FileText, MapPin, Link as LinkIcon, ArrowLeft } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Shield, FileText, ArrowLeft, ChevronDown } from 'lucide-react';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
 import EducationPill from '@/components/EducationPill';
 import { useJourneyStore } from '@/store/journeyStore';
 import { providers as allProviders } from '@/lib/providers';
-import { formatCurrency } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { formatCurrency, cn } from '@/lib/utils';
+import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 
 const wasteTypeLabels: Record<string, string> = {
@@ -41,6 +41,8 @@ export default function Checkout() {
   } = useJourneyStore();
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
+  const [dutyOfCareChecked, setDutyOfCareChecked] = useState(false);
+  const [termsChecked, setTermsChecked] = useState(false);
   
   const provider = allProviders.find(p => p.id === providerId);
   
@@ -280,24 +282,75 @@ export default function Checkout() {
               </div>
             </div>
             
-            <div className="bg-secondary/30 border border-border rounded-md p-4">
-              <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
-                <div className="flex items-center gap-2">
-                  <Shield className="w-4 h-4" />
-                  <span>Licensed operator</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4" />
-                  <span>Waste transfer note</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  <span>GPS drop</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <LinkIcon className="w-4 h-4" />
-                  <span>Chain of custody</span>
-                </div>
+            <div className="bg-card border border-card-border rounded-md p-4 space-y-3">
+              <div 
+                className={cn(
+                  "border rounded-md transition-all",
+                  dutyOfCareChecked ? "border-primary bg-primary/5" : "border-border"
+                )}
+              >
+                <label className="flex items-center gap-3 p-3 cursor-pointer">
+                  <Checkbox 
+                    checked={dutyOfCareChecked} 
+                    onCheckedChange={(checked) => setDutyOfCareChecked(checked as boolean)}
+                    data-testid="checkbox-duty-of-care"
+                  />
+                  <div className="flex items-center gap-2 flex-1">
+                    <Shield className="w-4 h-4 text-primary" />
+                    <span className="font-medium text-sm">Duty of Care</span>
+                  </div>
+                  <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", dutyOfCareChecked && "rotate-180")} />
+                </label>
+                <AnimatePresence>
+                  {dutyOfCareChecked && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 pb-4 text-sm text-muted-foreground">
+                        <p>Duty of Care text will appear here. This explains your responsibilities when disposing of waste legally and safely.</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+              
+              <div 
+                className={cn(
+                  "border rounded-md transition-all",
+                  termsChecked ? "border-primary bg-primary/5" : "border-border"
+                )}
+              >
+                <label className="flex items-center gap-3 p-3 cursor-pointer">
+                  <Checkbox 
+                    checked={termsChecked} 
+                    onCheckedChange={(checked) => setTermsChecked(checked as boolean)}
+                    data-testid="checkbox-terms"
+                  />
+                  <div className="flex items-center gap-2 flex-1">
+                    <FileText className="w-4 h-4 text-primary" />
+                    <span className="font-medium text-sm">Terms & Conditions</span>
+                  </div>
+                  <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", termsChecked && "rotate-180")} />
+                </label>
+                <AnimatePresence>
+                  {termsChecked && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-4 pb-4 text-sm text-muted-foreground">
+                        <p>Terms & Conditions text will appear here. This outlines the agreement between you and the skip hire provider.</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
             
@@ -315,7 +368,7 @@ export default function Checkout() {
                 type="submit"
                 size="lg"
                 className="flex-1"
-                disabled={loading}
+                disabled={loading || !dutyOfCareChecked || !termsChecked}
                 data-testid="button-pay"
               >
                 {loading ? 'Processing...' : `Pay ${formatCurrency(totals.total)}`}
