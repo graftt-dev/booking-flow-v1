@@ -359,8 +359,62 @@ export default function Checkout() {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-4 pb-4 text-sm text-muted-foreground">
-                        <p>Terms & Conditions text will appear here. This outlines the agreement between you and the skip hire provider.</p>
+                      <div className="px-4 pb-4 text-sm text-muted-foreground space-y-4">
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">1. Introduction</h4>
+                          <p>These Terms and Conditions govern the use of the GRAFTT platform and the placement of orders by customers for skip hire and related waste services. By accessing the GRAFTT website, creating a booking, or completing a transaction, the customer agrees to be bound by these Terms and Conditions. If the customer does not agree to these Terms, they must not proceed with a booking.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">2. Role of GRAFTT</h4>
+                          <p>GRAFTT operates as an online marketplace and introducing broker only. GRAFTT does not itself provide skip hire services, waste collection, transport, treatment, or disposal services. All services advertised on the platform are provided by independent third-party providers. Any contract for skip hire or waste services is formed exclusively between the customer and the selected provider, and GRAFTT is not a contracting party to those arrangements.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">3. Provider Responsibility</h4>
+                          <p>The provider is solely responsible for the delivery, placement, collection, and removal of skips and for the lawful transport, treatment, and disposal of waste in accordance with all applicable laws and regulations. The provider is also responsible for holding and maintaining all licences, permits, and authorisations required to operate as a waste carrier and to dispose of waste at authorised facilities. GRAFTT does not guarantee performance, availability, or service standards of any provider.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">4. Customer Responsibility</h4>
+                          <p>The customer confirms that all information supplied at the time of booking is accurate and complete, including information relating to waste type, waste quantity, skip placement location, access conditions, and permit requirements. The customer remains legally responsible for their waste at all times and acknowledges their statutory duty of care under waste legislation. The customer agrees that inaccurate or misleading information may result in additional charges, refusal of service, enforcement action, or liability for third-party costs.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">5. Prices and Payments</h4>
+                          <p>All prices displayed on the GRAFTT platform are supplied by providers and are indicative only. Prices may change where waste descriptions, access arrangements, hire duration, or permit requirements differ from those declared at the time of booking. GRAFTT is not responsible for additional charges levied by a provider as a result of changes, inaccuracies, or non-compliance.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">6. Permits and Permissions</h4>
+                          <p>Where a skip is placed on a road, pavement, verge, or any other public land, the customer is responsible for ensuring that a valid permit issued by the relevant local authority is in place prior to delivery, unless expressly agreed otherwise in writing by the provider. GRAFTT accepts no liability for delays, fines, removal costs, or enforcement action arising from failure to obtain or comply with permit requirements.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">7. Damage and Access</h4>
+                          <p>The customer is responsible for ensuring suitable access for delivery and collection vehicles and for any damage to surfaces, underground services, or third-party property unless caused by proven negligence of the provider. GRAFTT accepts no liability for property damage, obstruction, or access-related issues arising during the provision of services by the provider.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">8. Limitation of Liability</h4>
+                          <p>To the fullest extent permitted by law, GRAFTT excludes all warranties, representations, and conditions relating to services provided by third-party providers. GRAFTT shall not be liable for any loss, damage, delay, inconvenience, personal injury, enforcement action, or financial loss arising from or in connection with services provided by a provider. Where liability cannot be excluded by law, GRAFTT's total liability shall be limited to the amount paid by the customer to GRAFTT in respect of the relevant booking.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">9. Indemnity</h4>
+                          <p>The customer agrees to indemnify and hold harmless GRAFTT against all claims, losses, damages, fines, penalties, costs, and expenses arising from the customer's breach of these Terms and Conditions, including but not limited to misdescription of waste, inclusion of prohibited materials, failure to obtain required permits, or non-compliance with applicable legislation.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">10. Cancellations and Refunds</h4>
+                          <p>Cancellation, amendment, and refund terms are set by individual providers and may vary. GRAFTT does not control provider cancellation policies and accepts no liability for fees, deductions, or refusal of refunds imposed by a provider.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">11. Intellectual Property</h4>
+                          <p>All intellectual property rights in the GRAFTT platform, including software, design, branding, content, and functionality, remain the property of GRAFTT or its licensors. No rights are granted to the customer except those necessary to use the platform in accordance with these Terms.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">12. Changes to Terms</h4>
+                          <p>GRAFTT reserves the right to amend these Terms and Conditions at any time. Updated Terms shall apply to all bookings made after the date of publication on the platform.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">13. Governing Law and Jurisdiction</h4>
+                          <p>These Terms and Conditions are governed by and construed in accordance with the laws of England and Wales. The courts of England and Wales shall have exclusive jurisdiction to settle any disputes arising from or in connection with these Terms.</p>
+                        </div>
+                        <div className="pt-2 border-t">
+                          <p className="font-medium text-foreground">By proceeding with a booking or selecting this checkbox, the customer confirms that they have read, understood, and agree to be bound by the GRAFTT Platform Terms & Conditions.</p>
+                        </div>
                       </div>
                     </motion.div>
                   )}
