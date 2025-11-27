@@ -111,9 +111,6 @@ export default function DeliveryDate() {
   };
 
   const getDayClasses = (date: Date) => {
-    const disabled = isDateDisabled(date);
-    if (disabled) return 'text-muted-foreground/40 cursor-not-allowed';
-
     const isDeliveryStart = deliveryStart && isSameDay(date, deliveryStart);
     const isDeliveryEnd = deliveryEnd && isSameDay(date, deliveryEnd);
     const isCollectionStart = collectionStart && isSameDay(date, collectionStart);
@@ -129,17 +126,30 @@ export default function DeliveryDate() {
     const isInHirePeriod = effectiveDelivery && effectiveCollection &&
       isAfter(date, effectiveDelivery) && isBefore(date, effectiveCollection);
 
-    if (isDeliveryStart || isDeliveryEnd || isCollectionStart || isCollectionEnd) {
+    // Always show delivery dates highlighted, even when in collection phase
+    if (isDeliveryStart || isDeliveryEnd) {
       return 'bg-primary text-primary-foreground font-semibold';
     }
     
-    if (isInDeliveryFlex || isInCollectionFlex) {
+    if (isCollectionStart || isCollectionEnd) {
+      return 'bg-primary text-primary-foreground font-semibold';
+    }
+    
+    if (isInDeliveryFlex) {
+      return 'bg-muted text-muted-foreground';
+    }
+    
+    if (isInCollectionFlex) {
       return 'bg-muted text-muted-foreground';
     }
     
     if (isInHirePeriod) {
       return 'bg-primary/20 text-primary';
     }
+
+    // Check disabled after delivery/collection highlights
+    const disabled = isDateDisabled(date);
+    if (disabled) return 'text-muted-foreground/40 cursor-not-allowed';
 
     return 'hover-elevate text-foreground';
   };
