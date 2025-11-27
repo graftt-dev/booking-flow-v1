@@ -175,7 +175,7 @@ export default function WasteType() {
                   <div className="flex items-center gap-2 text-xs">
                     <Eye className="w-3.5 h-3.5 text-primary flex-shrink-0" />
                     <span className="text-muted-foreground">
-                      <span className="font-medium text-foreground">Visual assessment:</span> Each supplier checks waste on-site
+                      <span className="font-medium text-foreground">Visual assessment:</span> Each supplier checks waste on-site and at their facility to ensure compliance
                     </span>
                   </div>
                 </div>
