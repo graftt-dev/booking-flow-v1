@@ -398,7 +398,7 @@ export default function DeliveryDate() {
                 
                 <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mt-3 pt-3 border-t border-border">
                   <Info className="w-3.5 h-3.5 flex-shrink-0" />
-                  <p>Standard hire is <span className="font-semibold text-foreground">14-21 days</span> for {size || '6yd'} skips — additional days may incur extra charges, provider dependent.</p>
+                  <p>Standard hire terms are around <span className="font-semibold text-foreground">14-21 days</span> for {size || '6yd'} skips — additional days may incur extra charges. Terms vary between providers.</p>
                 </div>
               </motion.div>
             )}
