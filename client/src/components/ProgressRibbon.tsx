@@ -8,7 +8,7 @@ const steps = [
   "Placement",
   "Size",
   "Waste",
-  "Delivery",
+  "Dates",
   "Providers",
   "Items",
   "Checkout",
