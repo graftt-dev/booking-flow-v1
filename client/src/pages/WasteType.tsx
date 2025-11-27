@@ -124,27 +124,29 @@ export default function WasteType() {
                     </p>
                   </div>
                   
-                  <div className="mb-3">
-                    <div className="flex items-center gap-1 mb-2">
-                      <Check className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-xs font-semibold text-foreground">Common materials</span>
+                  <div className="grid grid-cols-2 gap-3 mb-3">
+                    <div>
+                      <div className="flex items-center gap-1 mb-1.5">
+                        <Check className="w-3.5 h-3.5 text-primary" />
+                        <span className="text-xs font-semibold text-foreground">Common materials</span>
+                      </div>
+                      <div className="space-y-0.5">
+                        {type.commonMaterials.slice(0, 3).map((material, idx) => (
+                          <p key={idx} className="text-xs text-muted-foreground">• {material}</p>
+                        ))}
+                      </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
-                      {type.commonMaterials.slice(0, 6).map((material, idx) => (
-                        <p key={idx} className="text-xs text-muted-foreground">• {material}</p>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="mb-3">
-                    <div className="flex items-center gap-1 mb-2">
-                      <X className="w-3.5 h-3.5 text-destructive" />
-                      <span className="text-xs font-semibold text-foreground">Materials to avoid</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
-                      {type.materialsToAvoid.slice(0, 6).map((material, idx) => (
-                        <p key={idx} className="text-xs text-muted-foreground">• {material}</p>
-                      ))}
+                    
+                    <div>
+                      <div className="flex items-center gap-1 mb-1.5">
+                        <X className="w-3.5 h-3.5 text-destructive" />
+                        <span className="text-xs font-semibold text-foreground">Avoid</span>
+                      </div>
+                      <div className="space-y-0.5">
+                        {type.materialsToAvoid.slice(0, 3).map((material, idx) => (
+                          <p key={idx} className="text-xs text-muted-foreground">• {material}</p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                   
