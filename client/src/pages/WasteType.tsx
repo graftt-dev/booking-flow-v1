@@ -1,11 +1,21 @@
+import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { Check, X, Info, Eye, ArrowLeft } from 'lucide-react';
+import { Check, X, Info, Eye, ArrowLeft, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
 import EducationPill from '@/components/EducationPill';
 import { useJourneyStore } from '@/store/journeyStore';
 import { motion } from 'framer-motion';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const wasteTypes = [
   { 
@@ -67,6 +77,7 @@ const wasteTypes = [
 export default function WasteType() {
   const [, setLocation] = useLocation();
   const { wasteType, setWasteType } = useJourneyStore();
+  const [showContactDialog, setShowContactDialog] = useState(false);
   
   const handleSelect = (type: string) => {
     setWasteType(type);
@@ -76,6 +87,10 @@ export default function WasteType() {
     if (wasteType) {
       setLocation('/delivery-date');
     }
+  };
+  
+  const handleOtherClick = () => {
+    setShowContactDialog(true);
   };
   
   return (
@@ -167,6 +182,53 @@ export default function WasteType() {
               </button>
             ))}
           </div>
+          
+          <button
+            onClick={handleOtherClick}
+            className="w-full mt-4 px-4 py-4 rounded-md border border-[#05E4C0]/30 bg-[#05E4C0]/10 hover:bg-[#05E4C0]/20 transition-all text-left"
+            data-testid="tile-other"
+          >
+            <p className="text-lg font-semibold text-[#06062D] dark:text-[#05E4C0]">Don't see the waste type you need to dispose of?</p>
+            <p className="text-sm text-[#06062D]/70 dark:text-[#05E4C0]/70 mt-1">Get in touch with us for a bespoke solution</p>
+          </button>
+
+          <AlertDialog open={showContactDialog} onOpenChange={setShowContactDialog}>
+            <AlertDialogContent data-testid="dialog-contact">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Get in touch with GRAFTT</AlertDialogTitle>
+                <AlertDialogDescription className="space-y-4">
+                  <p>
+                    Have a unique waste type or special disposal requirements? Our team is here to help you find the right solution.
+                  </p>
+                  
+                  <div className="space-y-3 pt-2">
+                    <div className="flex items-center gap-3 text-foreground">
+                      <Phone className="w-5 h-5 text-primary" />
+                      <div>
+                        <p className="font-semibold">Call us</p>
+                        <a href="tel:0800123456" className="text-primary hover:underline">
+                          0800 123 456
+                        </a>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 text-foreground">
+                      <Mail className="w-5 h-5 text-primary" />
+                      <div>
+                        <p className="font-semibold">Email us</p>
+                        <a href="mailto:hello@graftt.co.uk" className="text-primary hover:underline">
+                          hello@graftt.co.uk
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogAction data-testid="button-close-dialog">Got it</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
 
           <div className="flex justify-center items-center gap-4 mt-8">
             <Button
