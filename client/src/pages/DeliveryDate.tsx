@@ -234,65 +234,79 @@ export default function DeliveryDate() {
         
         <div className="max-w-3xl mx-auto">
           <div className="bg-card border border-border rounded-lg overflow-hidden">
-            <div className="grid grid-cols-2 border-b border-border">
+            <div className="grid grid-cols-2">
               <button
                 onClick={handleChangeDelivery}
-                className={`p-4 text-center transition-all border-b-2 ${
+                className={`p-5 text-center transition-all relative ${
                   phase === 'delivery' 
-                    ? 'border-primary bg-primary/5' 
+                    ? 'bg-primary/10 border-b-4 border-primary' 
                     : deliveryStart 
-                      ? 'border-transparent bg-muted/30 hover-elevate' 
-                      : 'border-transparent opacity-50'
+                      ? 'bg-muted/30 border-b border-border hover-elevate' 
+                      : 'bg-muted/20 border-b border-border opacity-60'
                 }`}
                 data-testid="tab-delivery"
               >
+                {phase === 'delivery' && (
+                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-primary text-primary-foreground text-xs font-medium rounded">
+                    Step 1
+                  </div>
+                )}
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  {deliveryStart ? (
-                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                      <Check className="w-3 h-3 text-primary-foreground" />
+                  {deliveryStart && phase !== 'delivery' ? (
+                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                      <Check className="w-4 h-4 text-primary-foreground" />
                     </div>
                   ) : (
-                    <Truck className={`w-5 h-5 ${phase === 'delivery' ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <Truck className={`w-6 h-6 ${phase === 'delivery' ? 'text-primary' : 'text-muted-foreground'}`} />
                   )}
-                  <span className={`font-medium ${phase === 'delivery' ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <span className={`text-lg font-semibold ${phase === 'delivery' ? 'text-foreground' : 'text-muted-foreground'}`}>
                     Delivery
                   </span>
                 </div>
                 {deliveryStart ? (
-                  <p className="text-sm font-semibold text-primary">{formatDateDisplay(deliveryStart, deliveryEnd)}</p>
+                  <p className={`text-sm font-semibold ${phase === 'delivery' ? 'text-primary' : 'text-foreground'}`}>
+                    {formatDateDisplay(deliveryStart, deliveryEnd)}
+                  </p>
                 ) : (
-                  <p className="text-xs text-muted-foreground">Select date</p>
+                  <p className="text-sm text-muted-foreground">Select date</p>
                 )}
               </button>
               
               <button
                 onClick={() => deliveryStart && setPhase('collection')}
                 disabled={!deliveryStart}
-                className={`p-4 text-center transition-all border-b-2 ${
+                className={`p-5 text-center transition-all relative ${
                   phase === 'collection' 
-                    ? 'border-primary bg-primary/5' 
+                    ? 'bg-primary/10 border-b-4 border-primary' 
                     : collectionStart 
-                      ? 'border-transparent bg-muted/30 hover-elevate' 
-                      : 'border-transparent'
+                      ? 'bg-muted/30 border-b border-border hover-elevate' 
+                      : 'bg-muted/20 border-b border-border'
                 } ${!deliveryStart ? 'opacity-40 cursor-not-allowed' : ''}`}
                 data-testid="tab-collection"
               >
+                {phase === 'collection' && (
+                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-primary text-primary-foreground text-xs font-medium rounded">
+                    Step 2
+                  </div>
+                )}
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  {collectionStart ? (
-                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                      <Check className="w-3 h-3 text-primary-foreground" />
+                  {collectionStart && phase !== 'collection' ? (
+                    <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                      <Check className="w-4 h-4 text-primary-foreground" />
                     </div>
                   ) : (
-                    <Package className={`w-5 h-5 ${phase === 'collection' ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <Package className={`w-6 h-6 ${phase === 'collection' ? 'text-primary' : 'text-muted-foreground'}`} />
                   )}
-                  <span className={`font-medium ${phase === 'collection' ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <span className={`text-lg font-semibold ${phase === 'collection' ? 'text-foreground' : 'text-muted-foreground'}`}>
                     Collection
                   </span>
                 </div>
                 {collectionStart ? (
-                  <p className="text-sm font-semibold text-primary">{formatDateDisplay(collectionStart, collectionEnd)}</p>
+                  <p className={`text-sm font-semibold ${phase === 'collection' ? 'text-primary' : 'text-foreground'}`}>
+                    {formatDateDisplay(collectionStart, collectionEnd)}
+                  </p>
                 ) : (
-                  <p className="text-xs text-muted-foreground">{deliveryStart ? 'Select date' : 'After delivery'}</p>
+                  <p className="text-sm text-muted-foreground">{deliveryStart ? 'Select date' : 'After delivery'}</p>
                 )}
               </button>
             </div>
