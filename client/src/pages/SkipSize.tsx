@@ -65,7 +65,7 @@ const skipSizes = [
     unit: 'yard',
     cubicYards: 6,
     binBags: 60,
-    recommended: true,
+    recommended: false,
     perfectFor: [
       'Full bathroom refit',
       'Kitchen renovation waste',
