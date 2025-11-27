@@ -234,26 +234,16 @@ export default function SkipSize() {
                 </div>
               </button>
             ))}
-            
-            <button
-              onClick={handleOtherClick}
-              className="text-left p-6 rounded-md border-2 border-border bg-background hover-elevate transition-all"
-              data-testid="tile-other"
-            >
-              <h3 className="text-2xl font-bold text-foreground mb-1">
-                Other
-              </h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Need a different size or custom solution?
-              </p>
-              
-              <div className="space-y-3">
-                <p className="text-sm text-foreground">
-                  Get in touch with our team for bespoke skip hire options and expert advice.
-                </p>
-              </div>
-            </button>
           </div>
+          
+          <button
+            onClick={handleOtherClick}
+            className="w-full mt-4 px-4 py-3 rounded-md border border-[#05E4C0]/30 bg-[#05E4C0]/10 text-[#06062D] dark:text-[#05E4C0] hover:bg-[#05E4C0]/20 transition-all text-left"
+            data-testid="tile-other"
+          >
+            <span className="font-medium">Other</span>
+            <span className="text-sm ml-2 opacity-80">— Need a different size or custom solution?</span>
+          </button>
 
           <AlertDialog open={showContactDialog} onOpenChange={setShowContactDialog}>
             <AlertDialogContent data-testid="dialog-contact">
