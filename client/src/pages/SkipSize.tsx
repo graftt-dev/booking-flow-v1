@@ -34,6 +34,19 @@ const skipSizes = [
     ]
   },
   { 
+    id: '3yd', 
+    label: '3', 
+    unit: 'yard',
+    cubicYards: 3,
+    binBags: 30,
+    recommended: false,
+    perfectFor: [
+      'Single room clearance',
+      'Small kitchen refit',
+      'Moderate garden waste'
+    ]
+  },
+  { 
     id: '4yd', 
     label: '4', 
     unit: 'yard',
