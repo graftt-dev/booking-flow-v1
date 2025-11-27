@@ -225,7 +225,7 @@ export default function SkipSize() {
                     </ul>
                   </div>
                   
-                  <div className="w-36 flex-shrink-0 flex items-center justify-center p-2">
+                  <div className="w-36 flex-shrink-0 flex items-center justify-center p-2 pt-8">
                     <img 
                       src={skip2ydImage} 
                       alt={`${skip.label} yard skip`}
