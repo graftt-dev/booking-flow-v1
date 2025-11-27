@@ -63,7 +63,7 @@ export default function Home() {
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="space-y-4">
             <h1 className="text-5xl md:text-6xl font-bold text-foreground tracking-tight" data-testid="text-hero-title">
-              UK's No.1 Marketplace
+              The Household Name
               <br />
               for Skip Hire
             </h1>
