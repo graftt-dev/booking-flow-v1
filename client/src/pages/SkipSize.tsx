@@ -7,7 +7,7 @@ import EducationPill from '@/components/EducationPill';
 import { useJourneyStore, type SkipSize as SkipSizeType } from '@/store/journeyStore';
 import { motion } from 'framer-motion';
 import { calculateTotals } from '@/lib/pricing';
-import { ArrowLeft, Phone, Mail, Flame, Gauge } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, Flame, Gauge, Ruler, Weight } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +27,8 @@ const skipSizes = [
     cubicYards: 2,
     binBags: 20,
     recommended: false,
+    dimensions: '1.2m × 1.0m × 0.9m',
+    weight: 'Up to ~1 tonne',
     perfectFor: [
       'Small garden tidy-up',
       'Wardrobe clear-out',
@@ -40,6 +42,8 @@ const skipSizes = [
     cubicYards: 3,
     binBags: 30,
     recommended: false,
+    dimensions: '1.5m × 1.2m × 0.9m',
+    weight: 'Up to ~1.5 tonnes',
     perfectFor: [
       'Single room clearance',
       'Small kitchen refit',
@@ -53,6 +57,8 @@ const skipSizes = [
     cubicYards: 4,
     binBags: 40,
     recommended: false,
+    dimensions: '1.8m × 1.2m × 1.0m',
+    weight: 'Up to ~2 tonnes',
     perfectFor: [
       'Small bathroom renovation',
       'Garden shed clear-out',
@@ -66,6 +72,8 @@ const skipSizes = [
     cubicYards: 6,
     binBags: 60,
     recommended: false,
+    dimensions: '3.0m × 1.5m × 1.0m',
+    weight: 'Up to ~3 tonnes',
     perfectFor: [
       'Full bathroom refit',
       'Kitchen renovation waste',
@@ -79,6 +87,8 @@ const skipSizes = [
     cubicYards: 8,
     binBags: 80,
     recommended: false,
+    dimensions: '3.7m × 1.7m × 1.2m',
+    weight: 'Up to ~4 tonnes',
     perfectFor: [
       'Large house clearance',
       'Full garden landscaping',
@@ -92,6 +102,8 @@ const skipSizes = [
     cubicYards: 12,
     binBags: 120,
     recommended: false,
+    dimensions: '3.7m × 1.8m × 1.5m',
+    weight: 'Up to ~6 tonnes',
     perfectFor: [
       'Complete home refurbishment',
       'Commercial fit-out waste',
@@ -105,6 +117,8 @@ const skipSizes = [
     cubicYards: 14,
     binBags: 140,
     recommended: false,
+    dimensions: '4.0m × 1.8m × 1.6m',
+    weight: 'Up to ~7 tonnes',
     perfectFor: [
       'Major commercial projects',
       'Full house demolition waste',
@@ -118,6 +132,8 @@ const skipSizes = [
     cubicYards: 16,
     binBags: 160,
     recommended: false,
+    dimensions: '4.2m × 1.8m × 1.8m',
+    weight: 'Up to ~8 tonnes',
     perfectFor: [
       'Heavy construction waste',
       'Complete building refits',
@@ -207,6 +223,23 @@ export default function SkipSize() {
                         </li>
                       ))}
                     </ul>
+                    
+                    <div className="flex gap-6 mt-4 pt-3 border-t border-border/50">
+                      <div className="flex items-start gap-2">
+                        <Ruler className="w-4 h-4 text-muted-foreground mt-0.5" />
+                        <div>
+                          <p className="text-xs text-muted-foreground">Dimensions</p>
+                          <p className="text-sm font-medium text-foreground">{skip.dimensions}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Weight className="w-4 h-4 text-muted-foreground mt-0.5" />
+                        <div>
+                          <p className="text-xs text-muted-foreground">Weight</p>
+                          <p className="text-sm font-medium text-foreground">{skip.weight}</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
                   <div className="w-36 flex-shrink-0 flex items-center justify-center p-2">
