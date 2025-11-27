@@ -310,8 +310,22 @@ export default function Checkout() {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-4 pb-4 text-sm text-muted-foreground">
-                        <p>Duty of Care text will appear here. This explains your responsibilities when disposing of waste legally and safely.</p>
+                      <div className="px-4 pb-4 text-sm text-muted-foreground space-y-4">
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">1. Duty of Care</h4>
+                          <p className="mb-3">Under Section 34 of the Environmental Protection Act 1990, every person who produces, keeps, transports, or disposes of controlled waste has a legal duty of care. By placing an order through the GRAFTT platform, the customer acknowledges and accepts that they remain the producer of the waste and are legally responsible for it at all times until it is lawfully disposed of at an authorised facility. The customer confirms that all information provided in relation to the waste, including its type, quantity, and composition, is accurate and complete to the best of their knowledge.</p>
+                          <p className="mb-3">The customer agrees to take all reasonable steps to ensure that their waste is stored, handled, and transferred in a manner that prevents escape, pollution, harm to human health, or illegal disposal. This duty applies whether the skip is ordered directly from a provider or via GRAFTT as an introducing platform. The customer understands that reliance on a third-party provider does not remove or reduce their statutory obligations under waste legislation.</p>
+                          <p>Where waste is misdescribed, contains prohibited or hazardous materials, or is otherwise non-compliant with the information provided at the time of booking, the customer accepts full responsibility for any resulting costs, enforcement action, penalties, or refusal of collection. GRAFTT does not accept liability for any breach of duty arising from inaccurate declarations or unlawful use of the skip.</p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-foreground mb-2">2. Waste Hierarchy Compliance</h4>
+                          <p className="mb-3">The customer confirms that they have considered and applied the waste hierarchy as required under the Waste (England and Wales) Regulations 2011 prior to ordering a skip. The waste hierarchy places a legal obligation on waste producers to prioritise prevention, followed by reuse, recycling, recovery, and disposal only as a final option. By proceeding with a booking, the customer confirms that disposal of waste via skip hire is appropriate and proportionate for the materials being removed.</p>
+                          <p className="mb-3">The customer acknowledges that they have taken reasonable steps to minimise the amount of waste produced and to separate materials for reuse or recycling where practicable. The customer further confirms that the waste placed in the skip is suitable for disposal through the selected service and does not include materials that should reasonably have been diverted to alternative lawful treatment or recovery routes.</p>
+                          <p>The customer understands that waste hierarchy compliance may be subject to audit or inspection by regulatory authorities and agrees to cooperate fully with any lawful requests for information relating to waste composition, handling, and disposal. Any failure to comply with waste hierarchy requirements, whether intentional or due to negligence, remains the responsibility of the customer, and GRAFTT shall not be liable for any consequences arising from such non-compliance.</p>
+                        </div>
+                        <div className="pt-2 border-t">
+                          <p className="font-medium text-foreground">By checking this box, the customer confirms that they have read, understood, and agreed to the Duty of Care and Waste Hierarchy Terms and that they accept full legal responsibility for compliance with applicable waste legislation.</p>
+                        </div>
                       </div>
                     </motion.div>
                   )}
