@@ -223,23 +223,6 @@ export default function SkipSize() {
                         </li>
                       ))}
                     </ul>
-                    
-                    <div className="flex gap-6 mt-4 pt-3 border-t border-border/50">
-                      <div className="flex items-start gap-2">
-                        <Ruler className="w-4 h-4 text-muted-foreground mt-0.5" />
-                        <div>
-                          <p className="text-xs text-muted-foreground">Dimensions</p>
-                          <p className="text-sm font-medium text-foreground">{skip.dimensions}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Weight className="w-4 h-4 text-muted-foreground mt-0.5" />
-                        <div>
-                          <p className="text-xs text-muted-foreground">Weight</p>
-                          <p className="text-sm font-medium text-foreground">{skip.weight}</p>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                   
                   <div className="w-36 flex-shrink-0 flex items-center justify-center p-2">
@@ -248,6 +231,23 @@ export default function SkipSize() {
                       alt={`${skip.label} yard skip`}
                       className="w-full h-auto object-contain"
                     />
+                  </div>
+                </div>
+                
+                <div className="flex gap-8 px-4 py-3 border-t border-border/50">
+                  <div className="flex items-start gap-2">
+                    <Ruler className="w-4 h-4 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Dimensions</p>
+                      <p className="text-sm font-medium text-foreground">{skip.dimensions}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Weight className="w-4 h-4 text-muted-foreground mt-0.5" />
+                    <div>
+                      <p className="text-xs text-muted-foreground">Weight</p>
+                      <p className="text-sm font-medium text-foreground">{skip.weight}</p>
+                    </div>
                   </div>
                 </div>
                 
