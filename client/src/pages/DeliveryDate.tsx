@@ -366,40 +366,33 @@ export default function DeliveryDate() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="mt-8"
+                className="mt-8 p-6 bg-card border border-border rounded-lg"
                 data-testid="confirmation-message"
               >
-                <div className="flex items-center justify-center gap-4">
-                  <div className="flex flex-col items-center">
-                    <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-2">
-                      <Truck className="w-6 h-6 text-primary" />
-                    </div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Delivery</p>
-                    <p className="text-sm font-semibold text-foreground">{format(deliveryStart, 'EEE d MMM yyyy')}</p>
+                <h3 className="text-center font-semibold text-foreground mb-6">Your Booking Summary</h3>
+                
+                <div className="grid grid-cols-3 gap-6 text-center">
+                  <div>
+                    <Truck className="w-5 h-5 text-primary mx-auto mb-2" />
+                    <p className="text-xs text-muted-foreground uppercase mb-1">Delivery</p>
+                    <p className="font-semibold text-foreground">{format(deliveryStart, 'EEE d MMM')}</p>
                   </div>
                   
-                  <div className="w-8 h-0.5 bg-primary/40" />
-                  
-                  <div className="flex flex-col items-center">
-                    <div className="w-20 h-20 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-2">
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-primary">{getHireDays()}</p>
-                        <p className="text-[10px] uppercase text-primary/70 font-medium">days</p>
-                      </div>
-                    </div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Hire Period</p>
+                  <div className="border-x border-border px-4">
+                    <div className="text-3xl font-bold text-primary">{getHireDays()}</div>
+                    <p className="text-xs text-muted-foreground uppercase">days hire</p>
                   </div>
                   
-                  <div className="w-8 h-0.5 bg-primary/40" />
-                  
-                  <div className="flex flex-col items-center">
-                    <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-2">
-                      <Package className="w-6 h-6 text-primary" />
-                    </div>
-                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Collection</p>
-                    <p className="text-sm font-semibold text-foreground">{format(collectionStart, 'EEE d MMM yyyy')}</p>
+                  <div>
+                    <Package className="w-5 h-5 text-primary mx-auto mb-2" />
+                    <p className="text-xs text-muted-foreground uppercase mb-1">Collection</p>
+                    <p className="font-semibold text-foreground">{format(collectionStart, 'EEE d MMM')}</p>
                   </div>
                 </div>
+                
+                <p className="text-center text-xs text-muted-foreground mt-5 pt-4 border-t border-border">
+                  Most providers include <span className="font-semibold text-foreground">7-14 days</span> for a {size || '6yd'} skip. Extra days may incur charges.
+                </p>
               </motion.div>
             )}
           </AnimatePresence>
