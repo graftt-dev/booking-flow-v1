@@ -223,6 +223,7 @@ export default function Providers() {
             {filteredProviders.map((provider, index) => {
               const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
               const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
+              const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
               
               return (
                 <ProviderCard
@@ -232,7 +233,7 @@ export default function Providers() {
                   selected={providerId === provider.id}
                   onSelect={() => handleSelectProvider(provider.id)}
                   index={index}
-                  basePrice={totals.base}
+                  basePrice={providerBasePrice}
                   extras={totals.extras}
                   permit={totals.permit}
                   vat={totals.vat}
