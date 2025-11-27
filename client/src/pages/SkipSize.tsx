@@ -4,11 +4,10 @@ import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
 import EducationPill from '@/components/EducationPill';
-import Tile from '@/components/Tile';
 import { useJourneyStore, type SkipSize as SkipSizeType } from '@/store/journeyStore';
 import { motion } from 'framer-motion';
 import { calculateTotals } from '@/lib/pricing';
-import { ArrowLeft, Phone, Mail } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, Flame, Gauge } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,91 +17,99 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import skip2ydImage from '@assets/ChatGPT Image Nov 27, 2025, 03_35_55 PM_1764257857350.png';
 
 const skipSizes = [
   { 
     id: '2yd', 
-    label: '2 yard', 
-    bags: '≈ 20 bin bags • 2 cubic yards',
+    label: '2', 
+    unit: 'yard',
+    cubicYards: 2,
+    binBags: 20,
     recommended: false,
-    whatFits: [
+    perfectFor: [
       'Small garden tidy-up',
       'Wardrobe clear-out',
       'Light DIY waste'
-    ],
-    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+    ]
   },
   { 
     id: '4yd', 
-    label: '4 yard', 
-    bags: '≈ 40 bin bags • 4 cubic yards',
+    label: '4', 
+    unit: 'yard',
+    cubicYards: 4,
+    binBags: 40,
     recommended: false,
-    whatFits: [
+    perfectFor: [
       'Small bathroom renovation',
       'Garden shed clear-out',
       'Kitchen cabinet removal'
-    ],
-    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+    ]
   },
   { 
     id: '6yd', 
-    label: '6 yard', 
-    bags: '≈ 60 bin bags • 6 cubic yards',
+    label: '6', 
+    unit: 'yard',
+    cubicYards: 6,
+    binBags: 60,
     recommended: true,
-    whatFits: [
+    perfectFor: [
       'Full bathroom refit',
       'Kitchen renovation waste',
       'Garage or loft clearance'
-    ],
-    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+    ]
   },
   { 
     id: '8yd', 
-    label: '8 yard', 
-    bags: '≈ 80 bin bags • 8 cubic yards',
+    label: '8', 
+    unit: 'yard',
+    cubicYards: 8,
+    binBags: 80,
     recommended: false,
-    whatFits: [
+    perfectFor: [
       'Large house clearance',
       'Full garden landscaping',
       'Major renovation project'
-    ],
-    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+    ]
   },
   { 
     id: '12yd', 
-    label: '12 yard', 
-    bags: '≈ 120 bin bags • 12 cubic yards',
+    label: '12', 
+    unit: 'yard',
+    cubicYards: 12,
+    binBags: 120,
     recommended: false,
-    whatFits: [
+    perfectFor: [
       'Complete home refurbishment',
       'Commercial fit-out waste',
       'Large construction projects'
-    ],
-    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+    ]
   },
   { 
     id: '14yd', 
-    label: '14 yard', 
-    bags: '≈ 140 bin bags • 14 cubic yards',
+    label: '14', 
+    unit: 'yard',
+    cubicYards: 14,
+    binBags: 140,
     recommended: false,
-    whatFits: [
+    perfectFor: [
       'Major commercial projects',
       'Full house demolition waste',
       'Large-scale renovations'
-    ],
-    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+    ]
   },
   { 
     id: '16yd', 
-    label: '16 yard', 
-    bags: '≈ 160 bin bags • 16 cubic yards',
+    label: '16', 
+    unit: 'yard',
+    cubicYards: 16,
+    binBags: 160,
     recommended: false,
-    whatFits: [
+    perfectFor: [
       'Heavy construction waste',
       'Complete building refits',
       'Industrial-scale projects'
-    ],
-    fillGuidance: 'Fill to 90% - leave 10-15cm from the top'
+    ]
   },
 ];
 
@@ -149,7 +156,7 @@ export default function SkipSize() {
                 key={skip.id}
                 onClick={() => handleSelect(skip.id as SkipSizeType)}
                 className={`
-                  text-left p-6 rounded-md border-2 transition-all relative
+                  text-left rounded-md border-2 transition-all relative overflow-hidden
                   ${size === skip.id 
                     ? 'border-primary bg-primary/5' 
                     : 'border-border bg-background hover-elevate'
@@ -158,36 +165,60 @@ export default function SkipSize() {
                 data-testid={`tile-${skip.id}`}
               >
                 {skip.recommended && (
-                  <div className="absolute top-4 right-4">
+                  <div className="absolute top-4 right-4 z-10">
                     <span className="px-3 py-1 text-xs font-medium bg-primary text-primary-foreground rounded-full">
                       Recommended
                     </span>
                   </div>
                 )}
                 
-                <h3 className="text-2xl font-bold text-foreground mb-1">
-                  {skip.label}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {skip.bags}
-                </p>
-                
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-sm font-semibold text-foreground mb-2">What fits:</p>
-                    <ul className="space-y-1">
-                      {skip.whatFits.map((item, idx) => (
-                        <li key={idx} className="text-sm text-muted-foreground flex items-start">
-                          <span className="mr-2">•</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
+                <div className="flex">
+                  <div className="w-32 h-32 flex-shrink-0 bg-gradient-to-br from-[#06062D] to-[#0a0a3d] flex items-center justify-center">
+                    <img 
+                      src={skip2ydImage} 
+                      alt={`${skip.label} yard skip`}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   
-                  <div className="pt-2 border-t border-border">
-                    <p className="text-xs font-medium text-foreground">Space to leave:</p>
-                    <p className="text-xs text-muted-foreground mt-1">{skip.fillGuidance}</p>
+                  <div className="flex-1 p-4">
+                    <div className="flex items-baseline gap-1 mb-1">
+                      <span className="text-4xl font-bold text-foreground">{skip.label}</span>
+                      <span className="text-lg font-medium text-muted-foreground">{skip.unit}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Holds approx. <span className="font-semibold text-foreground">{skip.binBags} bin bags</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {skip.cubicYards} cubic yards
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="px-4 pb-3">
+                  <p className="text-sm font-semibold text-foreground mb-2">Perfect for:</p>
+                  <ul className="space-y-1">
+                    {skip.perfectFor.map((item, idx) => (
+                      <li key={idx} className="text-sm text-muted-foreground flex items-start">
+                        <span className="mr-2 text-primary">•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div className="border-t border-border bg-secondary/30 px-4 py-3 space-y-2">
+                  <div className="flex items-center gap-2 text-xs">
+                    <Gauge className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                    <span className="text-muted-foreground">
+                      <span className="font-medium text-foreground">Level fill:</span> fill to 95% - leave 5-10cm from the top
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs">
+                    <Flame className="w-3.5 h-3.5 text-destructive flex-shrink-0" />
+                    <span className="text-muted-foreground">
+                      <span className="font-medium text-foreground">No fires:</span> leave out any substances that ignite
+                    </span>
                   </div>
                 </div>
               </button>
@@ -254,7 +285,7 @@ export default function SkipSize() {
           <div className="flex justify-center items-center gap-4 mt-8">
             <Button
               variant="ghost"
-              onClick={() => setLocation('/placement')}
+              onClick={() => setLocation('/location')}
               data-testid="button-back"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
