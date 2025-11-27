@@ -1,5 +1,5 @@
 import { useLocation } from 'wouter';
-import { Check, X, ArrowLeft } from 'lucide-react';
+import { Check, X, Info, Eye, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
@@ -12,49 +12,55 @@ const wasteTypes = [
     id: 'mixed', 
     label: 'Mixed General', 
     tag: 'The all-rounder',
-    producedIn: 'House clearances, garage clear-outs, office refits',
-    includes: ['Wood & timber', 'Furniture', 'Cardboard', 'Plastics'],
-    avoids: ['Hazardous materials', 'Electronics', 'Chemicals'],
+    producedIn: ['House clearances', 'Garage clear-outs', 'Light renovations', 'Office refits'],
+    commonMaterials: ['Wood & timber', 'Furniture & textiles', 'Non-hazardous DIY waste', 'Cardboard & paper', 'Plastics & packaging', 'Small metals'],
+    materialsToAvoid: ['Large volumes of soil/rubble', 'Asbestos or hazardous materials', 'Paints, solvents & chemicals', 'Pure plasterboard loads', 'Batteries & electronics', 'Gas cylinders'],
+    tip: 'Perfect when your waste is a mix of different materials from a typical clearance.'
   },
   { 
     id: 'construction', 
     label: 'Mixed Construction', 
     tag: 'Construction debris',
-    producedIn: 'Demolitions, extensions, bathroom/kitchen refits',
-    includes: ['Bricks & blocks', 'Tiles', 'Concrete', 'Stone'],
-    avoids: ['Plasterboard', 'Asbestos', 'Large soil volumes'],
+    producedIn: ['Building demolitions', 'Extension works', 'Bathroom/kitchen refits', 'Driveway removals'],
+    commonMaterials: ['Bricks & blocks', 'Tiles & ceramics', 'Sand & gravel', 'Concrete & hardcore', 'Stone & slate'],
+    materialsToAvoid: ['Plasterboard (requires separate)', 'Large soil volumes', 'Hazardous substances', 'Asbestos materials', 'Mixed general waste'],
+    tip: 'Weight limits apply - heavy materials fill up fast. Consider a smaller skip.'
   },
   { 
     id: 'soil', 
     label: 'Soil & Stone', 
-    tag: 'Groundworks',
-    producedIn: 'Excavations, landscaping, foundation digging',
-    includes: ['Clean soil', 'Clay', 'Sand', 'Small stones'],
-    avoids: ['Contaminated soil', 'Green waste', 'Mixed waste'],
+    tag: 'Groundworks specialist',
+    producedIn: ['Garden excavations', 'Foundation digging', 'Landscaping projects', 'Pond installations'],
+    commonMaterials: ['Clean soil & earth', 'Clay & subsoil', 'Sand', 'Turf & topsoil', 'Small stones & gravel'],
+    materialsToAvoid: ['Contaminated soil', 'Green waste & roots', 'Any mixed waste', 'Concrete & hardcore', 'Building materials'],
+    tip: 'Inert soil streams are often cheaper - keep it pure for best rates.'
   },
   { 
     id: 'garden', 
     label: 'Green & Garden', 
     tag: 'Garden projects',
-    producedIn: 'Garden makeovers, hedge trimming, tree surgery',
-    includes: ['Grass & turf', 'Branches', 'Shrubs', 'Leaves'],
-    avoids: ['Soil volumes', 'Pots & planters', 'Treated timber'],
+    producedIn: ['Garden makeovers', 'Hedge trimming', 'Tree surgery', 'Lawn renovations'],
+    commonMaterials: ['Grass & turf', 'Branches & twigs', 'Shrubs & bushes', 'Hedge clippings', 'Leaves & plants'],
+    materialsToAvoid: ['Large soil volumes', 'Invasive species (Japanese knotweed)', 'Pots & planters', 'Food waste', 'Treated timber'],
+    tip: 'Keep it green only - mixing in soil or pots changes the waste classification.'
   },
   { 
     id: 'wood', 
     label: 'Wood', 
     tag: 'Timber & fencing',
-    producedIn: 'Fencing, decking removals, shed demolitions',
-    includes: ['Untreated timber', 'Chipboard', 'Pallets', 'Plywood'],
-    avoids: ['Treated wood', 'Railway sleepers', 'Painted wood'],
+    producedIn: ['Fencing replacements', 'Decking removals', 'Shed demolitions', 'Flooring projects'],
+    commonMaterials: ['Untreated timber', 'Chipboard & MDF', 'Wooden furniture', 'Pallets & crates', 'Plywood sheets'],
+    materialsToAvoid: ['Creosoted/treated wood', 'Mixed waste materials', 'Railway sleepers', 'Painted hazardous coatings', 'MDF with bonded materials'],
+    tip: 'Separating wood from mixed waste often reduces your disposal costs.'
   },
   { 
     id: 'plasterboard', 
     label: 'Plasterboard', 
     tag: 'Walls & ceilings',
-    producedIn: 'Wall demolitions, ceiling removals, loft conversions',
-    includes: ['Plasterboard sheets', 'Drywall', 'Gypsum boards'],
-    avoids: ['Mixed waste', 'Insulation', 'Artex (asbestos risk)'],
+    producedIn: ['Ceiling removals', 'Wall demolitions', 'Partition changes', 'Loft conversions'],
+    commonMaterials: ['Plasterboard sheets', 'Drywall sections', 'Plaster & skim', 'Gypsum boards', 'Ceiling tiles (gypsum)'],
+    materialsToAvoid: ['Mixed general waste', 'Insulation materials', 'Artex (may contain asbestos)', 'Wet or mouldy plasterboard', 'Metal frames & fixings'],
+    tip: 'Plasterboard must be segregated by law - mixing it incurs extra charges.'
   },
 ];
 
@@ -88,14 +94,14 @@ export default function WasteType() {
         
         <ProgressRibbon currentStep={2} />
         
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
             {wasteTypes.map((type) => (
               <button
                 key={type.id}
                 onClick={() => handleSelect(type.id)}
                 className={`
-                  text-left rounded-md border-2 transition-all relative overflow-hidden
+                  text-left rounded-md border-2 transition-all relative overflow-hidden flex flex-col
                   ${wasteType === type.id 
                     ? 'border-primary bg-primary/5' 
                     : 'border-border bg-background hover-elevate'
@@ -103,36 +109,57 @@ export default function WasteType() {
                 `}
                 data-testid={`tile-${type.id}`}
               >
-                <div className="p-4">
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="text-lg font-bold text-foreground">{type.label}</h3>
+                <div className="p-4 flex-1">
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <h3 className="text-xl font-bold text-foreground">{type.label}</h3>
                     <span className="px-2 py-1 text-xs font-medium bg-secondary text-muted-foreground rounded-full whitespace-nowrap flex-shrink-0">
                       {type.tag}
                     </span>
                   </div>
                   
-                  <p className="text-xs text-muted-foreground mb-3">{type.producedIn}</p>
+                  <div className="mb-3 p-2 rounded bg-primary/10 border border-primary/20">
+                    <p className="text-xs text-primary font-medium mb-1">Produced in:</p>
+                    <p className="text-xs text-muted-foreground">
+                      {type.producedIn.join(' • ')}
+                    </p>
+                  </div>
                   
-                  <div className="flex gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-1 mb-1">
-                        <Check className="w-3 h-3 text-primary" />
-                        <span className="text-xs font-semibold text-foreground">Includes</span>
-                      </div>
-                      {type.includes.map((item, idx) => (
-                        <p key={idx} className="text-xs text-muted-foreground">• {item}</p>
+                  <div className="mb-3">
+                    <div className="flex items-center gap-1 mb-2">
+                      <Check className="w-3.5 h-3.5 text-primary" />
+                      <span className="text-xs font-semibold text-foreground">Common materials</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
+                      {type.commonMaterials.slice(0, 6).map((material, idx) => (
+                        <p key={idx} className="text-xs text-muted-foreground">• {material}</p>
                       ))}
                     </div>
-                    
-                    <div className="flex-1">
-                      <div className="flex items-center gap-1 mb-1">
-                        <X className="w-3 h-3 text-destructive" />
-                        <span className="text-xs font-semibold text-foreground">Avoids</span>
-                      </div>
-                      {type.avoids.map((item, idx) => (
-                        <p key={idx} className="text-xs text-muted-foreground">• {item}</p>
+                  </div>
+                  
+                  <div className="mb-3">
+                    <div className="flex items-center gap-1 mb-2">
+                      <X className="w-3.5 h-3.5 text-destructive" />
+                      <span className="text-xs font-semibold text-foreground">Materials to avoid</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
+                      {type.materialsToAvoid.slice(0, 6).map((material, idx) => (
+                        <p key={idx} className="text-xs text-muted-foreground">• {material}</p>
                       ))}
                     </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-2 text-xs text-muted-foreground bg-secondary/50 rounded p-2">
+                    <Info className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" />
+                    <span>{type.tip}</span>
+                  </div>
+                </div>
+                
+                <div className="border-t border-border bg-secondary/30 px-4 py-3">
+                  <div className="flex items-center gap-2 text-xs">
+                    <Eye className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                    <span className="text-muted-foreground">
+                      <span className="font-medium text-foreground">Visual assessment:</span> Each supplier checks waste on-site
+                    </span>
                   </div>
                 </div>
               </button>
