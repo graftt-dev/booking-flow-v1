@@ -366,49 +366,39 @@ export default function DeliveryDate() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                className="mt-6 space-y-3"
+                className="mt-8"
                 data-testid="confirmation-message"
               >
-                <div className="relative py-6">
-                  <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center w-full max-w-3xl mx-auto gap-0">
-                    <div className="flex flex-col items-center text-center px-4">
-                      <div className="w-16 h-16 rounded-lg bg-primary/10 border-2 border-primary flex items-center justify-center mb-3">
-                        <Truck className="w-7 h-7 text-primary" />
-                      </div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-1">Delivery</p>
-                      <p className="text-sm font-bold text-foreground leading-tight">{formatDateDisplay(deliveryStart, deliveryEnd)}</p>
+                <div className="flex items-center justify-center gap-4">
+                  <div className="flex flex-col items-center">
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-2">
+                      <Truck className="w-6 h-6 text-primary" />
                     </div>
-                    
-                    <div className="h-[2px] w-12 bg-primary" />
-                    
-                    <div className="flex flex-col items-center text-center px-4">
-                      <div className="w-24 h-24 rounded-lg bg-primary/10 border-2 border-primary flex items-center justify-center mb-3 shadow-lg">
-                        <div className="text-center">
-                          <p className="text-3xl font-bold text-primary">{getHireDays()}</p>
-                          <p className="text-xs uppercase text-primary font-semibold -mt-1">days</p>
-                        </div>
-                      </div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Hire Period</p>
-                    </div>
-                    
-                    <div className="h-[2px] w-12 bg-primary" />
-                    
-                    <div className="flex flex-col items-center text-center px-4">
-                      <div className="w-16 h-16 rounded-lg bg-primary/10 border-2 border-primary flex items-center justify-center mb-3">
-                        <Package className="w-7 h-7 text-primary" />
-                      </div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-1">Collection</p>
-                      <p className="text-sm font-bold text-foreground leading-tight">{formatDateDisplay(collectionStart, collectionEnd)}</p>
-                    </div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Delivery</p>
+                    <p className="text-sm font-semibold text-foreground">{format(deliveryStart, 'EEE d MMM yyyy')}</p>
                   </div>
-                </div>
-
-                <div className="flex items-start justify-center gap-2 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground">
-                  <Info className="w-4 h-4 mt-0.5 shrink-0" />
-                  <p>
-                    Most providers include <span className="font-semibold text-foreground">7 days</span> hire for a {size || '6yd'} skip as standard. 
-                    Extra days may have additional charges. <span className="font-medium">Hire terms are provider dependent.</span>
-                  </p>
+                  
+                  <div className="w-8 h-0.5 bg-primary/40" />
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="w-20 h-20 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-2">
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-primary">{getHireDays()}</p>
+                        <p className="text-[10px] uppercase text-primary/70 font-medium">days</p>
+                      </div>
+                    </div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Hire Period</p>
+                  </div>
+                  
+                  <div className="w-8 h-0.5 bg-primary/40" />
+                  
+                  <div className="flex flex-col items-center">
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-2">
+                      <Package className="w-6 h-6 text-primary" />
+                    </div>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Collection</p>
+                    <p className="text-sm font-semibold text-foreground">{format(collectionStart, 'EEE d MMM yyyy')}</p>
+                  </div>
                 </div>
               </motion.div>
             )}
