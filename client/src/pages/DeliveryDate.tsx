@@ -239,7 +239,7 @@ export default function DeliveryDate() {
                 onClick={handleChangeDelivery}
                 className={`p-4 text-center transition-all border-b-2 ${
                   phase === 'delivery' 
-                    ? 'border-primary bg-primary/5' 
+                    ? 'border-[#06062D] bg-[#06062D]/5' 
                     : deliveryStart 
                       ? 'border-transparent bg-muted/30 hover-elevate' 
                       : 'border-transparent opacity-50'
@@ -248,18 +248,18 @@ export default function DeliveryDate() {
               >
                 <div className="flex items-center justify-center gap-2 mb-1">
                   {deliveryStart ? (
-                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                      <Check className="w-3 h-3 text-primary-foreground" />
+                    <div className="w-5 h-5 rounded-full bg-[#06062D] flex items-center justify-center">
+                      <Check className="w-3 h-3 text-white" />
                     </div>
                   ) : (
-                    <Truck className={`w-5 h-5 ${phase === 'delivery' ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <Truck className={`w-5 h-5 ${phase === 'delivery' ? 'text-[#06062D]' : 'text-muted-foreground'}`} />
                   )}
                   <span className={`font-medium ${phase === 'delivery' ? 'text-foreground' : 'text-muted-foreground'}`}>
                     Delivery
                   </span>
                 </div>
                 {deliveryStart ? (
-                  <p className="text-sm font-semibold text-primary">{formatDateDisplay(deliveryStart, deliveryEnd)}</p>
+                  <p className="text-sm font-semibold text-[#06062D]">{formatDateDisplay(deliveryStart, deliveryEnd)}</p>
                 ) : (
                   <p className="text-xs text-muted-foreground">Select date</p>
                 )}
@@ -270,7 +270,7 @@ export default function DeliveryDate() {
                 disabled={!deliveryStart}
                 className={`p-4 text-center transition-all border-b-2 ${
                   phase === 'collection' 
-                    ? 'border-primary bg-primary/5' 
+                    ? 'border-[#06062D] bg-[#06062D]/5' 
                     : collectionStart 
                       ? 'border-transparent bg-muted/30 hover-elevate' 
                       : 'border-transparent'
@@ -279,18 +279,18 @@ export default function DeliveryDate() {
               >
                 <div className="flex items-center justify-center gap-2 mb-1">
                   {collectionStart ? (
-                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                      <Check className="w-3 h-3 text-primary-foreground" />
+                    <div className="w-5 h-5 rounded-full bg-[#06062D] flex items-center justify-center">
+                      <Check className="w-3 h-3 text-white" />
                     </div>
                   ) : (
-                    <Package className={`w-5 h-5 ${phase === 'collection' ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <Package className={`w-5 h-5 ${phase === 'collection' ? 'text-[#06062D]' : 'text-muted-foreground'}`} />
                   )}
                   <span className={`font-medium ${phase === 'collection' ? 'text-foreground' : 'text-muted-foreground'}`}>
                     Collection
                   </span>
                 </div>
                 {collectionStart ? (
-                  <p className="text-sm font-semibold text-primary">{formatDateDisplay(collectionStart, collectionEnd)}</p>
+                  <p className="text-sm font-semibold text-[#06062D]">{formatDateDisplay(collectionStart, collectionEnd)}</p>
                 ) : (
                   <p className="text-xs text-muted-foreground">{deliveryStart ? 'Select date' : 'After delivery'}</p>
                 )}
