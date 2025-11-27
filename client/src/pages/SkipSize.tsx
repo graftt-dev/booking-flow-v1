@@ -26,7 +26,7 @@ const skipSizes = [
     unit: 'yard',
     cubicYards: 2,
     binBags: 20,
-    recommended: false,
+    tag: 'Mini',
     dimensions: '1.2m × 1.0m × 0.9m',
     weight: 'Up to ~1 tonne',
     perfectFor: [
@@ -41,7 +41,7 @@ const skipSizes = [
     unit: 'yard',
     cubicYards: 3,
     binBags: 30,
-    recommended: false,
+    tag: 'Mini',
     dimensions: '1.5m × 1.2m × 0.9m',
     weight: 'Up to ~1.5 tonnes',
     perfectFor: [
@@ -56,7 +56,7 @@ const skipSizes = [
     unit: 'yard',
     cubicYards: 4,
     binBags: 40,
-    recommended: false,
+    tag: 'Midi',
     dimensions: '1.8m × 1.2m × 1.0m',
     weight: 'Up to ~2 tonnes',
     perfectFor: [
@@ -71,7 +71,7 @@ const skipSizes = [
     unit: 'yard',
     cubicYards: 6,
     binBags: 60,
-    recommended: false,
+    tag: "Builders' choice",
     dimensions: '3.0m × 1.5m × 1.0m',
     weight: 'Up to ~3 tonnes',
     perfectFor: [
@@ -86,7 +86,7 @@ const skipSizes = [
     unit: 'yard',
     cubicYards: 8,
     binBags: 80,
-    recommended: false,
+    tag: "Builders' choice",
     dimensions: '3.7m × 1.7m × 1.2m',
     weight: 'Up to ~4 tonnes',
     perfectFor: [
@@ -101,7 +101,7 @@ const skipSizes = [
     unit: 'yard',
     cubicYards: 12,
     binBags: 120,
-    recommended: false,
+    tag: 'Maxi (light waste)',
     dimensions: '3.7m × 1.8m × 1.5m',
     weight: 'Up to ~6 tonnes',
     perfectFor: [
@@ -116,7 +116,7 @@ const skipSizes = [
     unit: 'yard',
     cubicYards: 14,
     binBags: 140,
-    recommended: false,
+    tag: 'Maxi (light waste)',
     dimensions: '4.0m × 1.8m × 1.6m',
     weight: 'Up to ~7 tonnes',
     perfectFor: [
@@ -131,7 +131,7 @@ const skipSizes = [
     unit: 'yard',
     cubicYards: 16,
     binBags: 160,
-    recommended: false,
+    tag: 'Maxi (light waste)',
     dimensions: '4.2m × 1.8m × 1.8m',
     weight: 'Up to ~8 tonnes',
     perfectFor: [
@@ -193,10 +193,10 @@ export default function SkipSize() {
                 `}
                 data-testid={`tile-${skip.id}`}
               >
-                {skip.recommended && (
-                  <div className="absolute top-4 right-4 z-10">
-                    <span className="px-3 py-1 text-xs font-medium bg-primary text-primary-foreground rounded-full">
-                      Recommended
+                {skip.tag && (
+                  <div className="absolute top-3 right-3 z-10">
+                    <span className="px-3 py-1.5 text-xs font-medium bg-secondary text-muted-foreground rounded-full">
+                      {skip.tag}
                     </span>
                   </div>
                 )}
