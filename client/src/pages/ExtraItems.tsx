@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Minus, Plus, ArrowLeft } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
 import EducationPill from '@/components/EducationPill';
@@ -29,13 +30,22 @@ const items = [
   'Batteries',
 ];
 
-const hazardousItems = ['Asbestos', 'Paints/Liquids'];
+const notAcceptedItems = [
+  'Asbestos',
+  'Paint/Liquids',
+  'Food waste',
+  'Medical waste',
+  'Chemicals & solvents',
+  'Oil & fuel containers',
+  'Fluorescent tubes'
+];
 
 export default function ExtraItems() {
   const [, setLocation] = useLocation();
   const { items: selectedItems, itemQuantities, toggleItem, setItems, setItemQuantity } = useJourneyStore();
   const [showHazardWarning, setShowHazardWarning] = useState(false);
   const [noneExplicitlySelected, setNoneExplicitlySelected] = useState(false);
+  const [confirmedNoProhibited, setConfirmedNoProhibited] = useState(false);
   
   const handleItemClick = (item: string) => {
     toggleItem(item);
@@ -140,20 +150,28 @@ export default function ExtraItems() {
           <div className="bg-destructive/10 border border-destructive/20 rounded-md p-4">
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-destructive mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-foreground">Hazardous items not accepted:</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {hazardousItems.join(', ')} - These require special disposal
-                </p>
-                
-                <p className="text-sm font-medium text-foreground mt-4">This provider also does not accept:</p>
-                <ul className="text-sm text-muted-foreground mt-1 space-y-0.5 list-disc list-inside">
-                  <li>Food waste</li>
-                  <li>Medical waste</li>
-                  <li>Chemicals & solvents</li>
-                  <li>Oil & fuel containers</li>
-                  <li>Fluorescent tubes</li>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-foreground">This provider does not accept:</p>
+                <ul className="text-sm text-muted-foreground mt-2 space-y-1 list-disc list-inside">
+                  {notAcceptedItems.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
                 </ul>
+                
+                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-destructive/20">
+                  <Checkbox
+                    id="confirm-no-prohibited"
+                    checked={confirmedNoProhibited}
+                    onCheckedChange={(checked) => setConfirmedNoProhibited(checked === true)}
+                    data-testid="checkbox-confirm-no-prohibited"
+                  />
+                  <label 
+                    htmlFor="confirm-no-prohibited" 
+                    className="text-sm text-foreground cursor-pointer"
+                  >
+                    I confirm none of these items will be in the skip
+                  </label>
+                </div>
               </div>
             </div>
           </div>
