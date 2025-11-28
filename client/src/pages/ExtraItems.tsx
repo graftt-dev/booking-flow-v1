@@ -145,6 +145,15 @@ export default function ExtraItems() {
                 <p className="text-sm text-muted-foreground mt-1">
                   {hazardousItems.join(', ')} - These require special disposal
                 </p>
+                
+                <p className="text-sm font-medium text-foreground mt-4">This provider also does not accept:</p>
+                <ul className="text-sm text-muted-foreground mt-1 space-y-0.5 list-disc list-inside">
+                  <li>Food waste</li>
+                  <li>Medical waste</li>
+                  <li>Chemicals & solvents</li>
+                  <li>Oil & fuel containers</li>
+                  <li>Fluorescent tubes</li>
+                </ul>
               </div>
             </div>
           </div>
