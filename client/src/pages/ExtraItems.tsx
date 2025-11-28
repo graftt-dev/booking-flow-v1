@@ -185,7 +185,7 @@ export default function ExtraItems() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
-            <Button size="lg" onClick={handleContinue} data-testid="button-continue">
+            <Button size="lg" onClick={handleContinue} disabled={!confirmedNoProhibited} data-testid="button-continue">
               Continue
             </Button>
           </div>
