@@ -14,7 +14,7 @@ type DateMode = 'specific' | 'flexible';
 
 export default function DeliveryDate() {
   const [, setLocation] = useLocation();
-  const { setDeliveryDate, setCollectionDate, size } = useJourneyStore();
+  const { setDeliveryDate, setCollectionDate, size, placement } = useJourneyStore();
   const [phase, setPhase] = useState<SelectionPhase>('delivery');
   const [deliveryMode, setDeliveryMode] = useState<DateMode>('specific');
   const [collectionMode, setCollectionMode] = useState<DateMode>('specific');
@@ -28,6 +28,9 @@ export default function DeliveryDate() {
 
   const today = new Date();
   const tomorrow = addDays(today, 1);
+  
+  // For public road placement, minimum delivery date is 14 days from today due to permit requirements
+  const minDeliveryDate = placement === 'road' ? addDays(today, 14) : tomorrow;
 
   const currentMode = phase === 'delivery' ? deliveryMode : collectionMode;
   const setCurrentMode = phase === 'delivery' ? setDeliveryMode : setCollectionMode;
@@ -105,7 +108,7 @@ export default function DeliveryDate() {
 
   const isDateDisabled = (date: Date) => {
     if (phase === 'delivery') {
-      return isBefore(date, tomorrow);
+      return isBefore(date, minDeliveryDate);
     }
     return isBefore(date, collectionMinDate);
   };
