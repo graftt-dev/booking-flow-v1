@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, Minus, Plus, ArrowLeft } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
 import EducationPill from '@/components/EducationPill';
@@ -45,7 +44,6 @@ export default function ExtraItems() {
   const { items: selectedItems, itemQuantities, toggleItem, setItems, setItemQuantity } = useJourneyStore();
   const [showHazardWarning, setShowHazardWarning] = useState(false);
   const [noneExplicitlySelected, setNoneExplicitlySelected] = useState(false);
-  const [confirmedNoProhibited, setConfirmedNoProhibited] = useState(false);
   
   const handleItemClick = (item: string) => {
     toggleItem(item);
@@ -157,21 +155,6 @@ export default function ExtraItems() {
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
-                
-                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-destructive/20">
-                  <Checkbox
-                    id="confirm-no-prohibited"
-                    checked={confirmedNoProhibited}
-                    onCheckedChange={(checked) => setConfirmedNoProhibited(checked === true)}
-                    data-testid="checkbox-confirm-no-prohibited"
-                  />
-                  <label 
-                    htmlFor="confirm-no-prohibited" 
-                    className="text-sm text-foreground cursor-pointer"
-                  >
-                    I confirm none of these items will be in the skip
-                  </label>
-                </div>
               </div>
             </div>
           </div>
@@ -185,7 +168,7 @@ export default function ExtraItems() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
-            <Button size="lg" onClick={handleContinue} disabled={!confirmedNoProhibited} data-testid="button-continue">
+            <Button size="lg" onClick={handleContinue} data-testid="button-continue">
               Continue
             </Button>
           </div>
