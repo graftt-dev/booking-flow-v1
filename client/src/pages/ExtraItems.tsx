@@ -147,31 +147,35 @@ export default function ExtraItems() {
             None of the above
           </Chip>
           
-          <div className="bg-destructive/10 border border-destructive/20 rounded-md p-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-destructive mt-0.5" />
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground">This provider does not accept:</p>
-                <ul className="text-sm text-muted-foreground mt-2 space-y-1 list-disc list-inside">
-                  {notAcceptedItems.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-                
-                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-destructive/20">
-                  <Checkbox
-                    id="confirm-no-prohibited"
-                    checked={confirmedNoProhibited}
-                    onCheckedChange={(checked) => setConfirmedNoProhibited(checked === true)}
-                    data-testid="checkbox-confirm-no-prohibited"
-                  />
-                  <label 
-                    htmlFor="confirm-no-prohibited" 
-                    className="text-sm text-foreground cursor-pointer"
-                  >
-                    I confirm none of these items will be in the skip
-                  </label>
+          <div className="border border-destructive/20 rounded-md overflow-hidden">
+            <div className="bg-destructive/10 p-4">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-destructive mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-foreground">This provider does not accept:</p>
+                  <ul className="text-sm text-muted-foreground mt-2 space-y-1 list-disc list-inside">
+                    {notAcceptedItems.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
                 </div>
+              </div>
+            </div>
+            
+            <div className="bg-background p-4">
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  id="confirm-no-prohibited"
+                  checked={confirmedNoProhibited}
+                  onCheckedChange={(checked) => setConfirmedNoProhibited(checked === true)}
+                  data-testid="checkbox-confirm-no-prohibited"
+                />
+                <label 
+                  htmlFor="confirm-no-prohibited" 
+                  className="text-sm text-foreground cursor-pointer"
+                >
+                  I confirm none of these items will be in the skip
+                </label>
               </div>
             </div>
           </div>
