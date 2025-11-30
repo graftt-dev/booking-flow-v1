@@ -158,16 +158,23 @@ export default function ExtraItems() {
                   ))}
                 </ul>
                 
-                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-destructive/20">
+                <div className={`flex items-center gap-3 mt-4 p-3 rounded-md border-2 transition-all cursor-pointer ${
+                    confirmedNoProhibited 
+                      ? 'bg-primary/10 border-primary' 
+                      : 'bg-background border-destructive/50 hover:border-destructive'
+                  }`}
+                  onClick={() => setConfirmedNoProhibited(!confirmedNoProhibited)}
+                >
                   <Checkbox
                     id="confirm-no-prohibited"
                     checked={confirmedNoProhibited}
                     onCheckedChange={(checked) => setConfirmedNoProhibited(checked === true)}
                     data-testid="checkbox-confirm-no-prohibited"
+                    className="border-2"
                   />
                   <label 
                     htmlFor="confirm-no-prohibited" 
-                    className="text-sm text-foreground cursor-pointer"
+                    className="text-sm font-medium text-foreground cursor-pointer flex-1"
                   >
                     I confirm none of these items will be in the skip
                   </label>
