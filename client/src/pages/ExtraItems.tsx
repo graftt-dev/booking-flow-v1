@@ -157,31 +157,23 @@ export default function ExtraItems() {
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
+                
+                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-destructive/20">
+                  <Checkbox
+                    id="confirm-no-prohibited"
+                    checked={confirmedNoProhibited}
+                    onCheckedChange={(checked) => setConfirmedNoProhibited(checked === true)}
+                    data-testid="checkbox-confirm-no-prohibited"
+                  />
+                  <label 
+                    htmlFor="confirm-no-prohibited" 
+                    className="text-sm text-foreground cursor-pointer"
+                  >
+                    I confirm none of these items will be in the skip
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div 
-            className={`flex items-center gap-3 p-4 rounded-md border-2 transition-all cursor-pointer ${
-              confirmedNoProhibited 
-                ? 'bg-primary/10 border-primary' 
-                : 'bg-card border-border hover:border-primary/50'
-            }`}
-            onClick={() => setConfirmedNoProhibited(!confirmedNoProhibited)}
-          >
-            <Checkbox
-              id="confirm-no-prohibited"
-              checked={confirmedNoProhibited}
-              onCheckedChange={(checked) => setConfirmedNoProhibited(checked === true)}
-              data-testid="checkbox-confirm-no-prohibited"
-              className="border-2"
-            />
-            <label 
-              htmlFor="confirm-no-prohibited" 
-              className="text-sm font-medium text-foreground cursor-pointer flex-1"
-            >
-              I confirm none of these items will be in the skip
-            </label>
           </div>
           
           <div className="flex justify-center items-center gap-4 pt-4">
