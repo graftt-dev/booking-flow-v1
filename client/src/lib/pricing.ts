@@ -12,13 +12,14 @@ export const basePrices: Record<SkipSize, number> = {
 };
 
 export const itemPrices: Record<string, number> = {
-  "Mattress": 15,
-  "Sofa": 12,
-  "Tyres": 20,
+  "Plasterboard / Gypsum Waste": 60,
+  "Gas Bottles": 50,
+  "Single Mattress": 20,
+  "Double Mattress": 30,
+  "Tyres": 5,
   "Fridge/Freezer": 25,
-  "Plasterboard": 10,
-  "Gas Bottles": 15,
-  "Batteries": 5,
+  "Sofa": 15,
+  "Batteries": 10,
 };
 
 export const calculateExtras = (items: string[], itemQuantities: Record<string, number> = {}): number => {

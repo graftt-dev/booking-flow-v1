@@ -19,14 +19,21 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const items = [
-  'Mattress',
-  'Sofa',
-  'Tyres',
-  'Fridge/Freezer',
-  'Plasterboard',
-  'Gas Bottles',
-  'Batteries',
+interface ExtraItem {
+  name: string;
+  price: number;
+  pricingType: 'per item' | 'per tonne';
+}
+
+const items: ExtraItem[] = [
+  { name: 'Plasterboard / Gypsum Waste', price: 60, pricingType: 'per tonne' },
+  { name: 'Gas Bottles', price: 50, pricingType: 'per item' },
+  { name: 'Single Mattress', price: 20, pricingType: 'per item' },
+  { name: 'Double Mattress', price: 30, pricingType: 'per item' },
+  { name: 'Tyres', price: 5, pricingType: 'per item' },
+  { name: 'Fridge/Freezer', price: 25, pricingType: 'per item' },
+  { name: 'Sofa', price: 15, pricingType: 'per item' },
+  { name: 'Batteries', price: 10, pricingType: 'per item' },
 ];
 
 const notAcceptedItems = [
@@ -84,18 +91,26 @@ export default function ExtraItems() {
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="grid grid-cols-1 gap-3 mt-8">
             {items.map((item) => {
-              const isSelected = selectedItems.includes(item);
-              const quantity = itemQuantities[item] || 1;
+              const isSelected = selectedItems.includes(item.name);
+              const quantity = itemQuantities[item.name] || 1;
               
               return (
-                <div key={item} className="flex items-center gap-3">
+                <div key={item.name} className="flex items-center gap-3">
                   <div className="flex-1">
                     <Chip
                       selected={isSelected}
-                      onClick={() => handleItemClick(item)}
-                      className="w-full"
+                      onClick={() => handleItemClick(item.name)}
+                      className="w-full justify-start"
                     >
-                      {item}
+                      <span className="flex items-center gap-2">
+                        <span>{item.name}</span>
+                        <span className={cn(
+                          "text-sm",
+                          isSelected ? "text-primary-foreground/70" : "text-muted-foreground"
+                        )}>
+                          +£{item.price.toFixed(2)} {item.pricingType}
+                        </span>
+                      </span>
                     </Chip>
                   </div>
                   
@@ -108,20 +123,20 @@ export default function ExtraItems() {
                         className="flex items-center gap-2"
                       >
                         <button
-                          onClick={() => handleQuantityChange(item, -1)}
+                          onClick={() => handleQuantityChange(item.name, -1)}
                           className="w-8 h-8 rounded-md border border-border bg-background flex items-center justify-center hover-elevate active-elevate-2"
                           disabled={quantity <= 1}
-                          data-testid={`button-decrease-${item}`}
+                          data-testid={`button-decrease-${item.name}`}
                         >
                           <Minus className="w-4 h-4" />
                         </button>
-                        <span className="text-sm font-medium text-foreground min-w-8 text-center" data-testid={`text-quantity-${item}`}>
+                        <span className="text-sm font-medium text-foreground min-w-8 text-center" data-testid={`text-quantity-${item.name}`}>
                           {quantity}
                         </span>
                         <button
-                          onClick={() => handleQuantityChange(item, 1)}
+                          onClick={() => handleQuantityChange(item.name, 1)}
                           className="w-8 h-8 rounded-md border border-border bg-background flex items-center justify-center hover-elevate active-elevate-2"
-                          data-testid={`button-increase-${item}`}
+                          data-testid={`button-increase-${item.name}`}
                         >
                           <Plus className="w-4 h-4" />
                         </button>
