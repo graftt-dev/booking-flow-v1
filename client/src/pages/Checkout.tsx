@@ -37,6 +37,7 @@ export default function Checkout() {
     address,
     wasteType,
     deliveryDate,
+    collectionDate,
     flags
   } = useJourneyStore();
   const [notes, setNotes] = useState('');
@@ -67,6 +68,26 @@ export default function Checkout() {
   const getWasteTypeLabel = () => {
     return wasteTypeLabels[wasteType] || wasteType;
   };
+
+  const getHireDaysInfo = () => {
+    if (!provider) return { standardDays: 14, extraDays: 0 };
+    
+    const standardDays = provider.standardHireDays;
+    
+    if (!deliveryDate || !collectionDate) {
+      return { standardDays, extraDays: 0 };
+    }
+    
+    const start = new Date(deliveryDate);
+    const end = new Date(collectionDate);
+    const diffTime = end.getTime() - start.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const extraDays = Math.max(0, diffDays - standardDays);
+    
+    return { standardDays, extraDays };
+  };
+
+  const { standardDays, extraDays } = getHireDaysInfo();
 
   const getItemsText = () => {
     if (items.length === 0) return '';
@@ -208,6 +229,30 @@ export default function Checkout() {
                   </span>
                 )}
                 .
+              </p>
+
+              <p>
+                Your hire includes{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-hire-days"
+                >
+                  {standardDays} days
+                </span>
+                {extraDays > 0 ? (
+                  <>
+                    {' '}as standard, plus{' '}
+                    <span 
+                      className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                      data-testid="badge-extra-days"
+                    >
+                      {extraDays} extra day{extraDays > 1 ? 's' : ''}
+                    </span>
+                    {' '}which we've added to your quote.
+                  </>
+                ) : (
+                  <> as standard.</>
+                )}
               </p>
 
               <p className="pt-4 border-t mt-4">
