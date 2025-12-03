@@ -121,7 +121,7 @@ export default function Providers() {
                     </a>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Monday-Sunday 24/7
+                    Mon-Sun 24/7
                   </p>
                 </div>
               </Card>
