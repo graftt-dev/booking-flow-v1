@@ -12,8 +12,10 @@ import { useJourneyStore } from '@/store/journeyStore';
 import { providers as allProviders, sortProviders, getProviderPrice } from '@/lib/providers';
 import { motion } from 'framer-motion';
 import { calculateTotals } from '@/lib/pricing';
-import { ArrowLeft, MapPin, Package, Trash2, Calendar, CalendarCheck, Lightbulb } from 'lucide-react';
+import { ArrowLeft, MapPin, Package, Trash2, Calendar, CalendarCheck, Lightbulb, Phone, MessageCircle } from 'lucide-react';
 import { format, parse } from 'date-fns';
+
+const NO_PROVIDER_POSTCODES = ['M1 1AE'];
 
 type SortMode = 'best' | 'cheapest' | 'greenest';
 
@@ -72,6 +74,97 @@ export default function Providers() {
   
   const filteredProviders = providers.slice(0, 9);
   const skipInfo = skipSizeNames[size || '6yd'] || { name: 'Skip', yards: '' };
+  const hasNoProviders = NO_PROVIDER_POSTCODES.includes(postcode);
+  
+  if (hasNoProviders) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        
+        <motion.main 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="container mx-auto px-4 py-8"
+        >
+          <div className="max-w-2xl mx-auto text-center">
+            <ProgressRibbon currentStep={4} />
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mt-12"
+            >
+              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Phone className="w-10 h-10 text-primary" />
+              </div>
+              
+              <h1 className="text-3xl font-bold text-foreground mb-4" data-testid="text-no-providers-title">
+                We'd love to help you personally
+              </h1>
+              
+              <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
+                We're still growing our network in your area. Give us a quick call and we'll find the perfect skip hire solution for you.
+              </p>
+              
+              <Card className="p-6 mb-8">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-center gap-3">
+                    <Phone className="w-5 h-5 text-primary" />
+                    <a 
+                      href="tel:08001234567" 
+                      className="text-2xl font-bold text-primary hover:underline"
+                      data-testid="link-phone"
+                    >
+                      0800 123 4567
+                    </a>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Mon-Fri 8am-6pm, Sat 9am-4pm
+                  </p>
+                </div>
+              </Card>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Button
+                  size="lg"
+                  onClick={() => window.location.href = 'tel:08001234567'}
+                  className="w-full sm:w-auto"
+                  data-testid="button-call-us"
+                >
+                  <Phone className="w-4 h-4 mr-2" />
+                  Call Us Now
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => setLocation('/')}
+                  className="w-full sm:w-auto"
+                  data-testid="button-try-different"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Try a Different Location
+                </Button>
+              </div>
+              
+              <div className="mt-8 p-4 bg-muted/50 rounded-md">
+                <div className="flex items-start gap-3 text-left">
+                  <MessageCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Why call?</p>
+                    <p className="text-sm text-muted-foreground">
+                      Our team can often arrange skip hire even in areas not yet on our platform. We'll get you sorted!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.main>
+      </div>
+    );
+  }
   
   return (
     <div className="min-h-screen bg-background">

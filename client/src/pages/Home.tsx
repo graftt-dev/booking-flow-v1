@@ -8,11 +8,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, X } from 'lucide-react';
 
 const mockAddresses = [
-  { id: 1, address: '10 Downing Street, London', postcode: 'SW1A 2AA', lat: 51.5034, lng: -0.1276 },
-  { id: 2, address: '221B Baker Street, London', postcode: 'NW1 6XE', lat: 51.5238, lng: -0.1585 },
-  { id: 3, address: '1 Abbey Road, London', postcode: 'NW8 9AY', lat: 51.5319, lng: -0.1778 },
-  { id: 4, address: '30 St Mary Axe, London', postcode: 'EC3A 8EP', lat: 51.5145, lng: -0.0803 },
-  { id: 5, address: 'Tower Bridge Road, London', postcode: 'SE1 2UP', lat: 51.5055, lng: -0.0754 },
+  { id: 1, address: '10 Downing Street, London', postcode: 'SW1A 2AA', lat: 51.5034, lng: -0.1276, noProviders: false },
+  { id: 2, address: '221B Baker Street, London', postcode: 'NW1 6XE', lat: 51.5238, lng: -0.1585, noProviders: false },
+  { id: 3, address: '1 Abbey Road, London', postcode: 'NW8 9AY', lat: 51.5319, lng: -0.1778, noProviders: false },
+  { id: 4, address: '30 St Mary Axe, London', postcode: 'EC3A 8EP', lat: 51.5145, lng: -0.0803, noProviders: false },
+  { id: 5, address: 'Tower Bridge Road, London', postcode: 'SE1 2UP', lat: 51.5055, lng: -0.0754, noProviders: false },
+  { id: 6, address: '42 Test Lane, Manchester', postcode: 'M1 1AE', lat: 53.4808, lng: -2.2426, noProviders: true },
 ];
 
 export default function Home() {
@@ -122,13 +123,13 @@ export default function Home() {
                       <button
                         key={addr.id}
                         onClick={() => handleAddressSelect(addr)}
-                        className="w-full px-4 py-3 text-left hover-elevate active-elevate-2 flex items-start gap-3 border-b border-border last:border-b-0"
+                        className={`w-full px-4 py-3 text-left hover-elevate active-elevate-2 flex items-start gap-3 border-b border-border last:border-b-0 ${addr.noProviders ? 'bg-destructive/5' : ''}`}
                         data-testid={`address-option-${addr.id}`}
                       >
-                        <MapPin className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                        <MapPin className={`w-4 h-4 mt-1 flex-shrink-0 ${addr.noProviders ? 'text-destructive' : 'text-primary'}`} />
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-foreground">{addr.address}</div>
-                          <div className="text-sm text-muted-foreground">{addr.postcode}</div>
+                          <div className={`font-medium ${addr.noProviders ? 'text-destructive' : 'text-foreground'}`}>{addr.address}</div>
+                          <div className={`text-sm ${addr.noProviders ? 'text-destructive/70' : 'text-muted-foreground'}`}>{addr.postcode}</div>
                         </div>
                       </button>
                     ))}
