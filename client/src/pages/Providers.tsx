@@ -105,7 +105,7 @@ export default function Providers() {
               </h1>
               
               <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-                We're still growing our online network in your area. No stress, give us a quick call and we will handle your order personally with one of our trusted providers.
+                We're still growing our online network in your area. Give us a quick call and we will handle your order personally with one of our trusted providers.
               </p>
               
               <Card className="p-6 mb-8">
@@ -154,7 +154,7 @@ export default function Providers() {
                   <div>
                     <p className="text-sm font-medium text-foreground">Why call?</p>
                     <p className="text-sm text-muted-foreground">
-                      Our team can often arrange skip hire even in areas not yet on our platform. We'll get you sorted!
+                      Our team can arrange skip hire even in areas not yet on our platform. We'll get you sorted!
                     </p>
                   </div>
                 </div>
