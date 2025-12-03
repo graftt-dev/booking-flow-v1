@@ -105,7 +105,7 @@ export default function Providers() {
               </h1>
               
               <p className="text-lg text-muted-foreground mb-8 max-w-md mx-auto">
-                We're still growing our network in your area. Give us a quick call and we'll find the perfect skip hire solution for you.
+                We're still growing our online network in your area. No stress, give us a quick call and we will handle your order personally with one of our trusted providers.
               </p>
               
               <Card className="p-6 mb-8">
