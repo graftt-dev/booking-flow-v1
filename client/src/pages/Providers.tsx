@@ -113,11 +113,11 @@ export default function Providers() {
                   <div className="flex items-center justify-center gap-3">
                     <Phone className="w-5 h-5 text-primary" />
                     <a 
-                      href="tel:08001234567" 
+                      href="tel:03330508776" 
                       className="text-2xl font-bold text-primary hover:underline"
                       data-testid="link-phone"
                     >
-                      0800 123 4567
+                      0333 050 8776
                     </a>
                   </div>
                   <p className="text-sm text-muted-foreground">
@@ -129,7 +129,7 @@ export default function Providers() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <Button
                   size="lg"
-                  onClick={() => window.location.href = 'tel:08001234567'}
+                  onClick={() => window.location.href = 'tel:03330508776'}
                   className="w-full sm:w-auto"
                   data-testid="button-call-us"
                 >
