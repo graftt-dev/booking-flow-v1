@@ -158,14 +158,7 @@ export default function Checkout() {
                   className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
                   data-testid="badge-address"
                 >
-                  {address || 'your location'}
-                </span>
-                ,{' '}
-                <span 
-                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
-                  data-testid="badge-postcode"
-                >
-                  {postcode || 'N/A'}
+                  {address || 'your location'}{postcode ? `, ${postcode}` : ''}
                 </span>
                 .
               </p>
