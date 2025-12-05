@@ -35,6 +35,8 @@ export default function Checkout() {
     customer, 
     setCustomer, 
     address,
+    postcode,
+    w3w,
     wasteType,
     deliveryDate,
     collectionDate,
@@ -139,9 +141,27 @@ export default function Checkout() {
                 >
                   {address || 'your location'}
                 </span>
+                ,{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-postcode"
+                >
+                  {postcode || 'N/A'}
+                </span>
+                .
+              </p>
+              
+              <p>
+                Your skip will be dropped in W3W location{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-w3w"
+                >
+                  {w3w || '///filled.count.soap'}
+                </span>
                 {placement && (
                   <>
-                    , and confirmed that you{' '}
+                    , and you've confirmed that you{' '}
                     {flags.onRoadFromHome === false ? (
                       <>
                         own the land so{' '}
