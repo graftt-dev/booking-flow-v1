@@ -164,13 +164,14 @@ export default function Checkout() {
               </p>
               
               <p>
-                Your skip will be dropped in W3W location{' '}
+                Your skip will be dropped in{' '}
                 <span 
                   className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
                   data-testid="badge-w3w"
                 >
-                  {w3w || '///filled.count.soap'}
+                  {w3w || '///mock.what3.words'}
                 </span>
+                {' '}location
                 {placement && (
                   <>
                     , and you've confirmed that you{' '}
