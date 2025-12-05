@@ -67,6 +67,25 @@ export default function Checkout() {
     }
   };
 
+  const formatCollectionDate = () => {
+    if (!collectionDate) return { text: 'ASAP', isFlexible: false };
+    try {
+      if (collectionDate.includes('|')) {
+        const [start, end] = collectionDate.split('|');
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        return { 
+          text: `${format(startDate, 'EEEE d MMMM')} and ${format(endDate, 'EEEE d MMMM')}`,
+          isFlexible: true 
+        };
+      }
+      const date = new Date(collectionDate);
+      return { text: format(date, 'EEEE d MMMM'), isFlexible: false };
+    } catch {
+      return { text: collectionDate, isFlexible: false };
+    }
+  };
+
   const getWasteTypeLabel = () => {
     return wasteTypeLabels[wasteType] || wasteType;
   };
@@ -183,12 +202,19 @@ export default function Checkout() {
               </p>
 
               <p>
-                You need it{' '}
+                You need it delivered{' '}
                 <span 
                   className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
                   data-testid="badge-delivery-date"
                 >
                   {formatDeliveryDate()}
+                </span>
+                {' '}and collected {formatCollectionDate().isFlexible ? 'between' : 'on'}{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-collection-date"
+                >
+                  {formatCollectionDate().text}
                 </span>
                 {wasteType && (
                   <>
