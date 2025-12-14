@@ -73,7 +73,7 @@ function formatDateDisplay(dateStr: string): string {
 
 export default function QuoteRequest() {
   const [, setLocationPath] = useLocation();
-  const { postcode, address, w3w, placement, wasteType, size, providerId, deliveryDate, collectionDate } = useJourneyStore();
+  const { postcode, address, w3w, placement, wasteType, size, providerId, deliveryDate, collectionDate, items: journeyItems, itemQuantities } = useJourneyStore();
   
   const [submitted, setSubmitted] = useState(false);
   
@@ -86,7 +86,7 @@ export default function QuoteRequest() {
       email: '',
       phone: '',
       message: '',
-      selectedItems: [],
+      selectedItems: journeyItems || [],
     },
   });
   
@@ -281,39 +281,67 @@ export default function QuoteRequest() {
             
             <Card className="p-5" data-testid="card-items">
               <h2 className="text-lg font-semibold text-foreground mb-2">Items to Dispose</h2>
-              <p className="text-sm text-muted-foreground mb-4">Select any items you'd like included in your quote</p>
-              
-              <div className="grid grid-cols-2 gap-3">
-                {allItems.map((item) => (
-                  <div 
-                    key={item.id}
-                    className={cn(
-                      "flex items-center gap-3 p-3 rounded-md border transition-all cursor-pointer",
-                      selectedItems.includes(item.id)
-                        ? "border-primary bg-primary/5"
-                        : "border-border hover:border-primary/50",
-                      !item.appropriate && "opacity-70"
-                    )}
-                    onClick={() => toggleItem(item.id)}
-                    data-testid={`item-${item.id}`}
-                  >
-                    <Checkbox 
-                      checked={selectedItems.includes(item.id)}
-                      onCheckedChange={() => toggleItem(item.id)}
-                      data-testid={`checkbox-${item.id}`}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground">{item.name}</p>
-                      {!item.appropriate && (
-                        <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                          <AlertTriangle className="w-3 h-3" />
-                          May require special handling
-                        </p>
-                      )}
-                    </div>
+              {journeyItems && journeyItems.length > 0 ? (
+                <>
+                  <p className="text-sm text-muted-foreground mb-4">These items will be included in your quote request</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {journeyItems.map((itemName) => {
+                      const quantity = itemQuantities[itemName] || 1;
+                      return (
+                        <div 
+                          key={itemName}
+                          className="flex items-center gap-3 p-3 rounded-md border border-primary bg-primary/5"
+                          data-testid={`item-${itemName.toLowerCase().replace(/\s+/g, '-')}`}
+                        >
+                          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                            <CheckCircle2 className="w-4 h-4 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-foreground">
+                              {quantity > 1 ? `${quantity}× ` : ''}{itemName}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                ))}
-              </div>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-muted-foreground mb-4">Select any items you'd like included in your quote</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {allItems.map((item) => (
+                      <div 
+                        key={item.id}
+                        className={cn(
+                          "flex items-center gap-3 p-3 rounded-md border transition-all cursor-pointer",
+                          selectedItems.includes(item.id)
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50",
+                          !item.appropriate && "opacity-70"
+                        )}
+                        onClick={() => toggleItem(item.id)}
+                        data-testid={`item-${item.id}`}
+                      >
+                        <Checkbox 
+                          checked={selectedItems.includes(item.id)}
+                          onCheckedChange={() => toggleItem(item.id)}
+                          data-testid={`checkbox-${item.id}`}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground">{item.name}</p>
+                          {!item.appropriate && (
+                            <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                              <AlertTriangle className="w-3 h-3" />
+                              May require special handling
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </Card>
             
             <Card className="p-5" data-testid="card-contact">
