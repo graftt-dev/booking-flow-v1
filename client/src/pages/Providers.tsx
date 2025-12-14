@@ -55,6 +55,7 @@ export default function Providers() {
   const [sortMode, setSortMode] = useState<SortMode>('best');
   const [providers, setProviders] = useState(allProviders);
   const [showNotGuaranteed, setShowNotGuaranteed] = useState(false);
+  const [guaranteedOnly, setGuaranteedOnly] = useState(false);
   
   useEffect(() => {
     const sorted = sortProviders(allProviders, sortMode, size || '6yd', items, placement || 'driveway');
@@ -310,19 +311,45 @@ export default function Providers() {
           <ProgressRibbon currentStep={4} />
           
           <Tabs value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)} className="w-full">
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-4">
               <TabsList data-testid="tabs-sort">
-                <TabsTrigger value="best" data-testid="tab-best">Best</TabsTrigger>
+                <TabsTrigger value="best" data-testid="tab-best">Popular</TabsTrigger>
                 <TabsTrigger value="cheapest" data-testid="tab-cheapest">Cheapest</TabsTrigger>
                 <TabsTrigger value="greenest" data-testid="tab-greenest">Greenest</TabsTrigger>
               </TabsList>
             </div>
           </Tabs>
           
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full">
+              <span className="text-sm text-foreground" data-testid="text-provider-count">
+                {guaranteedOnly 
+                  ? `${guaranteedProviders.length} providers found`
+                  : `${guaranteedProviders.length + notVerifiedProviders.length} providers found`
+                }
+              </span>
+            </div>
+          </div>
+          
+          <div className="flex justify-center mb-6">
+            <button
+              onClick={() => setGuaranteedOnly(!guaranteedOnly)}
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-sm ${
+                guaranteedOnly 
+                  ? 'bg-[#05E4C0]/10 border-[#05E4C0] text-[#06062D]' 
+                  : 'bg-transparent border-border text-muted-foreground hover:border-[#05E4C0]/50'
+              }`}
+              data-testid="button-guaranteed-only"
+            >
+              <span className={`w-3 h-3 rounded-full ${guaranteedOnly ? 'bg-[#05E4C0]' : 'bg-muted-foreground/30'}`} />
+              GRAFTT Guaranteed only
+            </button>
+          </div>
+          
           <div className="space-y-6">
             {/* All providers in a single list */}
             <div className="space-y-3">
-              {[...guaranteedProviders, ...notVerifiedProviders].map((provider, index) => {
+              {(guaranteedOnly ? guaranteedProviders : [...guaranteedProviders, ...notVerifiedProviders]).map((provider, index) => {
                 const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
                 const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
                 const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
