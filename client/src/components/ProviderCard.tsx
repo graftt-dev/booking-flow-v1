@@ -127,8 +127,17 @@ export default function ProviderCard({
           </div>
           
           <div className="text-right flex-shrink-0">
-            <span className="text-2xl font-bold text-foreground">{formatCurrency(totalPrice)}</span>
-            <p className="text-xs text-muted-foreground">inc. VAT</p>
+            {isNotVerified ? (
+              <>
+                <span className="text-2xl font-bold text-foreground" data-testid={`price-${provider.id}`}>POQ</span>
+                <p className="text-xs text-muted-foreground">Price on Quote</p>
+              </>
+            ) : (
+              <>
+                <span className="text-2xl font-bold text-foreground" data-testid={`price-${provider.id}`}>{formatCurrency(totalPrice)}</span>
+                <p className="text-xs text-muted-foreground">inc. VAT</p>
+              </>
+            )}
           </div>
         </div>
 
@@ -144,14 +153,18 @@ export default function ProviderCard({
         </div>
         
         <div className="flex items-center justify-between gap-4">
-          <button 
-            onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1 text-xs text-primary hover:underline"
-            data-testid="button-breakdown"
-          >
-            <span>{expanded ? 'Hide' : 'View'} breakdown</span>
-            <ChevronDown className={cn("w-3 h-3 transition-transform", expanded && "rotate-180")} />
-          </button>
+          {!isNotVerified ? (
+            <button 
+              onClick={() => setExpanded(!expanded)}
+              className="flex items-center gap-1 text-xs text-primary hover:underline"
+              data-testid="button-breakdown"
+            >
+              <span>{expanded ? 'Hide' : 'View'} breakdown</span>
+              <ChevronDown className={cn("w-3 h-3 transition-transform", expanded && "rotate-180")} />
+            </button>
+          ) : (
+            <div />
+          )}
           
           {isNotVerified ? (
             <Button
