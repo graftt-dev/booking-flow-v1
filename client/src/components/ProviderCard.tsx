@@ -95,7 +95,9 @@ export default function ProviderCard({
           "relative p-4 rounded-md border-2 transition-all bg-card",
           isDisabled && "opacity-50 pointer-events-none grayscale",
           selected
-            ? "border-primary shadow-soft"
+            ? isNotVerified 
+              ? "border-[#06062D] shadow-soft" 
+              : "border-primary shadow-soft"
             : "border-card-border hover-elevate"
         )}
       >
@@ -183,13 +185,13 @@ export default function ProviderCard({
             
             {isNotVerified ? (
               <Button
-                onClick={onRequestQuote}
-                variant="outline"
+                onClick={onSelect}
+                variant={selected ? "default" : "outline"}
                 size="sm"
-                className="min-w-28"
+                className={cn("min-w-28", selected && "bg-[#06062D] hover:bg-[#06062D]/90 border-[#06062D]")}
                 data-testid={`button-quote-${provider.id}`}
               >
-                Get a Quote
+                {selected ? 'Selected' : 'Get a Quote'}
               </Button>
             ) : (
               <Button
