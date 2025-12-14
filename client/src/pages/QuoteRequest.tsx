@@ -21,9 +21,17 @@ import Chip from '@/components/Chip';
 import { useJourneyStore } from '@/store/journeyStore';
 import { providers } from '@/lib/providers';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, MapPin, Package, Trash2, Calendar, CalendarCheck, AlertCircle, Send, CheckCircle2, Minus, Plus } from 'lucide-react';
-import { format, parse } from 'date-fns';
+import { ArrowLeft, AlertCircle, Send, CheckCircle2, Minus, Plus } from 'lucide-react';
+import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+
+const wasteTypeLabels: Record<string, string> = {
+  'house': 'house clearance',
+  'renovation': 'renovation',
+  'garden': 'garden makeover',
+  'soil': 'soil & rubble',
+  'diy': 'DIY woodwork',
+};
 
 const skipSizeNames: Record<string, { name: string; yards: string }> = {
   '2yd': { name: 'Mini Skip', yards: '2 cubic yards' },
@@ -71,29 +79,65 @@ const quoteFormSchema = z.object({
 
 type QuoteFormValues = z.infer<typeof quoteFormSchema>;
 
-function formatDateDisplay(dateStr: string): string {
-  if (!dateStr) return 'Not selected';
-  
-  if (dateStr.includes('|')) {
-    const [start, end] = dateStr.split('|');
-    const startDate = parse(start, 'yyyy-MM-dd', new Date());
-    const endDate = parse(end, 'yyyy-MM-dd', new Date());
-    return `${format(startDate, 'MMM d')} - ${format(endDate, 'MMM d')}`;
-  }
-  
-  const date = parse(dateStr, 'yyyy-MM-dd', new Date());
-  return format(date, 'EEE, MMM d');
-}
 
 export default function QuoteRequest() {
   const [, setLocationPath] = useLocation();
-  const { postcode, address, w3w, placement, wasteType, size, providerId, deliveryDate, collectionDate, items: journeyItems, itemQuantities, toggleItem, setItems, setItemQuantity } = useJourneyStore();
+  const { postcode, address, w3w, placement, wasteType, size, providerId, deliveryDate, collectionDate, items: journeyItems, itemQuantities, toggleItem, setItems, setItemQuantity, flags } = useJourneyStore();
   
   const [submitted, setSubmitted] = useState(false);
   const [noneExplicitlySelected, setNoneExplicitlySelected] = useState(false);
   
   const provider = providers.find(p => p.id === providerId);
   const skipInfo = skipSizeNames[size || '6yd'] || { name: 'Skip', yards: '' };
+
+  const formatDeliveryDate = () => {
+    if (!deliveryDate) return 'ASAP';
+    try {
+      const date = new Date(deliveryDate);
+      return format(date, 'EEEE d MMMM');
+    } catch {
+      return deliveryDate;
+    }
+  };
+
+  const formatCollectionDate = () => {
+    if (!collectionDate) return { text: 'ASAP', isFlexible: false };
+    try {
+      if (collectionDate.includes('|')) {
+        const [start, end] = collectionDate.split('|');
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+        return { 
+          text: `${format(startDate, 'EEEE d MMMM')} and ${format(endDate, 'EEEE d MMMM')}`,
+          isFlexible: true 
+        };
+      }
+      const date = new Date(collectionDate);
+      return { text: format(date, 'EEEE d MMMM'), isFlexible: false };
+    } catch {
+      return { text: collectionDate, isFlexible: false };
+    }
+  };
+
+  const getWasteTypeLabel = () => {
+    return wasteTypeLabels[wasteType] || wasteType;
+  };
+
+  const getItemsText = () => {
+    if (journeyItems.length === 0) return '';
+    
+    const itemsWithQty = journeyItems.map(item => {
+      const qty = itemQuantities[item] || 1;
+      return qty > 1 ? `${qty}× ${item}` : item;
+    });
+    
+    if (itemsWithQty.length === 1) return itemsWithQty[0];
+    if (itemsWithQty.length === 2) return `${itemsWithQty[0]} and ${itemsWithQty[1]}`;
+    
+    const lastItem = itemsWithQty[itemsWithQty.length - 1];
+    const otherItems = itemsWithQty.slice(0, -1).join(', ');
+    return `${otherItems}, and ${lastItem}`;
+  };
   
   const form = useForm<QuoteFormValues>({
     resolver: zodResolver(quoteFormSchema),
@@ -245,59 +289,108 @@ export default function QuoteRequest() {
           <ProgressRibbon currentStep={4} />
           
           <div className="space-y-6 mt-8">
-            <Card className="p-5" data-testid="card-summary">
-              <h2 className="text-lg font-semibold text-foreground mb-4">Your Selection Summary</h2>
+            <div className="bg-white dark:bg-card border border-card-border rounded-lg p-6 shadow-sm" data-testid="card-summary">
+              <h2 className="text-xl font-semibold mb-4">Just to summarise…</h2>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3" data-testid="summary-location">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-primary uppercase tracking-wide">Location</p>
-                    <p className="font-semibold text-foreground" data-testid="text-postcode">{postcode || 'Not set'}</p>
-                    {address && <p className="text-sm text-muted-foreground" data-testid="text-address">{address}</p>}
-                    {w3w && <p className="text-xs text-muted-foreground mt-0.5" data-testid="text-w3w">///{w3w}</p>}
-                  </div>
-                </div>
+              <div className="space-y-3 text-base leading-relaxed text-foreground/90">
+                <p>
+                  You've asked us to deliver your skip to{' '}
+                  <span 
+                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                    data-testid="badge-address"
+                  >
+                    {address || 'your location'}{postcode ? `, ${postcode}` : ''}
+                  </span>
+                  .
+                </p>
                 
-                <div className="flex items-start gap-3" data-testid="summary-skip">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Package className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-primary uppercase tracking-wide">Skip Size</p>
-                    <p className="font-semibold text-foreground" data-testid="text-skip-name">{skipInfo.name}</p>
-                    <p className="text-sm text-muted-foreground" data-testid="text-skip-yards">{skipInfo.yards}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3" data-testid="summary-waste">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Trash2 className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-primary uppercase tracking-wide">Waste Type</p>
-                    <p className="font-semibold text-foreground" data-testid="text-waste-type">{wasteType || 'General Waste'}</p>
-                    <p className="text-sm text-muted-foreground" data-testid="text-placement">{placement === 'road' ? 'On Road' : 'On Property'}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-3" data-testid="summary-dates">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Calendar className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-medium text-primary uppercase tracking-wide">Dates</p>
-                    <p className="font-semibold text-foreground" data-testid="text-delivery">{formatDateDisplay(deliveryDate)}</p>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1" data-testid="text-collection">
-                      <CalendarCheck className="w-3 h-3" />
-                      Collection: {formatDateDisplay(collectionDate)}
-                    </p>
-                  </div>
-                </div>
+                <p>
+                  Your skip will be dropped in{' '}
+                  <span 
+                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                    data-testid="badge-w3w"
+                  >
+                    {w3w || '///mock.what3.words'}
+                  </span>
+                  {' '}location
+                  {placement && (
+                    <>
+                      , and you've confirmed that you{' '}
+                      {flags.onRoadFromHome === false ? (
+                        <>
+                          own the land so{' '}
+                          <span className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full">
+                            no permit's needed
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          need a{' '}
+                          <span className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full">
+                            road permit
+                          </span>
+                        </>
+                      )}
+                    </>
+                  )}
+                  .
+                </p>
+
+                <p>
+                  You need it delivered{' '}
+                  <span 
+                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                    data-testid="badge-delivery-date"
+                  >
+                    {formatDeliveryDate()}
+                  </span>
+                  {' '}and collected {formatCollectionDate().isFlexible ? 'between' : 'on'}{' '}
+                  <span 
+                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                    data-testid="badge-collection-date"
+                  >
+                    {formatCollectionDate().text}
+                  </span>
+                  {wasteType && (
+                    <>
+                      {' '}for your{' '}
+                      <span 
+                        className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                        data-testid="badge-waste-type"
+                      >
+                        {getWasteTypeLabel()}
+                      </span>
+                      {' '}project
+                    </>
+                  )}
+                  .
+                </p>
+
+                <p>
+                  You've chosen a{' '}
+                  <span 
+                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                    data-testid="badge-size"
+                  >
+                    {size} ({skipInfo.name})
+                  </span>
+                  {' '}skip and you're requesting a quote from{' '}
+                  {provider && (
+                    <span 
+                      className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                      data-testid="badge-provider"
+                    >
+                      {provider.name}
+                    </span>
+                  )}
+                  .
+                </p>
+
+                <p className="pt-2 text-foreground font-medium">
+                  Does everything look right? Fill in your details below to request your personalised quote.
+                </p>
               </div>
-            </Card>
+            </div>
             
             <Card className="p-5" data-testid="card-items">
               <h2 className="text-lg font-semibold text-foreground mb-2">Any of these items?</h2>
