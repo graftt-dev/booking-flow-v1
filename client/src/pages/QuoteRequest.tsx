@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -18,10 +17,11 @@ import {
 } from '@/components/ui/form';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
+import Chip from '@/components/Chip';
 import { useJourneyStore } from '@/store/journeyStore';
 import { providers } from '@/lib/providers';
-import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin, Package, Trash2, Calendar, CalendarCheck, AlertTriangle, Send, CheckCircle2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowLeft, MapPin, Package, Trash2, Calendar, CalendarCheck, AlertCircle, Send, CheckCircle2, Minus, Plus } from 'lucide-react';
 import { format, parse } from 'date-fns';
 import { cn } from '@/lib/utils';
 
@@ -35,17 +35,31 @@ const skipSizeNames: Record<string, { name: string; yards: string }> = {
   '16yd': { name: 'Roll-on Roll-off', yards: '16 cubic yards' },
 };
 
-const allItems = [
-  { id: 'mattress', name: 'Mattress', appropriate: true },
-  { id: 'fridge', name: 'Fridge/Freezer', appropriate: false },
-  { id: 'sofa', name: 'Sofa', appropriate: true },
-  { id: 'washing-machine', name: 'Washing Machine', appropriate: false },
-  { id: 'tv', name: 'TV/Monitor', appropriate: false },
-  { id: 'paint', name: 'Paint Cans', appropriate: true },
-  { id: 'tyres', name: 'Tyres', appropriate: false },
-  { id: 'batteries', name: 'Batteries', appropriate: false },
-  { id: 'plasterboard', name: 'Plasterboard', appropriate: true },
-  { id: 'rubble', name: 'Rubble/Bricks', appropriate: true },
+interface ExtraItem {
+  name: string;
+  price: number;
+  pricingType: 'per item' | 'per tonne';
+}
+
+const extraItemsList: ExtraItem[] = [
+  { name: 'Plasterboard / Gypsum Waste', price: 60, pricingType: 'per tonne' },
+  { name: 'Gas Bottles', price: 50, pricingType: 'per item' },
+  { name: 'Single Mattress', price: 20, pricingType: 'per item' },
+  { name: 'Double Mattress', price: 30, pricingType: 'per item' },
+  { name: 'Tyres', price: 5, pricingType: 'per item' },
+  { name: 'Fridge/Freezer', price: 25, pricingType: 'per item' },
+  { name: 'Sofa', price: 15, pricingType: 'per item' },
+  { name: 'Batteries', price: 10, pricingType: 'per item' },
+];
+
+const notAcceptedItems = [
+  'Asbestos',
+  'Paint/Liquids',
+  'Food waste',
+  'Medical waste',
+  'Chemicals & solvents',
+  'Oil & fuel containers',
+  'Fluorescent tubes'
 ];
 
 const quoteFormSchema = z.object({
@@ -73,9 +87,10 @@ function formatDateDisplay(dateStr: string): string {
 
 export default function QuoteRequest() {
   const [, setLocationPath] = useLocation();
-  const { postcode, address, w3w, placement, wasteType, size, providerId, deliveryDate, collectionDate, items: journeyItems, itemQuantities } = useJourneyStore();
+  const { postcode, address, w3w, placement, wasteType, size, providerId, deliveryDate, collectionDate, items: journeyItems, itemQuantities, toggleItem, setItems, setItemQuantity } = useJourneyStore();
   
   const [submitted, setSubmitted] = useState(false);
+  const [noneExplicitlySelected, setNoneExplicitlySelected] = useState(false);
   
   const provider = providers.find(p => p.id === providerId);
   const skipInfo = skipSizeNames[size || '6yd'] || { name: 'Skip', yards: '' };
@@ -86,18 +101,23 @@ export default function QuoteRequest() {
       email: '',
       phone: '',
       message: '',
-      selectedItems: journeyItems || [],
     },
   });
   
-  const selectedItems = form.watch('selectedItems') || [];
+  const handleItemClick = (item: string) => {
+    toggleItem(item);
+    setNoneExplicitlySelected(false);
+  };
   
-  const toggleItem = (itemId: string) => {
-    const currentItems = form.getValues('selectedItems') || [];
-    const newItems = currentItems.includes(itemId)
-      ? currentItems.filter(id => id !== itemId)
-      : [...currentItems, itemId];
-    form.setValue('selectedItems', newItems);
+  const handleQuantityChange = (item: string, delta: number) => {
+    const currentQty = itemQuantities[item] || 1;
+    const newQty = Math.max(1, currentQty + delta);
+    setItemQuantity(item, newQty);
+  };
+  
+  const handleNoneClick = () => {
+    setItems([]);
+    setNoneExplicitlySelected(true);
   };
   
   const onSubmit = async (data: QuoteFormValues) => {
@@ -280,68 +300,99 @@ export default function QuoteRequest() {
             </Card>
             
             <Card className="p-5" data-testid="card-items">
-              <h2 className="text-lg font-semibold text-foreground mb-2">Items to Dispose</h2>
-              {journeyItems && journeyItems.length > 0 ? (
-                <>
-                  <p className="text-sm text-muted-foreground mb-4">These items will be included in your quote request</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {journeyItems.map((itemName) => {
-                      const quantity = itemQuantities[itemName] || 1;
-                      return (
-                        <div 
-                          key={itemName}
-                          className="flex items-center gap-3 p-3 rounded-md border border-primary bg-primary/5"
-                          data-testid={`item-${itemName.toLowerCase().replace(/\s+/g, '-')}`}
+              <h2 className="text-lg font-semibold text-foreground mb-2">Any of these items?</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                {journeyItems && journeyItems.length > 0 
+                  ? "These items will be included in your quote request" 
+                  : "Select any items you'd like included in your quote"}
+              </p>
+              
+              <div className="grid grid-cols-1 gap-3">
+                {extraItemsList.map((item) => {
+                  const isSelected = journeyItems.includes(item.name);
+                  const quantity = itemQuantities[item.name] || 1;
+                  
+                  return (
+                    <div key={item.name} className="flex items-center gap-3">
+                      <div className="flex-1">
+                        <Chip
+                          selected={isSelected}
+                          onClick={() => handleItemClick(item.name)}
+                          className="w-full justify-start"
                         >
-                          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                            <CheckCircle2 className="w-4 h-4 text-primary" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground">
-                              {quantity > 1 ? `${quantity}× ` : ''}{itemName}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p className="text-sm text-muted-foreground mb-4">Select any items you'd like included in your quote</p>
-                  <div className="grid grid-cols-2 gap-3">
-                    {allItems.map((item) => (
-                      <div 
-                        key={item.id}
-                        className={cn(
-                          "flex items-center gap-3 p-3 rounded-md border transition-all cursor-pointer",
-                          selectedItems.includes(item.id)
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/50",
-                          !item.appropriate && "opacity-70"
-                        )}
-                        onClick={() => toggleItem(item.id)}
-                        data-testid={`item-${item.id}`}
-                      >
-                        <Checkbox 
-                          checked={selectedItems.includes(item.id)}
-                          onCheckedChange={() => toggleItem(item.id)}
-                          data-testid={`checkbox-${item.id}`}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground">{item.name}</p>
-                          {!item.appropriate && (
-                            <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                              <AlertTriangle className="w-3 h-3" />
-                              May require special handling
-                            </p>
-                          )}
-                        </div>
+                          <span className="flex items-center gap-2">
+                            <span>{item.name}</span>
+                            <span className={cn(
+                              "text-sm",
+                              isSelected ? "text-primary-foreground/70" : "text-muted-foreground"
+                            )}>
+                              +£{item.price.toFixed(2)} {item.pricingType}
+                            </span>
+                          </span>
+                        </Chip>
                       </div>
-                    ))}
+                      
+                      <AnimatePresence>
+                        {isSelected && (
+                          <motion.div
+                            initial={{ opacity: 0, width: 0 }}
+                            animate={{ opacity: 1, width: 'auto' }}
+                            exit={{ opacity: 0, width: 0 }}
+                            className="flex items-center gap-2"
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleQuantityChange(item.name, -1)}
+                              className="w-8 h-8 rounded-md border border-border bg-background flex items-center justify-center hover-elevate active-elevate-2"
+                              disabled={quantity <= 1}
+                              data-testid={`button-decrease-${item.name}`}
+                            >
+                              <Minus className="w-4 h-4" />
+                            </button>
+                            <span className="text-sm font-medium text-foreground min-w-8 text-center" data-testid={`text-quantity-${item.name}`}>
+                              {quantity}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleQuantityChange(item.name, 1)}
+                              className="w-8 h-8 rounded-md border border-border bg-background flex items-center justify-center hover-elevate active-elevate-2"
+                              data-testid={`button-increase-${item.name}`}
+                            >
+                              <Plus className="w-4 h-4" />
+                            </button>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              <Chip
+                selected={noneExplicitlySelected && journeyItems.length === 0}
+                onClick={handleNoneClick}
+                className={cn(
+                  "w-full mt-4 bg-[#05E4C0]/10 border-[#05E4C0]/30 text-[#06062D] dark:text-[#05E4C0]",
+                  !noneExplicitlySelected && "hover:bg-[#05E4C0]/20",
+                  noneExplicitlySelected && journeyItems.length === 0 && "!bg-primary !text-primary-foreground !border-primary-border"
+                )}
+              >
+                None of the above
+              </Chip>
+              
+              <div className="bg-destructive/10 border border-destructive/20 rounded-md p-4 mt-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-destructive mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-foreground">This provider does not accept:</p>
+                    <ul className="text-sm text-muted-foreground mt-2 space-y-1 list-disc list-inside">
+                      {notAcceptedItems.map((notAcceptedItem) => (
+                        <li key={notAcceptedItem}>{notAcceptedItem}</li>
+                      ))}
+                    </ul>
                   </div>
-                </>
-              )}
+                </div>
+              </div>
             </Card>
             
             <Card className="p-5" data-testid="card-contact">
