@@ -32,6 +32,7 @@ interface ProviderCardProps {
   price: number;
   selected?: boolean;
   onSelect: () => void;
+  onRequestQuote?: () => void;
   index?: number;
   basePrice: number;
   extras: number;
@@ -58,6 +59,7 @@ export default function ProviderCard({
   price,
   selected,
   onSelect,
+  onRequestQuote,
   index = 0,
   basePrice,
   extras,
@@ -73,6 +75,9 @@ export default function ProviderCard({
   const extraDays = calculateExtraDays(deliveryDate, collectionDate, provider.standardHireDays);
   const extraDaysCost = extraDays * provider.extraDayRate;
   const totalPrice = (basePrice + extraDaysCost + extras + permit) * 1.2;
+  
+  const isDisabled = provider.verificationStatus === 'not-guaranteed';
+  const isNotVerified = provider.verificationStatus === 'not-verified';
 
   return (
     <motion.div
@@ -84,6 +89,7 @@ export default function ProviderCard({
       <div
         className={cn(
           "relative p-4 rounded-md border-2 transition-all bg-card",
+          isDisabled && "opacity-50 pointer-events-none grayscale",
           selected
             ? "border-primary shadow-soft"
             : "border-card-border hover-elevate"
@@ -147,15 +153,28 @@ export default function ProviderCard({
             <ChevronDown className={cn("w-3 h-3 transition-transform", expanded && "rotate-180")} />
           </button>
           
-          <Button
-            onClick={onSelect}
-            variant={selected ? "default" : "outline"}
-            size="sm"
-            className="min-w-28"
-            data-testid={`button-select-${provider.id}`}
-          >
-            {selected ? 'Selected' : 'Select'}
-          </Button>
+          {isNotVerified ? (
+            <Button
+              onClick={onRequestQuote}
+              variant="outline"
+              size="sm"
+              className="min-w-28"
+              data-testid={`button-quote-${provider.id}`}
+            >
+              Get a Quote
+            </Button>
+          ) : (
+            <Button
+              onClick={onSelect}
+              variant={selected ? "default" : "outline"}
+              size="sm"
+              className="min-w-28"
+              disabled={isDisabled}
+              data-testid={`button-select-${provider.id}`}
+            >
+              {selected ? 'Selected' : 'Select'}
+            </Button>
+          )}
         </div>
 
         <AnimatePresence>

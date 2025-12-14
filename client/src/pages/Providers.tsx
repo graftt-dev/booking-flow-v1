@@ -72,6 +72,11 @@ export default function Providers() {
     }
   };
   
+  const handleRequestQuote = (providerIdToQuote: string) => {
+    setProviderId(providerIdToQuote);
+    setLocation('/quote-request');
+  };
+  
   const filteredProviders = providers.slice(0, 9);
   const skipInfo = skipSizeNames[size || '6yd'] || { name: 'Skip', yards: '' };
   const hasNoProviders = NO_PROVIDER_POSTCODES.includes(postcode);
@@ -369,6 +374,7 @@ export default function Providers() {
                       price={price}
                       selected={providerId === provider.id}
                       onSelect={() => handleSelectProvider(provider.id)}
+                      onRequestQuote={() => handleRequestQuote(provider.id)}
                       index={index}
                       basePrice={providerBasePrice}
                       extras={totals.extras}
