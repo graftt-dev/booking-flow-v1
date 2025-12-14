@@ -1,3 +1,5 @@
+export type VerificationStatus = 'guaranteed' | 'not-verified' | 'not-guaranteed';
+
 export interface Provider {
   id: string;
   name: string;
@@ -24,6 +26,7 @@ export interface Provider {
   sitePermit: string;
   standardHireDays: number;
   extraDayRate: number;
+  verificationStatus: VerificationStatus;
 }
 
 export const providers: Provider[] = [
@@ -44,7 +47,8 @@ export const providers: Provider[] = [
     wasteCarrierLicense: "CBDL847291",
     sitePermit: "EPR/LP3847CF",
     standardHireDays: 14,
-    extraDayRate: 5
+    extraDayRate: 5,
+    verificationStatus: 'guaranteed'
   },
   {
     id: "eco-skip",
@@ -63,7 +67,8 @@ export const providers: Provider[] = [
     wasteCarrierLicense: "CBDL592184",
     sitePermit: "EPR/LP7621CF",
     standardHireDays: 21,
-    extraDayRate: 4
+    extraDayRate: 4,
+    verificationStatus: 'guaranteed'
   },
   {
     id: "rapid-waste",
@@ -82,7 +87,8 @@ export const providers: Provider[] = [
     wasteCarrierLicense: "CBDL316758",
     sitePermit: "EPR/LP1294CF",
     standardHireDays: 10,
-    extraDayRate: 6
+    extraDayRate: 6,
+    verificationStatus: 'guaranteed'
   },
   {
     id: "green-bins",
@@ -101,7 +107,8 @@ export const providers: Provider[] = [
     wasteCarrierLicense: "CBDL729463",
     sitePermit: "EPR/LP5038CF",
     standardHireDays: 14,
-    extraDayRate: 5
+    extraDayRate: 5,
+    verificationStatus: 'not-verified'
   },
   {
     id: "clearway",
@@ -120,7 +127,8 @@ export const providers: Provider[] = [
     wasteCarrierLicense: "CBDL483926",
     sitePermit: "EPR/LP8467CF",
     standardHireDays: 14,
-    extraDayRate: 4
+    extraDayRate: 4,
+    verificationStatus: 'not-verified'
   },
   {
     id: "premier-skip",
@@ -139,7 +147,8 @@ export const providers: Provider[] = [
     wasteCarrierLicense: "CBDL651842",
     sitePermit: "EPR/LP2915CF",
     standardHireDays: 21,
-    extraDayRate: 6
+    extraDayRate: 6,
+    verificationStatus: 'not-verified'
   },
   {
     id: "urban-waste",
@@ -158,7 +167,8 @@ export const providers: Provider[] = [
     wasteCarrierLicense: "CBDL274815",
     sitePermit: "EPR/LP6183CF",
     standardHireDays: 14,
-    extraDayRate: 5
+    extraDayRate: 5,
+    verificationStatus: 'not-guaranteed'
   },
   {
     id: "fast-skip",
@@ -177,7 +187,8 @@ export const providers: Provider[] = [
     wasteCarrierLicense: "CBDL938671",
     sitePermit: "EPR/LP4572CF",
     standardHireDays: 10,
-    extraDayRate: 7
+    extraDayRate: 7,
+    verificationStatus: 'not-guaranteed'
   },
 ];
 

@@ -312,32 +312,114 @@ export default function Providers() {
             </Badge>
           </div>
           
-          <div className="space-y-4">
-            {filteredProviders.map((provider, index) => {
-              const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
-              const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
-              const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
-              
-              return (
-                <ProviderCard
-                  key={provider.id}
-                  provider={provider}
-                  price={price}
-                  selected={providerId === provider.id}
-                  onSelect={() => handleSelectProvider(provider.id)}
-                  index={index}
-                  basePrice={providerBasePrice}
-                  extras={totals.extras}
-                  permit={totals.permit}
-                  vat={totals.vat}
-                  items={items}
-                  itemQuantities={itemQuantities}
-                  placement={placement || 'driveway'}
-                  deliveryDate={deliveryDate}
-                  collectionDate={collectionDate}
-                />
-              );
-            })}
+          <div className="space-y-6">
+            {/* GRAFTT Guaranteed Providers */}
+            {filteredProviders.filter(p => p.verificationStatus === 'guaranteed').length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-px flex-1 bg-primary/20" />
+                  <span className="text-sm font-semibold text-primary px-2">GRAFTT Guaranteed</span>
+                  <div className="h-px flex-1 bg-primary/20" />
+                </div>
+                {filteredProviders.filter(p => p.verificationStatus === 'guaranteed').map((provider, index) => {
+                  const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
+                  const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
+                  const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
+                  
+                  return (
+                    <ProviderCard
+                      key={provider.id}
+                      provider={provider}
+                      price={price}
+                      selected={providerId === provider.id}
+                      onSelect={() => handleSelectProvider(provider.id)}
+                      index={index}
+                      basePrice={providerBasePrice}
+                      extras={totals.extras}
+                      permit={totals.permit}
+                      vat={totals.vat}
+                      items={items}
+                      itemQuantities={itemQuantities}
+                      placement={placement || 'driveway'}
+                      deliveryDate={deliveryDate}
+                      collectionDate={collectionDate}
+                    />
+                  );
+                })}
+              </div>
+            )}
+            
+            {/* Not Yet Verified Providers */}
+            {filteredProviders.filter(p => p.verificationStatus === 'not-verified').length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-px flex-1 bg-amber-500/20" />
+                  <span className="text-sm font-semibold text-amber-600 dark:text-amber-400 px-2">Not Yet Verified</span>
+                  <div className="h-px flex-1 bg-amber-500/20" />
+                </div>
+                {filteredProviders.filter(p => p.verificationStatus === 'not-verified').map((provider, index) => {
+                  const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
+                  const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
+                  const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
+                  
+                  return (
+                    <ProviderCard
+                      key={provider.id}
+                      provider={provider}
+                      price={price}
+                      selected={providerId === provider.id}
+                      onSelect={() => handleSelectProvider(provider.id)}
+                      index={index}
+                      basePrice={providerBasePrice}
+                      extras={totals.extras}
+                      permit={totals.permit}
+                      vat={totals.vat}
+                      items={items}
+                      itemQuantities={itemQuantities}
+                      placement={placement || 'driveway'}
+                      deliveryDate={deliveryDate}
+                      collectionDate={collectionDate}
+                    />
+                  );
+                })}
+              </div>
+            )}
+            
+            {/* Not GRAFTT Guaranteed Providers */}
+            {filteredProviders.filter(p => p.verificationStatus === 'not-guaranteed').length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="h-px flex-1 bg-border" />
+                  <span className="text-sm font-medium text-muted-foreground px-2">Other Providers</span>
+                  <div className="h-px flex-1 bg-border" />
+                </div>
+                {filteredProviders.filter(p => p.verificationStatus === 'not-guaranteed').map((provider, index) => {
+                  const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
+                  const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
+                  const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
+                  
+                  return (
+                    <ProviderCard
+                      key={provider.id}
+                      provider={provider}
+                      price={price}
+                      selected={providerId === provider.id}
+                      onSelect={() => handleSelectProvider(provider.id)}
+                      index={index}
+                      basePrice={providerBasePrice}
+                      extras={totals.extras}
+                      permit={totals.permit}
+                      vat={totals.vat}
+                      items={items}
+                      itemQuantities={itemQuantities}
+                      placement={placement || 'driveway'}
+                      deliveryDate={deliveryDate}
+                      collectionDate={collectionDate}
+                    />
+                  );
+                })}
+              </div>
+            )}
           </div>
           
           <div className="flex justify-center items-center gap-4 mt-12">

@@ -1,10 +1,31 @@
 import { useState } from 'react';
-import { Star, Shield, Leaf, ChevronDown, BadgeCheck } from 'lucide-react';
+import { Star, Shield, Leaf, ChevronDown, BadgeCheck, ShieldCheck, ShieldQuestion, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn, formatCurrency } from '@/lib/utils';
-import type { Provider } from '@/lib/providers';
+import type { Provider, VerificationStatus } from '@/lib/providers';
 import { motion, AnimatePresence } from 'framer-motion';
 import { itemPrices } from '@/lib/pricing';
+
+const verificationConfig: Record<VerificationStatus, { label: string; description: string; icon: typeof ShieldCheck; className: string }> = {
+  'guaranteed': {
+    label: 'GRAFTT Guaranteed',
+    description: 'Verified documentation reviewed by GRAFTT with platform-level protections',
+    icon: ShieldCheck,
+    className: 'bg-primary/10 text-primary border-primary/20'
+  },
+  'not-verified': {
+    label: 'Not Yet Verified',
+    description: 'This provider has not yet completed GRAFTT\'s verification process',
+    icon: ShieldQuestion,
+    className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+  },
+  'not-guaranteed': {
+    label: 'Not GRAFTT Guaranteed',
+    description: 'This listing is not covered by the GRAFTT Guarantee',
+    icon: ShieldAlert,
+    className: 'bg-muted text-muted-foreground border-border'
+  }
+};
 
 interface ProviderCardProps {
   provider: Provider;
@@ -74,7 +95,23 @@ export default function ProviderCard({
               <span className="text-lg font-bold text-primary">{provider.logo}</span>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground text-lg">{provider.name}</h3>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="font-semibold text-foreground text-lg">{provider.name}</h3>
+                {(() => {
+                  const config = verificationConfig[provider.verificationStatus];
+                  const IconComponent = config.icon;
+                  return (
+                    <span 
+                      className={cn("inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full border", config.className)}
+                      title={config.description}
+                      data-testid={`badge-verification-${provider.id}`}
+                    >
+                      <IconComponent className="w-3 h-3" />
+                      {config.label}
+                    </span>
+                  );
+                })()}
+              </div>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <Star className="w-3.5 h-3.5 fill-primary text-primary" />
                 <span className="text-sm font-semibold text-foreground">{provider.rating}</span>
