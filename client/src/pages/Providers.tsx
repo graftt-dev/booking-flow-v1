@@ -4,7 +4,6 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
 import EducationPill from '@/components/EducationPill';
@@ -15,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { calculateTotals } from '@/lib/pricing';
 import { 
   ArrowLeft, MapPin, Package, Trash2, Calendar, CalendarCheck, Lightbulb, Phone, MessageCircle,
-  ShieldCheck, ShieldQuestion, AlertTriangle, ChevronDown, CheckCircle2
+  AlertTriangle, ChevronDown
 } from 'lucide-react';
 import { format, parse } from 'date-fns';
 
@@ -45,53 +44,6 @@ function formatDateDisplay(dateStr: string): string {
   
   const date = parse(dateStr, 'yyyy-MM-dd', new Date());
   return format(date, 'EEE, MMM d');
-}
-
-function SectionDivider({ 
-  title, 
-  color, 
-  icon: Icon, 
-  popoverContent 
-}: { 
-  title: string; 
-  color: 'teal' | 'navy'; 
-  icon: typeof ShieldCheck;
-  popoverContent: React.ReactNode;
-}) {
-  const strokeColor = color === 'teal' ? '#05E4C0' : '#06062D';
-  
-  return (
-    <div className="flex items-center justify-center gap-4 mb-6">
-      <div className="flex-1 h-px" style={{ backgroundColor: strokeColor }} />
-      
-      <div className="flex flex-col items-center gap-1 flex-shrink-0">
-        <Popover>
-          <PopoverTrigger asChild>
-            <button 
-              className="p-1.5 rounded-full hover:bg-muted/50 transition-colors cursor-pointer"
-              data-testid={`popover-trigger-${color}`}
-            >
-              <Icon 
-                className="w-6 h-6" 
-                style={{ color: strokeColor }}
-              />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80" align="center">
-            {popoverContent}
-          </PopoverContent>
-        </Popover>
-        <span 
-          className="text-sm font-semibold whitespace-nowrap"
-          style={{ color: strokeColor }}
-        >
-          {title}
-        </span>
-      </div>
-      
-      <div className="flex-1 h-px" style={{ backgroundColor: strokeColor }} />
-    </div>
-  );
 }
 
 export default function Providers() {
@@ -367,141 +319,37 @@ export default function Providers() {
             </div>
           </Tabs>
           
-          <div className="space-y-10">
-            {/* GRAFTT Guaranteed Section */}
-            {guaranteedProviders.length > 0 && (
-              <section data-testid="section-guaranteed">
-                <SectionDivider
-                  title="GRAFTT Guaranteed"
-                  color="teal"
-                  icon={ShieldCheck}
-                  popoverContent={
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <ShieldCheck className="w-5 h-5" style={{ color: '#05E4C0' }} />
-                        <h3 className="font-semibold text-foreground">GRAFTT Guarantee</h3>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        Every GRAFTT Guaranteed provider has been thoroughly vetted by our team.
-                      </p>
-                      <div className="space-y-2">
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#05E4C0' }} />
-                          <span className="text-sm text-foreground">Verified Waste Carrier's License</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#05E4C0' }} />
-                          <span className="text-sm text-foreground">Confirmed Site Permit documentation</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#05E4C0' }} />
-                          <span className="text-sm text-foreground">Public liability insurance checked</span>
-                        </div>
-                        <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#05E4C0' }} />
-                          <span className="text-sm text-foreground">Price protection if anything goes wrong</span>
-                        </div>
-                      </div>
-                      <p className="text-xs text-muted-foreground pt-2 border-t border-border">
-                        Book with confidence knowing you're protected by GRAFTT.
-                      </p>
-                    </div>
-                  }
-                />
+          <div className="space-y-6">
+            {/* All providers in a single list */}
+            <div className="space-y-3">
+              {[...guaranteedProviders, ...notVerifiedProviders].map((provider, index) => {
+                const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
+                const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
+                const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
+                const isNotVerified = provider.verificationStatus === 'not-verified';
                 
-                <div className="space-y-3">
-                  {guaranteedProviders.map((provider, index) => {
-                    const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
-                    const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
-                    const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
-                    
-                    return (
-                      <ProviderCard
-                        key={provider.id}
-                        provider={provider}
-                        price={price}
-                        selected={providerId === provider.id}
-                        onSelect={() => handleSelectProvider(provider.id)}
-                        index={index}
-                        basePrice={providerBasePrice}
-                        extras={totals.extras}
-                        permit={totals.permit}
-                        vat={totals.vat}
-                        items={items}
-                        itemQuantities={itemQuantities}
-                        placement={placement || 'driveway'}
-                        deliveryDate={deliveryDate}
-                        collectionDate={collectionDate}
-                      />
-                    );
-                  })}
-                </div>
-              </section>
-            )}
-            
-            {/* Not Yet Verified Section */}
-            {notVerifiedProviders.length > 0 && (
-              <section data-testid="section-not-verified">
-                <SectionDivider
-                  title="Not Yet Verified"
-                  color="navy"
-                  icon={ShieldQuestion}
-                  popoverContent={
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
-                        <ShieldQuestion className="w-5 h-5" style={{ color: '#06062D' }} />
-                        <h3 className="font-semibold text-foreground">Request a Quote</h3>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        These providers are new to GRAFTT and haven't completed our verification process yet.
-                      </p>
-                      <div className="space-y-2 text-sm">
-                        <p className="text-foreground font-medium">What this means:</p>
-                        <ul className="space-y-1 text-muted-foreground list-disc pl-4">
-                          <li>Documentation is pending review</li>
-                          <li>Prices shown are estimates only</li>
-                          <li>Not yet covered by GRAFTT Guarantee</li>
-                        </ul>
-                      </div>
-                      <div className="pt-2 border-t border-border">
-                        <p className="text-sm text-foreground">
-                          <span className="font-medium">Request a quote</span> and we'll verify their credentials before you commit.
-                        </p>
-                      </div>
-                    </div>
-                  }
-                />
-                
-                <div className="space-y-3">
-                  {notVerifiedProviders.map((provider, index) => {
-                    const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
-                    const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
-                    const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
-                    
-                    return (
-                      <ProviderCard
-                        key={provider.id}
-                        provider={provider}
-                        price={price}
-                        selected={providerId === provider.id}
-                        onSelect={() => handleSelectProvider(provider.id)}
-                        onRequestQuote={() => handleRequestQuote(provider.id)}
-                        index={index}
-                        basePrice={providerBasePrice}
-                        extras={totals.extras}
-                        permit={totals.permit}
-                        vat={totals.vat}
-                        items={items}
-                        itemQuantities={itemQuantities}
-                        placement={placement || 'driveway'}
-                        deliveryDate={deliveryDate}
-                        collectionDate={collectionDate}
-                      />
-                    );
-                  })}
-                </div>
-              </section>
-            )}
+                return (
+                  <ProviderCard
+                    key={provider.id}
+                    provider={provider}
+                    price={price}
+                    selected={providerId === provider.id}
+                    onSelect={() => handleSelectProvider(provider.id)}
+                    onRequestQuote={isNotVerified ? () => handleRequestQuote(provider.id) : undefined}
+                    index={index}
+                    basePrice={providerBasePrice}
+                    extras={totals.extras}
+                    permit={totals.permit}
+                    vat={totals.vat}
+                    items={items}
+                    itemQuantities={itemQuantities}
+                    placement={placement || 'driveway'}
+                    deliveryDate={deliveryDate}
+                    collectionDate={collectionDate}
+                  />
+                );
+              })}
+            </div>
             
             {/* Not GRAFTT Guaranteed Section - Collapsible */}
             {notGuaranteedProviders.length > 0 && (
