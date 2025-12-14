@@ -508,17 +508,28 @@ export default function Providers() {
               <section data-testid="section-not-guaranteed">
                 <button
                   onClick={() => setShowNotGuaranteed(!showNotGuaranteed)}
-                  className="w-full flex items-center justify-between gap-4 py-3 px-4 rounded-md border border-border bg-muted/30 hover:bg-muted/50 transition-colors"
+                  className="w-full flex items-center justify-between gap-4 py-4 px-5 rounded-md border border-dashed border-muted-foreground/30 bg-muted/20 hover:bg-muted/40 transition-all group"
                   data-testid="button-toggle-not-guaranteed"
                 >
-                  <div className="flex items-center gap-3">
-                    <AlertTriangle className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-medium text-muted-foreground">
-                      Other providers ({notGuaranteedProviders.length})
-                    </span>
-                    <span className="text-xs text-muted-foreground">Not covered by GRAFTT Guarantee</span>
+                  <div className="flex items-center gap-4">
+                    <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center group-hover:bg-muted transition-colors">
+                      <AlertTriangle className="w-4 h-4 text-muted-foreground/70" />
+                    </div>
+                    <div className="text-left">
+                      <span className="text-sm font-medium text-muted-foreground block">
+                        Other providers
+                      </span>
+                      <span className="text-xs text-muted-foreground/70">
+                        {notGuaranteedProviders.length} not covered by GRAFTT Guarantee
+                      </span>
+                    </div>
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${showNotGuaranteed ? 'rotate-180' : ''}`} />
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground/50 hidden sm:inline">
+                      {showNotGuaranteed ? 'Hide' : 'Show'}
+                    </span>
+                    <ChevronDown className={`w-4 h-4 text-muted-foreground/70 transition-transform duration-200 ${showNotGuaranteed ? 'rotate-180' : ''}`} />
+                  </div>
                 </button>
                 
                 <AnimatePresence>

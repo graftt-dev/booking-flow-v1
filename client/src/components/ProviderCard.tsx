@@ -6,18 +6,22 @@ import type { Provider, VerificationStatus } from '@/lib/providers';
 import { motion, AnimatePresence } from 'framer-motion';
 import { itemPrices } from '@/lib/pricing';
 
-const verificationConfig: Record<VerificationStatus, { label: string; description: string; icon: typeof ShieldCheck; className: string }> = {
+const verificationConfig: Record<VerificationStatus, { label: string; description: string; icon: typeof ShieldCheck; className: string; iconStyle?: React.CSSProperties; textStyle?: React.CSSProperties }> = {
   'guaranteed': {
     label: 'GRAFTT Guaranteed',
     description: 'Verified documentation reviewed by GRAFTT with platform-level protections',
     icon: ShieldCheck,
-    className: 'bg-primary/10 text-primary border-primary/20'
+    className: 'bg-[#05E4C0]/10 border-[#05E4C0]/20',
+    iconStyle: { color: '#05E4C0' },
+    textStyle: { color: '#06062D' }
   },
   'not-verified': {
     label: 'Not Yet Verified',
     description: 'This provider has not yet completed GRAFTT\'s verification process',
     icon: ShieldQuestion,
-    className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20'
+    className: 'bg-[#06062D]/10 border-[#06062D]/20',
+    iconStyle: { color: '#06062D' },
+    textStyle: { color: '#06062D' }
   },
   'not-guaranteed': {
     label: 'Not GRAFTT Guaranteed',
@@ -112,13 +116,13 @@ export default function ProviderCard({
                       title={config.description}
                       data-testid={`badge-verification-${provider.id}`}
                     >
-                      <IconComponent className="w-3 h-3" />
-                      {config.label}
+                      <IconComponent className="w-3 h-3" style={config.iconStyle} />
+                      <span style={config.textStyle}>{config.label}</span>
                     </span>
                   );
                 })()}
               </div>
-              {!isDisabled && (
+              {!isDisabled && !isNotVerified && (
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <Star className="w-3.5 h-3.5 fill-primary text-primary" />
                   <span className="text-sm font-semibold text-foreground">{provider.rating}</span>
@@ -145,7 +149,7 @@ export default function ProviderCard({
           )}
         </div>
 
-        {!isDisabled && (
+        {!isDisabled && !isNotVerified && (
           <div className="flex items-center gap-4 mb-4">
             <div className="flex items-center gap-1.5">
               <BadgeCheck className="w-4 h-4 text-primary" />
@@ -156,6 +160,10 @@ export default function ProviderCard({
               <span className="text-sm text-muted-foreground"><span className="font-semibold">{provider.recyclingPct}%</span> Recycled</span>
             </div>
           </div>
+        )}
+        
+        {isNotVerified && (
+          <div className="mb-4" />
         )}
         
         {!isDisabled && (
