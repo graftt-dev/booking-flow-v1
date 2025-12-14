@@ -54,34 +54,15 @@ function SectionDivider({
   popoverContent 
 }: { 
   title: string; 
-  color: 'green' | 'blue'; 
+  color: 'teal' | 'navy'; 
   icon: typeof ShieldCheck;
   popoverContent: React.ReactNode;
 }) {
-  const strokeColor = color === 'green' ? '#22c55e' : 'hsl(var(--primary))';
+  const strokeColor = color === 'teal' ? '#05E4C0' : '#06062D';
   
   return (
     <div className="flex items-center justify-center gap-4 mb-6">
-      <svg className="flex-1 h-4" viewBox="0 0 200 16" preserveAspectRatio="none">
-        <path
-          d="M0,8 Q50,8 100,2 Q150,8 200,8"
-          fill="none"
-          stroke={strokeColor}
-          strokeWidth="1"
-          strokeLinecap="round"
-          style={{ 
-            strokeWidth: '1px',
-            filter: 'none'
-          }}
-        />
-        <path
-          d="M180,8 Q190,6 200,8"
-          fill="none"
-          stroke={strokeColor}
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-      </svg>
+      <div className="flex-1 h-px" style={{ backgroundColor: strokeColor }} />
       
       <div className="flex flex-col items-center gap-1 flex-shrink-0">
         <Popover>
@@ -108,22 +89,7 @@ function SectionDivider({
         </span>
       </div>
       
-      <svg className="flex-1 h-4" viewBox="0 0 200 16" preserveAspectRatio="none">
-        <path
-          d="M0,8 Q10,6 20,8"
-          fill="none"
-          stroke={strokeColor}
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <path
-          d="M0,8 Q50,8 100,2 Q150,8 200,8"
-          fill="none"
-          stroke={strokeColor}
-          strokeWidth="1"
-          strokeLinecap="round"
-        />
-      </svg>
+      <div className="flex-1 h-px" style={{ backgroundColor: strokeColor }} />
     </div>
   );
 }
@@ -407,12 +373,12 @@ export default function Providers() {
               <section data-testid="section-guaranteed">
                 <SectionDivider
                   title="GRAFTT Guaranteed"
-                  color="green"
+                  color="teal"
                   icon={ShieldCheck}
                   popoverContent={
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <ShieldCheck className="w-5 h-5 text-green-500" />
+                        <ShieldCheck className="w-5 h-5" style={{ color: '#05E4C0' }} />
                         <h3 className="font-semibold text-foreground">GRAFTT Guarantee</h3>
                       </div>
                       <p className="text-sm text-muted-foreground">
@@ -420,19 +386,19 @@ export default function Providers() {
                       </p>
                       <div className="space-y-2">
                         <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#05E4C0' }} />
                           <span className="text-sm text-foreground">Verified Waste Carrier's License</span>
                         </div>
                         <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#05E4C0' }} />
                           <span className="text-sm text-foreground">Confirmed Site Permit documentation</span>
                         </div>
                         <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#05E4C0' }} />
                           <span className="text-sm text-foreground">Public liability insurance checked</span>
                         </div>
                         <div className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: '#05E4C0' }} />
                           <span className="text-sm text-foreground">Price protection if anything goes wrong</span>
                         </div>
                       </div>
@@ -478,12 +444,12 @@ export default function Providers() {
               <section data-testid="section-not-verified">
                 <SectionDivider
                   title="Not Yet Verified"
-                  color="blue"
+                  color="navy"
                   icon={ShieldQuestion}
                   popoverContent={
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <ShieldQuestion className="w-5 h-5 text-primary" />
+                        <ShieldQuestion className="w-5 h-5" style={{ color: '#06062D' }} />
                         <h3 className="font-semibold text-foreground">Request a Quote</h3>
                       </div>
                       <p className="text-sm text-muted-foreground">
