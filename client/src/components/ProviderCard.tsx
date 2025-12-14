@@ -118,80 +118,87 @@ export default function ProviderCard({
                   );
                 })()}
               </div>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <Star className="w-3.5 h-3.5 fill-primary text-primary" />
-                <span className="text-sm font-semibold text-foreground">{provider.rating}</span>
-                <span className="text-sm text-muted-foreground">({provider.reviews.toLocaleString()} reviews)</span>
-              </div>
+              {!isDisabled && (
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <Star className="w-3.5 h-3.5 fill-primary text-primary" />
+                  <span className="text-sm font-semibold text-foreground">{provider.rating}</span>
+                  <span className="text-sm text-muted-foreground">({provider.reviews.toLocaleString()} reviews)</span>
+                </div>
+              )}
             </div>
           </div>
           
-          <div className="text-right flex-shrink-0">
-            {isNotVerified ? (
-              <>
-                <span className="text-2xl font-bold text-foreground" data-testid={`price-${provider.id}`}>POQ</span>
-                <p className="text-xs text-muted-foreground">Price on Quote</p>
-              </>
+          {!isDisabled && (
+            <div className="text-right flex-shrink-0">
+              {isNotVerified ? (
+                <>
+                  <span className="text-2xl font-bold text-foreground" data-testid={`price-${provider.id}`}>POQ</span>
+                  <p className="text-xs text-muted-foreground">Price on Quote</p>
+                </>
+              ) : (
+                <>
+                  <span className="text-2xl font-bold text-foreground" data-testid={`price-${provider.id}`}>{formatCurrency(totalPrice)}</span>
+                  <p className="text-xs text-muted-foreground">inc. VAT</p>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
+        {!isDisabled && (
+          <div className="flex items-center gap-4 mb-4">
+            <div className="flex items-center gap-1.5">
+              <BadgeCheck className="w-4 h-4 text-primary" />
+              <span className="text-sm text-muted-foreground">Licensed Operator</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Leaf className="w-4 h-4 text-primary" />
+              <span className="text-sm text-muted-foreground"><span className="font-semibold">{provider.recyclingPct}%</span> Recycled</span>
+            </div>
+          </div>
+        )}
+        
+        {!isDisabled && (
+          <div className="flex items-center justify-between gap-4">
+            {!isNotVerified ? (
+              <button 
+                onClick={() => setExpanded(!expanded)}
+                className="flex items-center gap-1 text-xs text-primary hover:underline"
+                data-testid="button-breakdown"
+              >
+                <span>{expanded ? 'Hide' : 'View'} breakdown</span>
+                <ChevronDown className={cn("w-3 h-3 transition-transform", expanded && "rotate-180")} />
+              </button>
             ) : (
-              <>
-                <span className="text-2xl font-bold text-foreground" data-testid={`price-${provider.id}`}>{formatCurrency(totalPrice)}</span>
-                <p className="text-xs text-muted-foreground">inc. VAT</p>
-              </>
+              <div />
+            )}
+            
+            {isNotVerified ? (
+              <Button
+                onClick={onRequestQuote}
+                variant="outline"
+                size="sm"
+                className="min-w-28"
+                data-testid={`button-quote-${provider.id}`}
+              >
+                Get a Quote
+              </Button>
+            ) : (
+              <Button
+                onClick={onSelect}
+                variant={selected ? "default" : "outline"}
+                size="sm"
+                className="min-w-28"
+                data-testid={`button-select-${provider.id}`}
+              >
+                {selected ? 'Selected' : 'Select'}
+              </Button>
             )}
           </div>
-        </div>
-
-        <div className="flex items-center gap-4 mb-4">
-          <div className="flex items-center gap-1.5">
-            <BadgeCheck className="w-4 h-4 text-primary" />
-            <span className="text-sm text-muted-foreground">Licensed Operator</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Leaf className="w-4 h-4 text-primary" />
-            <span className="text-sm text-muted-foreground"><span className="font-semibold">{provider.recyclingPct}%</span> Recycled</span>
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-between gap-4">
-          {!isNotVerified ? (
-            <button 
-              onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-1 text-xs text-primary hover:underline"
-              data-testid="button-breakdown"
-            >
-              <span>{expanded ? 'Hide' : 'View'} breakdown</span>
-              <ChevronDown className={cn("w-3 h-3 transition-transform", expanded && "rotate-180")} />
-            </button>
-          ) : (
-            <div />
-          )}
-          
-          {isNotVerified ? (
-            <Button
-              onClick={onRequestQuote}
-              variant="outline"
-              size="sm"
-              className="min-w-28"
-              data-testid={`button-quote-${provider.id}`}
-            >
-              Get a Quote
-            </Button>
-          ) : (
-            <Button
-              onClick={onSelect}
-              variant={selected ? "default" : "outline"}
-              size="sm"
-              className="min-w-28"
-              disabled={isDisabled}
-              data-testid={`button-select-${provider.id}`}
-            >
-              {selected ? 'Selected' : 'Select'}
-            </Button>
-          )}
-        </div>
+        )}
 
         <AnimatePresence>
-          {expanded && (
+          {expanded && !isDisabled && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
