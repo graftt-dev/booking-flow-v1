@@ -17,13 +17,11 @@ import {
 } from '@/components/ui/form';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
-import Chip from '@/components/Chip';
 import { useJourneyStore } from '@/store/journeyStore';
 import { providers } from '@/lib/providers';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, AlertCircle, Send, CheckCircle2, Minus, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Send, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
 
 const wasteTypeLabels: Record<string, string> = {
   'house': 'house clearance',
@@ -43,32 +41,6 @@ const skipSizeNames: Record<string, { name: string; yards: string }> = {
   '16yd': { name: 'Roll-on Roll-off', yards: '16 cubic yards' },
 };
 
-interface ExtraItem {
-  name: string;
-  price: number;
-  pricingType: 'per item' | 'per tonne';
-}
-
-const extraItemsList: ExtraItem[] = [
-  { name: 'Plasterboard / Gypsum Waste', price: 60, pricingType: 'per tonne' },
-  { name: 'Gas Bottles', price: 50, pricingType: 'per item' },
-  { name: 'Single Mattress', price: 20, pricingType: 'per item' },
-  { name: 'Double Mattress', price: 30, pricingType: 'per item' },
-  { name: 'Tyres', price: 5, pricingType: 'per item' },
-  { name: 'Fridge/Freezer', price: 25, pricingType: 'per item' },
-  { name: 'Sofa', price: 15, pricingType: 'per item' },
-  { name: 'Batteries', price: 10, pricingType: 'per item' },
-];
-
-const notAcceptedItems = [
-  'Asbestos',
-  'Paint/Liquids',
-  'Food waste',
-  'Medical waste',
-  'Chemicals & solvents',
-  'Oil & fuel containers',
-  'Fluorescent tubes'
-];
 
 const quoteFormSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -82,10 +54,9 @@ type QuoteFormValues = z.infer<typeof quoteFormSchema>;
 
 export default function QuoteRequest() {
   const [, setLocationPath] = useLocation();
-  const { postcode, address, w3w, placement, wasteType, size, providerId, deliveryDate, collectionDate, items: journeyItems, itemQuantities, toggleItem, setItems, setItemQuantity, flags } = useJourneyStore();
+  const { postcode, address, w3w, placement, wasteType, size, providerId, deliveryDate, collectionDate, items: journeyItems, itemQuantities, flags } = useJourneyStore();
   
   const [submitted, setSubmitted] = useState(false);
-  const [noneExplicitlySelected, setNoneExplicitlySelected] = useState(false);
   
   const provider = providers.find(p => p.id === providerId);
   const skipInfo = skipSizeNames[size || '6yd'] || { name: 'Skip', yards: '' };
@@ -286,7 +257,7 @@ export default function QuoteRequest() {
             Get a personalized quote from <span className="font-semibold text-foreground">{provider?.name || 'this provider'}</span>
           </p>
           
-          <ProgressRibbon currentStep={4} />
+          <ProgressRibbon currentStep={6} isQuoteFlow={true} />
           
           <div className="space-y-6 mt-8">
             <div className="bg-white dark:bg-card border border-card-border rounded-lg p-6 shadow-sm" data-testid="card-summary">
@@ -367,6 +338,32 @@ export default function QuoteRequest() {
                 </p>
 
                 <p>
+                  {journeyItems.length > 0 ? (
+                    <>
+                      You've mentioned you'll be disposing of{' '}
+                      <span 
+                        className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                        data-testid="badge-items"
+                      >
+                        {getItemsText()}
+                      </span>
+                      , which we'll include in your quote request.
+                    </>
+                  ) : (
+                    <>
+                      You've confirmed{' '}
+                      <span 
+                        className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                        data-testid="badge-no-items"
+                      >
+                        no additional items
+                      </span>
+                      {' '}will be included.
+                    </>
+                  )}
+                </p>
+
+                <p>
                   You've chosen a{' '}
                   <span 
                     className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
@@ -391,102 +388,6 @@ export default function QuoteRequest() {
                 </p>
               </div>
             </div>
-            
-            <Card className="p-5" data-testid="card-items">
-              <h2 className="text-lg font-semibold text-foreground mb-2">Any of these items?</h2>
-              <p className="text-sm text-muted-foreground mb-4">
-                {journeyItems && journeyItems.length > 0 
-                  ? "These items will be included in your quote request" 
-                  : "Select any items you'd like included in your quote"}
-              </p>
-              
-              <div className="grid grid-cols-1 gap-3">
-                {extraItemsList.map((item) => {
-                  const isSelected = journeyItems.includes(item.name);
-                  const quantity = itemQuantities[item.name] || 1;
-                  
-                  return (
-                    <div key={item.name} className="flex items-center gap-3">
-                      <div className="flex-1">
-                        <Chip
-                          selected={isSelected}
-                          onClick={() => handleItemClick(item.name)}
-                          className="w-full justify-start"
-                        >
-                          <span className="flex items-center gap-2">
-                            <span>{item.name}</span>
-                            <span className={cn(
-                              "text-sm",
-                              isSelected ? "text-primary-foreground/70" : "text-muted-foreground"
-                            )}>
-                              +£{item.price.toFixed(2)} {item.pricingType}
-                            </span>
-                          </span>
-                        </Chip>
-                      </div>
-                      
-                      <AnimatePresence>
-                        {isSelected && (
-                          <motion.div
-                            initial={{ opacity: 0, width: 0 }}
-                            animate={{ opacity: 1, width: 'auto' }}
-                            exit={{ opacity: 0, width: 0 }}
-                            className="flex items-center gap-2"
-                          >
-                            <button
-                              type="button"
-                              onClick={() => handleQuantityChange(item.name, -1)}
-                              className="w-8 h-8 rounded-md border border-border bg-background flex items-center justify-center hover-elevate active-elevate-2"
-                              disabled={quantity <= 1}
-                              data-testid={`button-decrease-${item.name}`}
-                            >
-                              <Minus className="w-4 h-4" />
-                            </button>
-                            <span className="text-sm font-medium text-foreground min-w-8 text-center" data-testid={`text-quantity-${item.name}`}>
-                              {quantity}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => handleQuantityChange(item.name, 1)}
-                              className="w-8 h-8 rounded-md border border-border bg-background flex items-center justify-center hover-elevate active-elevate-2"
-                              data-testid={`button-increase-${item.name}`}
-                            >
-                              <Plus className="w-4 h-4" />
-                            </button>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
-              </div>
-              
-              <Chip
-                selected={noneExplicitlySelected && journeyItems.length === 0}
-                onClick={handleNoneClick}
-                className={cn(
-                  "w-full mt-4 bg-[#05E4C0]/10 border-[#05E4C0]/30 text-[#06062D] dark:text-[#05E4C0]",
-                  !noneExplicitlySelected && "hover:bg-[#05E4C0]/20",
-                  noneExplicitlySelected && journeyItems.length === 0 && "!bg-primary !text-primary-foreground !border-primary-border"
-                )}
-              >
-                None of the above
-              </Chip>
-              
-              <div className="bg-destructive/10 border border-destructive/20 rounded-md p-4 mt-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-destructive mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-foreground">This provider does not accept:</p>
-                    <ul className="text-sm text-muted-foreground mt-2 space-y-1 list-disc list-inside">
-                      {notAcceptedItems.map((notAcceptedItem) => (
-                        <li key={notAcceptedItem}>{notAcceptedItem}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </Card>
             
             <Card className="p-5" data-testid="card-contact">
               <h2 className="text-lg font-semibold text-foreground mb-4">Contact Details</h2>
@@ -556,11 +457,11 @@ export default function QuoteRequest() {
                     <Button
                       type="button"
                       variant="ghost"
-                      onClick={() => setLocationPath('/providers')}
+                      onClick={() => setLocationPath('/items')}
                       data-testid="button-back"
                     >
                       <ArrowLeft className="w-4 h-4 mr-2" />
-                      Back to Providers
+                      Back
                     </Button>
                     
                     <Button

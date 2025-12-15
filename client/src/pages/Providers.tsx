@@ -79,7 +79,7 @@ export default function Providers() {
   
   const handleRequestQuote = (providerIdToQuote: string) => {
     setProviderId(providerIdToQuote);
-    setLocation('/quote-request');
+    setLocation('/items');
   };
   
   const filteredProviders = providers.slice(0, 9);

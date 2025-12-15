@@ -2,9 +2,10 @@ import { motion } from 'framer-motion';
 
 interface ProgressRibbonProps {
   currentStep: number;
+  isQuoteFlow?: boolean;
 }
 
-const steps = [
+const checkoutSteps = [
   "Placement",
   "Size",
   "Waste",
@@ -15,7 +16,19 @@ const steps = [
   "Done"
 ];
 
-export default function ProgressRibbon({ currentStep }: ProgressRibbonProps) {
+const quoteSteps = [
+  "Placement",
+  "Size",
+  "Waste",
+  "Dates",
+  "Providers",
+  "Items",
+  "Quote",
+  "Done"
+];
+
+export default function ProgressRibbon({ currentStep, isQuoteFlow = false }: ProgressRibbonProps) {
+  const steps = isQuoteFlow ? quoteSteps : checkoutSteps;
   const progress = ((currentStep + 1) / steps.length) * 100;
   
   return (

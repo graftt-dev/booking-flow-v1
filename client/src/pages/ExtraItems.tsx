@@ -7,6 +7,7 @@ import ProgressRibbon from '@/components/ProgressRibbon';
 import EducationPill from '@/components/EducationPill';
 import Chip from '@/components/Chip';
 import { useJourneyStore } from '@/store/journeyStore';
+import { providers } from '@/lib/providers';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
@@ -48,9 +49,12 @@ const notAcceptedItems = [
 
 export default function ExtraItems() {
   const [, setLocation] = useLocation();
-  const { items: selectedItems, itemQuantities, toggleItem, setItems, setItemQuantity } = useJourneyStore();
+  const { items: selectedItems, itemQuantities, toggleItem, setItems, setItemQuantity, providerId } = useJourneyStore();
   const [showHazardWarning, setShowHazardWarning] = useState(false);
   const [noneExplicitlySelected, setNoneExplicitlySelected] = useState(false);
+  
+  const provider = providers.find(p => p.id === providerId);
+  const isQuoteFlow = provider?.verificationStatus === 'not-verified';
   
   const handleItemClick = (item: string) => {
     toggleItem(item);
@@ -69,7 +73,11 @@ export default function ExtraItems() {
   };
   
   const handleContinue = () => {
-    setLocation('/checkout');
+    if (isQuoteFlow) {
+      setLocation('/quote-request');
+    } else {
+      setLocation('/checkout');
+    }
   };
   
   return (
@@ -86,7 +94,7 @@ export default function ExtraItems() {
           Any of these items?
         </h1>
         
-        <ProgressRibbon currentStep={5} />
+        <ProgressRibbon currentStep={5} isQuoteFlow={isQuoteFlow} />
         
         <div className="max-w-3xl mx-auto space-y-6">
           <div className="grid grid-cols-1 gap-3 mt-8">
