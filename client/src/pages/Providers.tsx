@@ -323,7 +323,7 @@ export default function Providers() {
           <div className="flex justify-center mb-4">
             <button
               onClick={() => setGuaranteedOnly(!guaranteedOnly)}
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-sm ${
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-md border transition-all text-sm ${
                 guaranteedOnly 
                   ? 'bg-[#05E4C0]/10 border-[#05E4C0] text-[#06062D]' 
                   : 'bg-transparent border-border text-muted-foreground hover:border-[#05E4C0]/50'
