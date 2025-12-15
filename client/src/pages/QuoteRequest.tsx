@@ -1,26 +1,18 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Shield, FileText, ArrowLeft, Send, CheckCircle2 } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 import Header from '@/components/Header';
 import ProgressRibbon from '@/components/ProgressRibbon';
+import EducationPill from '@/components/EducationPill';
 import { useJourneyStore } from '@/store/journeyStore';
 import { providers } from '@/lib/providers';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Send, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 
 const wasteTypeLabels: Record<string, string> = {
@@ -41,22 +33,18 @@ const skipSizeNames: Record<string, { name: string; yards: string }> = {
   '16yd': { name: 'Roll-on Roll-off', yards: '16 cubic yards' },
 };
 
-
-const quoteFormSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
-  phone: z.string().min(10, 'Please enter a valid phone number').max(15, 'Phone number is too long'),
-  message: z.string().optional(),
-  selectedItems: z.array(z.string()).optional(),
-});
-
-type QuoteFormValues = z.infer<typeof quoteFormSchema>;
-
-
 export default function QuoteRequest() {
   const [, setLocationPath] = useLocation();
-  const { postcode, address, w3w, placement, wasteType, size, providerId, deliveryDate, collectionDate, items: journeyItems, itemQuantities, flags } = useJourneyStore();
+  const { postcode, address, w3w, placement, wasteType, size, providerId, deliveryDate, collectionDate, items, itemQuantities, flags } = useJourneyStore();
   
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [notes, setNotes] = useState('');
+  const [dutyOfCareChecked, setDutyOfCareChecked] = useState(false);
+  const [termsChecked, setTermsChecked] = useState(false);
   
   const provider = providers.find(p => p.id === providerId);
   const skipInfo = skipSizeNames[size || '6yd'] || { name: 'Skip', yards: '' };
@@ -95,9 +83,9 @@ export default function QuoteRequest() {
   };
 
   const getItemsText = () => {
-    if (journeyItems.length === 0) return '';
+    if (items.length === 0) return '';
     
-    const itemsWithQty = journeyItems.map(item => {
+    const itemsWithQty = items.map(item => {
       const qty = itemQuantities[item] || 1;
       return qty > 1 ? `${qty}× ${item}` : item;
     });
@@ -110,40 +98,17 @@ export default function QuoteRequest() {
     return `${otherItems}, and ${lastItem}`;
   };
   
-  const form = useForm<QuoteFormValues>({
-    resolver: zodResolver(quoteFormSchema),
-    defaultValues: {
-      email: '',
-      phone: '',
-      message: '',
-    },
-  });
-  
-  const handleItemClick = (item: string) => {
-    toggleItem(item);
-    setNoneExplicitlySelected(false);
-  };
-  
-  const handleQuantityChange = (item: string, delta: number) => {
-    const currentQty = itemQuantities[item] || 1;
-    const newQty = Math.max(1, currentQty + delta);
-    setItemQuantity(item, newQty);
-  };
-  
-  const handleNoneClick = () => {
-    setItems([]);
-    setNoneExplicitlySelected(true);
-  };
-  
-  const onSubmit = async (data: QuoteFormValues) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!providerId) {
       setLocationPath('/providers');
       return;
     }
     
+    setLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
     setSubmitted(true);
+    setLoading(false);
   };
   
   if (!providerId) {
@@ -245,245 +210,259 @@ export default function QuoteRequest() {
       <motion.main 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        transition={{ duration: 0.3 }}
         className="container mx-auto px-4 py-8"
       >
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-4xl font-bold text-foreground text-center mb-2" data-testid="text-page-title">
-            Request a Quote
-          </h1>
-          
-          <p className="text-center text-muted-foreground mb-6" data-testid="text-provider-name">
-            Get a personalized quote from <span className="font-semibold text-foreground">{provider?.name || 'this provider'}</span>
-          </p>
-          
-          <ProgressRibbon currentStep={6} isQuoteFlow={true} />
-          
-          <div className="space-y-6 mt-8">
-            <div className="bg-white dark:bg-card border border-card-border rounded-lg p-6 shadow-sm" data-testid="card-summary">
-              <h2 className="text-xl font-semibold mb-4">Just to summarise…</h2>
+        <h1 className="text-4xl font-bold text-foreground text-center mb-2" data-testid="text-page-title">
+          Request a Quote
+        </h1>
+        
+        <ProgressRibbon currentStep={6} isQuoteFlow={true} />
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="max-w-4xl mx-auto mt-8"
+        >
+          <div className="bg-white dark:bg-card border border-card-border rounded-lg p-6 shadow-sm" data-testid="section-summary">
+            <h2 className="text-xl font-semibold mb-4">Just to summarise…</h2>
+            
+            <div className="space-y-3 text-base leading-relaxed text-foreground/90">
+              <p>
+                You've asked us to deliver your skip to{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-address"
+                >
+                  {address || 'your location'}{postcode ? `, ${postcode}` : ''}
+                </span>
+                .
+              </p>
               
-              <div className="space-y-3 text-base leading-relaxed text-foreground/90">
-                <p>
-                  You've asked us to deliver your skip to{' '}
-                  <span 
-                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
-                    data-testid="badge-address"
-                  >
-                    {address || 'your location'}{postcode ? `, ${postcode}` : ''}
-                  </span>
-                  .
-                </p>
-                
-                <p>
-                  Your skip will be dropped in{' '}
-                  <span 
-                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
-                    data-testid="badge-w3w"
-                  >
-                    {w3w || '///mock.what3.words'}
-                  </span>
-                  {' '}location
-                  {placement && (
-                    <>
-                      , and you've confirmed that you{' '}
-                      {flags.onRoadFromHome === false ? (
-                        <>
-                          own the land so{' '}
-                          <span className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full">
-                            no permit's needed
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          need a{' '}
-                          <span className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full">
-                            road permit
-                          </span>
-                        </>
-                      )}
-                    </>
-                  )}
-                  .
-                </p>
+              <p>
+                Your skip will be dropped in{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-w3w"
+                >
+                  {w3w || '///mock.what3.words'}
+                </span>
+                {' '}location
+                {placement && (
+                  <>
+                    , and you've confirmed that you{' '}
+                    {flags.onRoadFromHome === false ? (
+                      <>
+                        own the land so{' '}
+                        <span className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full">
+                          no permit's needed
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        need a{' '}
+                        <span className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full">
+                          road permit
+                        </span>
+                      </>
+                    )}
+                  </>
+                )}
+                .
+              </p>
 
-                <p>
-                  You need it delivered{' '}
-                  <span 
-                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
-                    data-testid="badge-delivery-date"
-                  >
-                    {formatDeliveryDate()}
-                  </span>
-                  {' '}and collected {formatCollectionDate().isFlexible ? 'between' : 'on'}{' '}
-                  <span 
-                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
-                    data-testid="badge-collection-date"
-                  >
-                    {formatCollectionDate().text}
-                  </span>
-                  {wasteType && (
-                    <>
-                      {' '}for your{' '}
-                      <span 
-                        className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
-                        data-testid="badge-waste-type"
-                      >
-                        {getWasteTypeLabel()}
-                      </span>
-                      {' '}project
-                    </>
-                  )}
-                  .
-                </p>
-
-                <p>
-                  {journeyItems.length > 0 ? (
-                    <>
-                      You've mentioned you'll be disposing of{' '}
-                      <span 
-                        className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
-                        data-testid="badge-items"
-                      >
-                        {getItemsText()}
-                      </span>
-                      , which we'll include in your quote request.
-                    </>
-                  ) : (
-                    <>
-                      You've confirmed{' '}
-                      <span 
-                        className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
-                        data-testid="badge-no-items"
-                      >
-                        no additional items
-                      </span>
-                      {' '}will be included.
-                    </>
-                  )}
-                </p>
-
-                <p>
-                  You've chosen a{' '}
-                  <span 
-                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
-                    data-testid="badge-size"
-                  >
-                    {size} ({skipInfo.name})
-                  </span>
-                  {' '}skip and you're requesting a quote from{' '}
-                  {provider && (
+              <p>
+                You need it delivered{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-delivery-date"
+                >
+                  {formatDeliveryDate()}
+                </span>
+                {' '}and collected {formatCollectionDate().isFlexible ? 'between' : 'on'}{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-collection-date"
+                >
+                  {formatCollectionDate().text}
+                </span>
+                {wasteType && (
+                  <>
+                    {' '}for your{' '}
                     <span 
                       className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
-                      data-testid="badge-provider"
+                      data-testid="badge-waste-type"
                     >
-                      {provider.name}
+                      {getWasteTypeLabel()}
                     </span>
-                  )}
-                  .
-                </p>
+                    {' '}project
+                  </>
+                )}
+                .
+              </p>
 
-                <p className="pt-2 text-foreground font-medium">
-                  Does everything look right? Fill in your details below to request your personalised quote.
-                </p>
+              <p>
+                {items.length > 0 ? (
+                  <>
+                    You've mentioned you'll be disposing of{' '}
+                    <span 
+                      className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                      data-testid="badge-items"
+                    >
+                      {getItemsText()}
+                    </span>
+                    , which we'll include in your quote request.
+                  </>
+                ) : (
+                  <>
+                    You've confirmed{' '}
+                    <span 
+                      className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                      data-testid="badge-no-items"
+                    >
+                      no additional items
+                    </span>
+                    {' '}will be included.
+                  </>
+                )}
+              </p>
+
+              <p>
+                You've chosen a{' '}
+                <span 
+                  className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                  data-testid="badge-size"
+                >
+                  {size} ({skipInfo.name})
+                </span>
+                {' '}skip and you're requesting a quote from{' '}
+                {provider && (
+                  <span 
+                    className="inline-flex items-center bg-[#05E4C0]/10 text-[#05E4C0] border border-[#05E4C0]/20 font-semibold px-2 py-0.5 rounded-full"
+                    data-testid="badge-provider"
+                  >
+                    {provider.name}
+                  </span>
+                )}
+                .
+              </p>
+
+              <p className="pt-2 text-foreground font-medium">
+                Does everything look right? Fill in your details below to request your personalised quote.
+              </p>
+            </div>
+          </div>
+
+          <EducationPill text="Double-checking your answers helps us get everything right first time." />
+        </motion.div>
+        
+        <div className="max-w-2xl mx-auto mt-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="bg-card border border-card-border rounded-md p-6 space-y-4">
+              <h2 className="text-lg font-semibold">Your Details</h2>
+              
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  data-testid="input-name"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  data-testid="input-email"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  required
+                  data-testid="input-phone"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="notes">Additional Information (optional)</Label>
+                <Textarea
+                  id="notes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Any special requirements or questions..."
+                  data-testid="textarea-notes"
+                />
               </div>
             </div>
             
-            <Card className="p-5" data-testid="card-contact">
-              <h2 className="text-lg font-semibold text-foreground mb-4">Contact Details</h2>
+            <div className="bg-card border border-card-border rounded-md p-4 space-y-3">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <Checkbox 
+                  checked={dutyOfCareChecked} 
+                  onCheckedChange={(checked) => setDutyOfCareChecked(checked as boolean)}
+                  data-testid="checkbox-duty-of-care"
+                />
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-primary" />
+                  <span className="text-sm">I accept the <span className="font-medium underline">Duty of Care</span> responsibilities</span>
+                </div>
+              </label>
               
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email Address</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="email"
-                              placeholder="you@example.com"
-                              data-testid="input-email"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage data-testid="error-email" />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone Number</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="tel"
-                              placeholder="07XXX XXX XXX"
-                              data-testid="input-phone"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage data-testid="error-phone" />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Additional Information (Optional)</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Any special requirements or questions..."
-                            rows={3}
-                            data-testid="input-message"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage data-testid="error-message" />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      onClick={() => setLocationPath('/items')}
-                      data-testid="button-back"
-                    >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
-                      Back
-                    </Button>
-                    
-                    <Button
-                      type="submit"
-                      size="lg"
-                      disabled={form.formState.isSubmitting}
-                      data-testid="button-submit"
-                    >
-                      {form.formState.isSubmitting ? (
-                        <>Sending...</>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4 mr-2" />
-                          Request Quote
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </form>
-              </Form>
-            </Card>
-          </div>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <Checkbox 
+                  checked={termsChecked} 
+                  onCheckedChange={(checked) => setTermsChecked(checked as boolean)}
+                  data-testid="checkbox-terms"
+                />
+                <div className="flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  <span className="text-sm">I accept the <span className="font-medium underline">Terms & Conditions</span></span>
+                </div>
+              </label>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setLocationPath('/items')}
+                data-testid="button-back"
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+              <Button
+                type="submit"
+                size="lg"
+                className="flex-1"
+                disabled={loading || !dutyOfCareChecked || !termsChecked}
+                data-testid="button-submit"
+              >
+                {loading ? (
+                  <>Sending...</>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    Request Quote
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
         </div>
       </motion.main>
     </div>
