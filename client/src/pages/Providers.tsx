@@ -320,18 +320,7 @@ export default function Providers() {
             </div>
           </Tabs>
           
-          <div className="flex justify-center mb-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full">
-              <span className="text-sm text-foreground" data-testid="text-provider-count">
-                {guaranteedOnly 
-                  ? `${guaranteedProviders.length} providers found`
-                  : `${guaranteedProviders.length + notVerifiedProviders.length} providers found`
-                }
-              </span>
-            </div>
-          </div>
-          
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-4">
             <button
               onClick={() => setGuaranteedOnly(!guaranteedOnly)}
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border transition-all text-sm ${
@@ -344,6 +333,17 @@ export default function Providers() {
               <span className={`w-3 h-3 rounded-full ${guaranteedOnly ? 'bg-[#05E4C0]' : 'bg-muted-foreground/30'}`} />
               GRAFTT Guaranteed only
             </button>
+          </div>
+          
+          <div className="flex justify-center mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full">
+              <span className="text-sm text-foreground" data-testid="text-provider-count">
+                {guaranteedOnly 
+                  ? `${guaranteedProviders.length} providers found`
+                  : `${guaranteedProviders.length + notVerifiedProviders.length} providers found`
+                }
+              </span>
+            </div>
           </div>
           
           <div className="space-y-6">
