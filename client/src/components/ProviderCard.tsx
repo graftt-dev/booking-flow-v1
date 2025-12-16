@@ -185,10 +185,7 @@ export default function ProviderCard({
             
             {isNotVerified ? (
               <Button
-                onClick={() => {
-                  onSelect();
-                  if (onRequestQuote) onRequestQuote();
-                }}
+                onClick={onSelect}
                 variant={selected ? "default" : "outline"}
                 size="sm"
                 className={cn("min-w-28", selected && "bg-[#06062D] hover:bg-[#06062D]/90 border-[#06062D]")}

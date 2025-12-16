@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { calculateTotals } from '@/lib/pricing';
 import { 
   ArrowLeft, MapPin, Package, Trash2, Calendar, CalendarCheck, Lightbulb, Phone, MessageCircle,
-  AlertTriangle, ChevronDown
+  AlertTriangle, ChevronDown, Send
 } from 'lucide-react';
 import { format, parse } from 'date-fns';
 
@@ -56,6 +56,7 @@ export default function Providers() {
   const [providers, setProviders] = useState(allProviders);
   const [showNotGuaranteed, setShowNotGuaranteed] = useState(false);
   const [guaranteedOnly, setGuaranteedOnly] = useState(false);
+  const [quoteAllSelected, setQuoteAllSelected] = useState(false);
   
   useEffect(() => {
     const sorted = sortProviders(allProviders, sortMode, size || '6yd', items, placement || 'driveway');
@@ -63,6 +64,7 @@ export default function Providers() {
   }, [sortMode, size, items, placement]);
   
   const handleSelectProvider = (id: string) => {
+    setQuoteAllSelected(false);
     setProviderId(id);
     const provider = allProviders.find(p => p.id === id);
     if (provider && size) {
@@ -71,15 +73,15 @@ export default function Providers() {
     }
   };
   
-  const handleContinue = () => {
-    if (providerId) {
-      setLocation('/items');
-    }
+  const handleQuoteAllSelect = () => {
+    setQuoteAllSelected(true);
+    setProviderId('quote-all');
   };
   
-  const handleRequestQuote = (providerIdToQuote: string) => {
-    setProviderId(providerIdToQuote);
-    setLocation('/items');
+  const handleContinue = () => {
+    if (providerId || quoteAllSelected) {
+      setLocation('/items');
+    }
   };
   
   const filteredProviders = providers.slice(0, 9);
@@ -347,22 +349,20 @@ export default function Providers() {
           </div>
           
           <div className="space-y-6">
-            {/* All providers in a single list */}
+            {/* GRAFTT Guaranteed providers */}
             <div className="space-y-3">
-              {(guaranteedOnly ? guaranteedProviders : [...guaranteedProviders, ...notVerifiedProviders]).map((provider, index) => {
+              {guaranteedProviders.map((provider, index) => {
                 const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
                 const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
                 const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
-                const isNotVerified = provider.verificationStatus === 'not-verified';
                 
                 return (
                   <ProviderCard
                     key={provider.id}
                     provider={provider}
                     price={price}
-                    selected={providerId === provider.id}
+                    selected={providerId === provider.id && !quoteAllSelected}
                     onSelect={() => handleSelectProvider(provider.id)}
-                    onRequestQuote={isNotVerified ? () => handleRequestQuote(provider.id) : undefined}
                     index={index}
                     basePrice={providerBasePrice}
                     extras={totals.extras}
@@ -377,6 +377,87 @@ export default function Providers() {
                 );
               })}
             </div>
+            
+            {/* Separator and Not Yet Verified section */}
+            {!guaranteedOnly && notVerifiedProviders.length > 0 && (
+              <>
+                {/* Subtle separator */}
+                <div className="flex items-center gap-4 py-2">
+                  <div className="flex-1 h-px bg-border" />
+                  <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Not Yet Verified</span>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+                
+                {/* Get a quote from all button */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                >
+                  <button
+                    onClick={handleQuoteAllSelect}
+                    className={`w-full p-4 rounded-md border-2 transition-all ${
+                      quoteAllSelected 
+                        ? 'border-[#06062D] bg-[#06062D]/5 shadow-soft' 
+                        : 'border-dashed border-border hover:border-[#06062D]/50 bg-card'
+                    }`}
+                    data-testid="button-quote-all"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          quoteAllSelected ? 'bg-[#06062D]' : 'bg-[#06062D]/10'
+                        }`}>
+                          <Send className={`w-5 h-5 ${quoteAllSelected ? 'text-white' : 'text-[#06062D]'}`} />
+                        </div>
+                        <div className="text-left">
+                          <p className="font-semibold text-foreground">Get a quote from all</p>
+                          <p className="text-sm text-muted-foreground">Request quotes from all {notVerifiedProviders.length} providers at once</p>
+                        </div>
+                      </div>
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                        quoteAllSelected 
+                          ? 'border-[#06062D] bg-[#06062D]' 
+                          : 'border-muted-foreground/30'
+                      }`}>
+                        {quoteAllSelected && (
+                          <div className="w-2 h-2 rounded-full bg-white" />
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                </motion.div>
+                
+                {/* Not Yet Verified providers */}
+                <div className="space-y-3">
+                  {notVerifiedProviders.map((provider, index) => {
+                    const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
+                    const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
+                    const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
+                    
+                    return (
+                      <ProviderCard
+                        key={provider.id}
+                        provider={provider}
+                        price={price}
+                        selected={providerId === provider.id && !quoteAllSelected}
+                        onSelect={() => handleSelectProvider(provider.id)}
+                        index={index}
+                        basePrice={providerBasePrice}
+                        extras={totals.extras}
+                        permit={totals.permit}
+                        vat={totals.vat}
+                        items={items}
+                        itemQuantities={itemQuantities}
+                        placement={placement || 'driveway'}
+                        deliveryDate={deliveryDate}
+                        collectionDate={collectionDate}
+                      />
+                    );
+                  })}
+                </div>
+              </>
+            )}
             
             {/* Not GRAFTT Guaranteed Section - Collapsible */}
             {notGuaranteedProviders.length > 0 && (
@@ -462,7 +543,7 @@ export default function Providers() {
             <Button
               size="lg"
               onClick={handleContinue}
-              disabled={!providerId}
+              disabled={!providerId && !quoteAllSelected}
               data-testid="button-continue"
             >
               Continue
