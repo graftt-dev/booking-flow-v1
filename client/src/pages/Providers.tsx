@@ -13,8 +13,7 @@ import { providers as allProviders, sortProviders, getProviderPrice } from '@/li
 import { motion, AnimatePresence } from 'framer-motion';
 import { calculateTotals } from '@/lib/pricing';
 import { 
-  ArrowLeft, MapPin, Package, Trash2, Calendar, CalendarCheck, Lightbulb, Phone, MessageCircle,
-  AlertTriangle, ChevronDown, Send
+  ArrowLeft, MapPin, Package, Trash2, Calendar, CalendarCheck, Lightbulb, Phone, MessageCircle
 } from 'lucide-react';
 import { format, parse } from 'date-fns';
 
@@ -54,9 +53,7 @@ export default function Providers() {
   } = useJourneyStore();
   const [sortMode, setSortMode] = useState<SortMode>('best');
   const [providers, setProviders] = useState(allProviders);
-  const [showNotGuaranteed, setShowNotGuaranteed] = useState(false);
   const [guaranteedOnly, setGuaranteedOnly] = useState(false);
-  const [quoteAllSelected, setQuoteAllSelected] = useState(false);
   
   useEffect(() => {
     const sorted = sortProviders(allProviders, sortMode, size || '6yd', items, placement || 'driveway');
@@ -64,7 +61,6 @@ export default function Providers() {
   }, [sortMode, size, items, placement]);
   
   const handleSelectProvider = (id: string) => {
-    setQuoteAllSelected(false);
     setProviderId(id);
     const provider = allProviders.find(p => p.id === id);
     if (provider && size) {
@@ -73,13 +69,8 @@ export default function Providers() {
     }
   };
   
-  const handleQuoteAllSelect = () => {
-    setQuoteAllSelected(true);
-    setProviderId('quote-all');
-  };
-  
   const handleContinue = () => {
-    if (providerId || quoteAllSelected) {
+    if (providerId) {
       setLocation('/items');
     }
   };
@@ -361,7 +352,7 @@ export default function Providers() {
                     key={provider.id}
                     provider={provider}
                     price={price}
-                    selected={providerId === provider.id && !quoteAllSelected}
+                    selected={providerId === provider.id}
                     onSelect={() => handleSelectProvider(provider.id)}
                     index={index}
                     basePrice={providerBasePrice}
@@ -388,46 +379,6 @@ export default function Providers() {
                   <div className="flex-1 h-px bg-border" />
                 </div>
                 
-                {/* Get a quote from all button */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <button
-                    onClick={handleQuoteAllSelect}
-                    className={`w-full p-4 rounded-md border-2 transition-all ${
-                      quoteAllSelected 
-                        ? 'border-[#06062D] bg-[#06062D]/5 shadow-soft' 
-                        : 'border-dashed border-border hover:border-[#06062D]/50 bg-card'
-                    }`}
-                    data-testid="button-quote-all"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                          quoteAllSelected ? 'bg-[#06062D]' : 'bg-[#06062D]/10'
-                        }`}>
-                          <Send className={`w-5 h-5 ${quoteAllSelected ? 'text-white' : 'text-[#06062D]'}`} />
-                        </div>
-                        <div className="text-left">
-                          <p className="font-semibold text-foreground">Get a quote from all</p>
-                          <p className="text-sm text-muted-foreground">Request quotes from all {notVerifiedProviders.length} providers at once</p>
-                        </div>
-                      </div>
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
-                        quoteAllSelected 
-                          ? 'border-[#06062D] bg-[#06062D]' 
-                          : 'border-muted-foreground/30'
-                      }`}>
-                        {quoteAllSelected && (
-                          <div className="w-2 h-2 rounded-full bg-white" />
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                </motion.div>
-                
                 {/* Not Yet Verified providers */}
                 <div className="space-y-3">
                   {notVerifiedProviders.map((provider, index) => {
@@ -440,7 +391,7 @@ export default function Providers() {
                         key={provider.id}
                         provider={provider}
                         price={price}
-                        selected={providerId === provider.id && !quoteAllSelected}
+                        selected={providerId === provider.id}
                         onSelect={() => handleSelectProvider(provider.id)}
                         index={index}
                         basePrice={providerBasePrice}
@@ -458,77 +409,6 @@ export default function Providers() {
                 </div>
               </>
             )}
-            
-            {/* Not GRAFTT Guaranteed Section - Collapsible */}
-            {notGuaranteedProviders.length > 0 && (
-              <section data-testid="section-not-guaranteed">
-                <button
-                  onClick={() => setShowNotGuaranteed(!showNotGuaranteed)}
-                  className="w-full flex items-center justify-between gap-4 py-4 px-5 rounded-md border border-dashed border-muted-foreground/30 bg-muted/20 hover:bg-muted/40 transition-all group"
-                  data-testid="button-toggle-not-guaranteed"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center group-hover:bg-muted transition-colors">
-                      <AlertTriangle className="w-4 h-4 text-muted-foreground/70" />
-                    </div>
-                    <div className="text-left">
-                      <span className="text-sm font-medium text-muted-foreground block">
-                        Other providers
-                      </span>
-                      <span className="text-xs text-muted-foreground/70">
-                        {notGuaranteedProviders.length} not covered by GRAFTT Guarantee
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground/50 hidden sm:inline">
-                      {showNotGuaranteed ? 'Hide' : 'Show'}
-                    </span>
-                    <ChevronDown className={`w-4 h-4 text-muted-foreground/70 transition-transform duration-200 ${showNotGuaranteed ? 'rotate-180' : ''}`} />
-                  </div>
-                </button>
-                
-                <AnimatePresence>
-                  {showNotGuaranteed && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="pt-4 space-y-3">
-                        {notGuaranteedProviders.map((provider, index) => {
-                          const price = getProviderPrice(provider, size || '6yd', items, placement || 'driveway');
-                          const totals = calculateTotals(size || '6yd', items, placement || 'driveway', itemQuantities);
-                          const providerBasePrice = provider.priceBySize[size as keyof typeof provider.priceBySize] || provider.priceBySize['6yd'];
-                          
-                          return (
-                            <ProviderCard
-                              key={provider.id}
-                              provider={provider}
-                              price={price}
-                              selected={providerId === provider.id}
-                              onSelect={() => handleSelectProvider(provider.id)}
-                              index={index}
-                              basePrice={providerBasePrice}
-                              extras={totals.extras}
-                              permit={totals.permit}
-                              vat={totals.vat}
-                              items={items}
-                              itemQuantities={itemQuantities}
-                              placement={placement || 'driveway'}
-                              deliveryDate={deliveryDate}
-                              collectionDate={collectionDate}
-                            />
-                          );
-                        })}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </section>
-            )}
           </div>
           
           <div className="flex justify-center items-center gap-4 mt-12">
@@ -543,7 +423,7 @@ export default function Providers() {
             <Button
               size="lg"
               onClick={handleContinue}
-              disabled={!providerId && !quoteAllSelected}
+              disabled={!providerId}
               data-testid="button-continue"
             >
               Continue
