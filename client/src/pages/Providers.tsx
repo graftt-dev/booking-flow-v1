@@ -13,7 +13,8 @@ import { providers as allProviders, sortProviders, getProviderPrice } from '@/li
 import { motion, AnimatePresence } from 'framer-motion';
 import { calculateTotals } from '@/lib/pricing';
 import { 
-  ArrowLeft, MapPin, Package, Trash2, Calendar, CalendarCheck, Lightbulb, Phone, MessageCircle
+  ArrowLeft, MapPin, Package, Trash2, Calendar, CalendarCheck, Lightbulb, Phone, MessageCircle,
+  Menu, X
 } from 'lucide-react';
 import { format, parse } from 'date-fns';
 
@@ -54,6 +55,7 @@ export default function Providers() {
   const [sortMode, setSortMode] = useState<SortMode>('best');
   const [providers, setProviders] = useState(allProviders);
   const [guaranteedOnly, setGuaranteedOnly] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   useEffect(() => {
     const sorted = sortProviders(allProviders, sortMode, size || '6yd', items, placement || 'driveway');
@@ -183,118 +185,162 @@ export default function Providers() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="px-4 py-8 relative"
       >
-        <div className="hidden lg:block fixed left-28 top-80 w-72 z-10">
-          <Card className="p-5">
-            <h2 className="text-lg font-semibold text-foreground mb-1">Your Selection</h2>
-            <p className="text-sm text-muted-foreground mb-5">Edit any detail to update providers</p>
-            
-            <div className="space-y-5">
-              <button 
-                onClick={() => setLocation('/placement')}
-                className="w-full text-left group"
-                data-testid="button-edit-location"
+        {/* Toggle button for sidebar - fixed on left */}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="fixed left-4 top-24 z-20 bg-white shadow-md"
+          data-testid="button-toggle-selection"
+        >
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </Button>
+        
+        {/* Sliding sidebar */}
+        <AnimatePresence>
+          {sidebarOpen && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.3 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setSidebarOpen(false)}
+                className="fixed inset-0 bg-black z-30"
+              />
+              
+              {/* Sidebar panel */}
+              <motion.div
+                initial={{ x: -320 }}
+                animate={{ x: 0 }}
+                exit={{ x: -320 }}
+                transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                className="fixed left-0 top-0 h-full w-80 bg-white z-40 shadow-xl overflow-y-auto"
               >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-5 h-5 text-primary" />
+                <div className="p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-lg font-semibold text-foreground">Your Selection</h2>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setSidebarOpen(false)}
+                      data-testid="button-close-selection"
+                    >
+                      <X className="w-5 h-5" />
+                    </Button>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">Location</p>
-                    <p className="font-semibold text-foreground">{postcode || 'Not set'}</p>
-                    {address && (
-                      <p className="text-sm text-muted-foreground truncate">{address}</p>
-                    )}
-                    {placement && (
-                      <Badge variant="secondary" className="mt-1.5 text-xs">
-                        {placement === 'driveway' ? 'On Property' : 'On Road'}
-                      </Badge>
-                    )}
+                  <p className="text-sm text-muted-foreground mb-5">Edit any detail to update providers</p>
+                  
+                  <div className="space-y-5">
+                    <button 
+                      onClick={() => { setSidebarOpen(false); setLocation('/placement'); }}
+                      className="w-full text-left group"
+                      data-testid="button-edit-location"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <MapPin className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">Location</p>
+                          <p className="font-semibold text-foreground">{postcode || 'Not set'}</p>
+                          {address && (
+                            <p className="text-sm text-muted-foreground truncate">{address}</p>
+                          )}
+                          {placement && (
+                            <Badge variant="secondary" className="mt-1.5 text-xs">
+                              {placement === 'driveway' ? 'On Property' : 'On Road'}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                    
+                    <div className="border-t border-border" />
+                    
+                    <button 
+                      onClick={() => { setSidebarOpen(false); setLocation('/skip-size'); }}
+                      className="w-full text-left group"
+                      data-testid="button-edit-size"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Package className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">Skip Size</p>
+                          <p className="font-semibold text-foreground">{skipInfo.name}</p>
+                          <p className="text-sm text-muted-foreground">{skipInfo.yards}</p>
+                        </div>
+                      </div>
+                    </button>
+                    
+                    <div className="border-t border-border" />
+                    
+                    <button 
+                      onClick={() => { setSidebarOpen(false); setLocation('/waste-type'); }}
+                      className="w-full text-left group"
+                      data-testid="button-edit-waste"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Trash2 className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">Waste Type</p>
+                          <p className="font-semibold text-foreground">{wasteType || 'General Waste'}</p>
+                        </div>
+                      </div>
+                    </button>
+                    
+                    <div className="border-t border-border" />
+                    
+                    <button 
+                      onClick={() => { setSidebarOpen(false); setLocation('/delivery-date'); }}
+                      className="w-full text-left group"
+                      data-testid="button-edit-delivery"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <Calendar className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">Delivery Timeframe</p>
+                          <p className="font-semibold text-foreground">{formatDateDisplay(deliveryDate)}</p>
+                        </div>
+                      </div>
+                    </button>
+                    
+                    <div className="border-t border-border" />
+                    
+                    <button 
+                      onClick={() => { setSidebarOpen(false); setLocation('/delivery-date'); }}
+                      className="w-full text-left group"
+                      data-testid="button-edit-collection"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                          <CalendarCheck className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">Collection Timeframe</p>
+                          <p className="font-semibold text-foreground">{formatDateDisplay(collectionDate)}</p>
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                  
+                  <div className="mt-6 pt-4 border-t border-border">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Lightbulb className="w-4 h-4 text-primary" />
+                      <span>Click any item to update and see new providers</span>
+                    </div>
                   </div>
                 </div>
-              </button>
-              
-              <div className="border-t border-border" />
-              
-              <button 
-                onClick={() => setLocation('/skip-size')}
-                className="w-full text-left group"
-                data-testid="button-edit-size"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Package className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">Skip Size</p>
-                    <p className="font-semibold text-foreground">{skipInfo.name}</p>
-                    <p className="text-sm text-muted-foreground">{skipInfo.yards}</p>
-                  </div>
-                </div>
-              </button>
-              
-              <div className="border-t border-border" />
-              
-              <button 
-                onClick={() => setLocation('/waste-type')}
-                className="w-full text-left group"
-                data-testid="button-edit-waste"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Trash2 className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">Waste Type</p>
-                    <p className="font-semibold text-foreground">{wasteType || 'General Waste'}</p>
-                  </div>
-                </div>
-              </button>
-              
-              <div className="border-t border-border" />
-              
-              <button 
-                onClick={() => setLocation('/delivery-date')}
-                className="w-full text-left group"
-                data-testid="button-edit-delivery"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Calendar className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">Delivery Timeframe</p>
-                    <p className="font-semibold text-foreground">{formatDateDisplay(deliveryDate)}</p>
-                  </div>
-                </div>
-              </button>
-              
-              <div className="border-t border-border" />
-              
-              <button 
-                onClick={() => setLocation('/delivery-date')}
-                className="w-full text-left group"
-                data-testid="button-edit-collection"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <CalendarCheck className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-primary uppercase tracking-wide mb-1">Collection Timeframe</p>
-                    <p className="font-semibold text-foreground">{formatDateDisplay(collectionDate)}</p>
-                  </div>
-                </div>
-              </button>
-            </div>
-            
-            <div className="mt-6 pt-4 border-t border-border">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Lightbulb className="w-4 h-4 text-primary" />
-                <span>Click any item to update and see new providers</span>
-              </div>
-            </div>
-          </Card>
-        </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
         
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold text-foreground text-center mb-2" data-testid="text-page-title">
